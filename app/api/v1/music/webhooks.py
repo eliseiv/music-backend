@@ -139,9 +139,6 @@ def _get_billing_service(
         "**Авторизация:** значение `ADAPTY_WEBHOOK_SECRET` в заголовке "
         "`Authorization` (поддерживаются оба формата: `Bearer <secret>` "
         "и просто `<secret>`).\n\n"
-        "**Test-ping:** при подключении хука в кабинете Adapty шлёт "
-        "тестовый POST с пустым телом — сервис проверит Authorization и "
-        "вернёт `200 {\"status\": \"test_ping\"}`.\n\n"
         "**Идемпотентность:** по `event_id` (повторное событие → "
         "`{\"status\": \"duplicate\"}`).\n\n"
         "**Атомарность:** user, subscription_state, wallet, ledger и "
@@ -190,7 +187,7 @@ def _is_test_payload(raw: bytes) -> bool:
 @router.post(
     "/webhooks/billing/rf",
     status_code=status.HTTP_200_OK,
-    summary="Webhook от RuStore (РФ биллинг)",
+    summary="Webhook от RuStore",
     description=(
         "Принимает события подписки и покупок от РФ-биллинга (RuStore):\n\n"
         "* `SUBSCRIPTION_PURCHASED` — активация подписки.\n"
