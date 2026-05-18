@@ -14,6 +14,22 @@ class FalSubmitResult:
 
 
 @dataclass
+class FalStatusResult:
+    """Результат опроса fal queue API (GET /requests/{rid}/status и /requests/{rid}).
+
+    `status` — `IN_QUEUE` | `IN_PROGRESS` | `COMPLETED` | `FAILED` | `CANCELED`.
+    """
+
+    request_id: str
+    status: str
+    audio_url: str | None = None
+    duration_seconds: float | None = None
+    stems: dict[str, Any] | None = None
+    error_message: str | None = None
+    raw: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
 class FalWebhookEvent:
     """Нормализованное событие webhook от fal.
 
@@ -75,3 +91,9 @@ class FalProvider(Protocol):
     def parse_webhook_event(
         self, *, headers: Mapping[str, str], raw_body: bytes
     ) -> FalWebhookEvent: ...
+
+    async def fetch_status(
+        self, *, model: str, request_id: str
+    ) -> FalStatusResult:
+        """Опрос статуса задачи в fal queue API."""
+        ...

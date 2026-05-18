@@ -61,6 +61,10 @@ class Settings(BaseSettings):
     MUSIC_URL_CHECK_ENABLED: bool = True
     MUSIC_URL_CHECK_TIMEOUT_SECONDS: float = 3.0
 
+    # Polling fal queue API (fallback к webhook'ам). 0 = выкл (только webhook).
+    MUSIC_POLL_INTERVAL_SECONDS: int = 10
+    MUSIC_POLL_ENABLED: bool = True
+
     @field_validator("API_KEY", mode="before")
     @classmethod
     def _empty_str_to_none(cls, v: object) -> object:

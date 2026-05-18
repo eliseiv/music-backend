@@ -9,7 +9,7 @@ import logging
 import uuid
 from typing import Mapping
 
-from app.music.providers.fal.base import FalSubmitResult, FalWebhookEvent
+from app.music.providers.fal.base import FalStatusResult, FalSubmitResult, FalWebhookEvent
 from app.music.providers.fal.signature import body_digest, verify_signature
 
 logger = logging.getLogger(__name__)
@@ -78,6 +78,15 @@ class StubFalProvider:
         self, *, content: bytes, filename: str, content_type: str
     ) -> str:
         return f"https://fal-stub-cdn.local/{uuid.uuid4().hex}/{filename}"
+
+    async def fetch_status(
+        self, *, model: str, request_id: str
+    ) -> FalStatusResult:
+        # Stub всегда говорит IN_QUEUE — для unit-тестов мы используем
+        # emit_webhook, polling не нужен.
+        return FalStatusResult(
+            request_id=request_id, status="IN_QUEUE", raw={"stub": True}
+        )
 
     def parse_webhook_event(
         self, *, headers: Mapping[str, str], raw_body: bytes

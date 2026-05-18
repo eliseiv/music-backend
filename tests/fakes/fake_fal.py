@@ -7,7 +7,7 @@ from collections import deque
 from typing import Any, Mapping
 
 from app.api.errors import WebhookPayloadInvalid, WebhookSignatureInvalid
-from app.music.providers.fal.base import FalSubmitResult, FalWebhookEvent
+from app.music.providers.fal.base import FalStatusResult, FalSubmitResult, FalWebhookEvent
 from app.music.providers.fal.signature import SIGNATURE_HEADER, body_digest
 
 
@@ -124,6 +124,12 @@ class FakeFal:
 
     async def aclose(self) -> None:
         pass
+
+    async def fetch_status(
+        self, *, model: str, request_id: str
+    ) -> FalStatusResult:
+        # Тесты используют emit_webhook, поллинг по-умолчанию говорит IN_QUEUE
+        return FalStatusResult(request_id=request_id, status="IN_QUEUE", raw={})
 
     # --- test helpers for end-to-end pipeline tests ---
 

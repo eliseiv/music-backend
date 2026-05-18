@@ -16,6 +16,9 @@ from app.middleware.rate_limit import RateLimitMiddleware
 from app.middleware.request_context import RequestContextMiddleware
 from app.music.providers.fal.client import FalAiProvider
 from app.music.providers.fal.stub import StubFalProvider
+from app.music.services.pipeline import Pipeline
+from app.music.services.poller import FalPoller
+from app.music.services.pricing_service import PricingService
 from app.music.services.recovery import recover_orphan_jobs, report_received_webhooks
 from app.music.services.wallet_service import WalletService
 
@@ -91,9 +94,34 @@ def create_app(
         except Exception:
             logger.exception("Recovery sweep failed on startup")
 
+        # FalPoller — fallback к webhook'ам (fal подписывает webhook своим
+        # ed25519, не нашим HMAC; до настройки JWK-проверки опрашиваем сами).
+        poller = None
+        if settings.MUSIC_POLL_ENABLED and fal is not None:
+            pipeline = Pipeline(
+                app.state.sessionmaker,
+                fal,
+                WalletService(app.state.sessionmaker),
+                PricingService(app.state.sessionmaker),
+                settings,
+            )
+            poller = FalPoller(
+                sessionmaker=app.state.sessionmaker,
+                fal=fal,
+                pipeline=pipeline,
+                settings=settings,
+            )
+            poller.start()
+            app.state.poller = poller
+
         try:
             yield
         finally:
+            if poller is not None:
+                try:
+                    await poller.stop()
+                except Exception:
+                    logger.exception("Failed to stop FalPoller")
             fal_instance = getattr(app.state, "fal_provider", None)
             if fal_instance is not None and hasattr(fal_instance, "aclose"):
                 try:

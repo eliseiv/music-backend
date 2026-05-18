@@ -205,6 +205,12 @@ class Pipeline:
         await self._record_stage(job.id, JobStage.music_generation, "running")
         prompt = _compose_prompt(job.input_payload, beat)
         webhook_url = self._webhook_url()
+        # fal-ai/minimax-music требует reference_audio_url. Используем URL бита
+        # как стилевой референс (voice_url пойдёт в отдельную vocal_tts стадию).
+        reference_audio_url = (
+            (job.input_payload or {}).get("voice_url")
+            or (beat.audio_url if beat is not None else None)
+        )
         try:
             submit = await self._fal.submit_music_generation(
                 prompt=prompt,
@@ -212,7 +218,7 @@ class Pipeline:
                     "desired_duration_seconds"
                 ),
                 lyrics=(job.input_payload or {}).get("lyrics_prompt"),
-                reference_audio_url=(job.input_payload or {}).get("voice_url"),
+                reference_audio_url=reference_audio_url,
                 webhook_url=webhook_url,
                 idempotency_key=f"{job.id}:music",
             )

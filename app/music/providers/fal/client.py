@@ -8,7 +8,7 @@ import httpx
 
 from app.api.errors import FalProviderError, FalTimeout, WebhookPayloadInvalid
 from app.logging_config import provider_var
-from app.music.providers.fal.base import FalSubmitResult, FalWebhookEvent
+from app.music.providers.fal.base import FalStatusResult, FalSubmitResult, FalWebhookEvent
 from app.music.providers.fal.signature import body_digest, verify_signature
 
 logger = logging.getLogger(__name__)
@@ -106,6 +106,10 @@ class FalAiProvider:
             idempotency_key=idempotency_key,
         )
 
+    # fal storage API живёт на rest.alpha.fal.ai (не queue.fal.run).
+    # Upload — two-step: initiate (получаем presigned URL) → PUT с файлом.
+    REST_STORAGE_BASE = "https://rest.alpha.fal.ai"
+
     async def upload_to_storage(
         self,
         *,
@@ -113,36 +117,55 @@ class FalAiProvider:
         filename: str,
         content_type: str,
     ) -> str:
-        url = f"{self._base_url}/storage/upload"
         token = provider_var.set(self.PROVIDER_NAME)
         try:
-            files = {"file": (filename, content, content_type)}
+            # 1. initiate — получаем presigned upload_url + финальный file_url
+            initiate_url = f"{self.REST_STORAGE_BASE}/storage/upload/initiate"
             try:
-                response = await self._client.post(url, files=files)
+                init_resp = await self._client.post(
+                    initiate_url,
+                    json={"file_name": filename, "content_type": content_type},
+                )
             except httpx.TimeoutException as exc:
                 raise FalTimeout() from exc
             except httpx.HTTPError as exc:
                 raise FalProviderError(
-                    f"fal storage upload failed: {exc.__class__.__name__}"
+                    f"fal storage initiate failed: {exc.__class__.__name__}"
                 ) from exc
-            if response.status_code >= 500:
+            if init_resp.status_code >= 400:
                 raise FalProviderError(
-                    f"fal storage returned {response.status_code}"
+                    f"fal storage initiate rejected ({init_resp.status_code}): "
+                    f"{init_resp.text[:200]}"
                 )
-            if response.status_code >= 400:
+            init_data = init_resp.json()
+            upload_url = init_data.get("upload_url")
+            file_url = init_data.get("file_url")
+            if not upload_url or not file_url:
                 raise FalProviderError(
-                    f"fal storage rejected upload ({response.status_code}): "
-                    f"{response.text[:200]}"
+                    "fal storage initiate response missing upload_url/file_url"
                 )
-            data = response.json()
-            url_value = data.get("url") or data.get("file_url") or data.get(
-                "uploaded_url"
-            )
-            if not url_value:
+
+            # 2. PUT — загружаем файл по presigned URL. Authorization не нужен —
+            # presigned URL уже содержит подпись.
+            try:
+                put_resp = await self._client.put(
+                    upload_url,
+                    content=content,
+                    headers={"Content-Type": content_type},
+                    # presigned URL не любит наш дефолтный Authorization
+                )
+            except httpx.TimeoutException as exc:
+                raise FalTimeout() from exc
+            except httpx.HTTPError as exc:
                 raise FalProviderError(
-                    "fal storage response missing url field"
+                    f"fal storage PUT failed: {exc.__class__.__name__}"
+                ) from exc
+            if put_resp.status_code >= 400:
+                raise FalProviderError(
+                    f"fal storage PUT rejected ({put_resp.status_code}): "
+                    f"{put_resp.text[:200]}"
                 )
-            return url_value
+            return file_url
         finally:
             provider_var.reset(token)
 
@@ -268,4 +291,96 @@ class FalAiProvider:
         finally:
             provider_var.reset(token)
 
+    async def fetch_status(
+        self, *, model: str, request_id: str
+    ) -> FalStatusResult:
+        """Polling fal queue API: GET /{model}/requests/{rid}/status.
 
+        Если COMPLETED — дополнительно делает GET /{model}/requests/{rid}
+        для получения результата (audio_url, duration_seconds, stems).
+        """
+        token = provider_var.set(self.PROVIDER_NAME)
+        try:
+            status_url = (
+                f"{self._base_url}/{model}/requests/{request_id}/status"
+            )
+            try:
+                resp = await self._client.get(status_url)
+            except httpx.TimeoutException as exc:
+                raise FalTimeout() from exc
+            except httpx.HTTPError as exc:
+                raise FalProviderError(
+                    f"fal status fetch failed: {exc.__class__.__name__}"
+                ) from exc
+            if resp.status_code == 404:
+                # Job ещё не виден в очереди или истёк TTL
+                return FalStatusResult(
+                    request_id=request_id, status="IN_QUEUE", raw={}
+                )
+            if resp.status_code >= 400:
+                raise FalProviderError(
+                    f"fal status returned {resp.status_code}: {resp.text[:200]}"
+                )
+            data = resp.json()
+            status = str(data.get("status") or "").upper()
+
+            if status != "COMPLETED":
+                return FalStatusResult(
+                    request_id=request_id,
+                    status=status or "IN_QUEUE",
+                    raw=data,
+                )
+
+            # Забираем результат
+            result_url = f"{self._base_url}/{model}/requests/{request_id}"
+            try:
+                result_resp = await self._client.get(result_url)
+            except (httpx.TimeoutException, httpx.HTTPError) as exc:
+                raise FalProviderError(
+                    f"fal result fetch failed: {exc.__class__.__name__}"
+                ) from exc
+            if result_resp.status_code == 422:
+                # fal приняла задачу в очередь, но при обработке отбросила
+                # её как невалидную — это финальный failed.
+                detail = result_resp.text[:300]
+                return FalStatusResult(
+                    request_id=request_id,
+                    status="FAILED",
+                    error_message=f"422 Unprocessable: {detail}",
+                    raw={"status_code": 422, "body": detail},
+                )
+            if result_resp.status_code >= 400:
+                return FalStatusResult(
+                    request_id=request_id,
+                    status="FAILED",
+                    error_message=f"result {result_resp.status_code}: {result_resp.text[:200]}",
+                    raw={},
+                )
+            result_data = result_resp.json()
+            # Достаём audio_url из разных вариантов формата ответа
+            audio_url = None
+            duration = None
+            stems = None
+            for key in ("audio", "audio_url", "output", "result"):
+                v = result_data.get(key)
+                if isinstance(v, dict):
+                    audio_url = audio_url or v.get("url") or v.get("audio_url")
+                    duration = duration or v.get("duration") or v.get("duration_seconds")
+                elif isinstance(v, str):
+                    audio_url = audio_url or v
+            audio_url = audio_url or result_data.get("audio_url")
+            duration = duration or result_data.get("duration_seconds")
+            stems_field = result_data.get("stems")
+            if isinstance(stems_field, dict):
+                stems = stems_field
+
+            return FalStatusResult(
+                request_id=request_id,
+                status="COMPLETED",
+                audio_url=audio_url,
+                duration_seconds=float(duration) if duration is not None else None,
+                stems=stems,
+                raw=result_data,
+            )
+        finally:
+            provider_var.reset(token)

@@ -3,7 +3,7 @@
     "category": "harmonic_bass",
     "tags": ["all_instruments", "jazz_trio"],
     "title": "Upright Walk",
-    "audio_url": "https://placeholder.example/samples/harmonic_bass/upright_walk.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=upright_walk",
     "duration_seconds": 4,
     "sort_order": 1
   },
@@ -11,7 +11,7 @@
     "category": "harmonic_bass",
     "tags": ["all_instruments", "synth_haven"],
     "title": "Sub Saw",
-    "audio_url": "https://placeholder.example/samples/harmonic_bass/sub_saw.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=sub_saw",
     "duration_seconds": 4,
     "sort_order": 2
   },
@@ -19,7 +19,7 @@
     "category": "harmonic_lead",
     "tags": ["all_instruments", "chill_keys"],
     "title": "Rhodes Sparkle",
-    "audio_url": "https://placeholder.example/samples/harmonic_lead/rhodes_sparkle.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=rhodes_sparkle",
     "duration_seconds": 4,
     "sort_order": 1
   },
@@ -27,7 +27,7 @@
     "category": "harmonic_chord",
     "tags": ["all_instruments", "soft_rock"],
     "title": "Acoustic Strum",
-    "audio_url": "https://placeholder.example/samples/harmonic_chord/acoustic_strum.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=acoustic_strum",
     "duration_seconds": 4,
     "sort_order": 1
   },
@@ -35,7 +35,7 @@
     "category": "drums_kick",
     "tags": ["all_drums", "trap_808"],
     "title": "808 Boom",
-    "audio_url": "https://placeholder.example/samples/drums_kick/808_boom.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=808_boom",
     "duration_seconds": 1,
     "sort_order": 1
   },
@@ -43,7 +43,7 @@
     "category": "drums_snare",
     "tags": ["all_drums", "acoustic"],
     "title": "Studio Snare",
-    "audio_url": "https://placeholder.example/samples/drums_snare/studio_snare.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=studio_snare",
     "duration_seconds": 1,
     "sort_order": 1
   },
@@ -51,7 +51,7 @@
     "category": "drums_closed_hihat",
     "tags": ["all_drums", "edm"],
     "title": "Tight Hat",
-    "audio_url": "https://placeholder.example/samples/drums_closed_hihat/tight_hat.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=tight_hat",
     "duration_seconds": 1,
     "sort_order": 1
   },
@@ -59,7 +59,7 @@
     "category": "drums_open_hihat",
     "tags": ["all_drums", "vintage_electronic"],
     "title": "Open Sizzle",
-    "audio_url": "https://placeholder.example/samples/drums_open_hihat/open_sizzle.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=open_sizzle",
     "duration_seconds": 1,
     "sort_order": 1
   },
@@ -67,7 +67,7 @@
     "category": "drums_auxiliary",
     "tags": ["all_drums", "experimental"],
     "title": "Glitch FX",
-    "audio_url": "https://placeholder.example/samples/drums_auxiliary/glitch_fx.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=glitch_fx",
     "duration_seconds": 2,
     "sort_order": 1
   },
@@ -75,7 +75,7 @@
     "category": "mixing",
     "tags": [],
     "title": "Master Bus Saturator",
-    "audio_url": "https://placeholder.example/samples/mixing/master_saturator.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=master_saturator",
     "duration_seconds": 0,
     "sort_order": 1
   },
@@ -83,7 +83,7 @@
     "category": "sound_effects",
     "tags": [],
     "title": "Riser",
-    "audio_url": "https://placeholder.example/samples/sound_effects/riser.wav",
+    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav?id=riser",
     "duration_seconds": 2,
     "sort_order": 1
   }
