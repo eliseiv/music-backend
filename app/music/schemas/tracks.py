@@ -114,6 +114,10 @@ class GenerateTrackRequest(CamelModel):
     store_stems: bool = False
     language: str = Field(default="en", min_length=2, max_length=8)
     desired_duration_seconds: int | None = Field(default=None, ge=5, le=600)
+    # opt-in флаг: запустить дополнительную стадию `audio_to_audio_refine`
+    # (fal-ai/ace-step). По умолчанию пропускается — основной music_generation
+    # уже использует бит как reference_audio_url.
+    enable_refine: bool = False
 
     @field_validator("voice_url")
     @classmethod

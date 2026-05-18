@@ -16,6 +16,7 @@ async def test_full_lifecycle_no_voice(
 ):
     await make_user_with_subscription("u-pl-1", tokens=10)
     payload = build_generate_payload(seed_beats)
+    payload["enableRefine"] = True  # opt-in для полного пайплайна
     h = auth_headers("u-pl-1")
 
     # 1. generate
@@ -40,7 +41,7 @@ async def test_full_lifecycle_no_voice(
     )
     assert resp.status_code == 200
 
-    # Поскольку beat_id передан → переход в audio_to_audio_refine
+    # Поскольку beat_id + enable_refine → переход в audio_to_audio_refine
     assert len(fake_fal.calls_refine) == 1
     refine_request_id = f"fake-refine-{len(fake_fal.calls_refine)}"
 
@@ -135,6 +136,7 @@ async def test_stems_only_when_store_stems_true(
     await make_user_with_subscription("u-stems", tokens=5)
     payload = build_generate_payload(seed_beats)
     payload["storeStems"] = True
+    payload["enableRefine"] = True
     h = auth_headers("u-stems")
 
     r = await app_client.post(

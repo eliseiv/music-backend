@@ -401,19 +401,23 @@ class Pipeline:
         self, job: Job, completed: JobStage
     ) -> JobStage | None:
         payload = job.input_payload or {}
-        has_beat = bool(payload.get("beat_id"))
         has_voice = bool(payload.get("voice_url"))
+        has_lyrics = bool(payload.get("lyrics_prompt"))
+        # refine — opt-in: требует доп. полей (tags/original_tags) и оставлен
+        # как фича для будущего. По умолчанию пропускается.
+        enable_refine = bool(payload.get("enable_refine"))
+        # vocal_tts — opt-in: требует voice_url + lyrics_prompt, иначе skip.
         if completed == JobStage.music_generation:
-            if has_beat:
+            if enable_refine and payload.get("beat_id"):
                 return JobStage.audio_to_audio_refine
-            if has_voice and payload.get("lyrics_prompt"):
+            if has_voice and has_lyrics:
                 return JobStage.vocal_tts
             return None
         if completed == JobStage.audio_to_audio_refine:
-            if has_voice and payload.get("lyrics_prompt"):
+            if has_voice and has_lyrics:
                 return JobStage.vocal_tts
             return None
-        # vocal_tts
+        # vocal_tts → finalize
         return None
 
     def _webhook_url(self) -> str | None:
