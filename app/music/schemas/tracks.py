@@ -165,7 +165,6 @@ class GenerateTrackResponse(CamelModel):
 
 
 class StageEntry(CamelModel):
-    """Запись о статусе одной стадии пайплайна (ТЗ §9.1.2 — прогресс и шаги)."""
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -192,7 +191,7 @@ class JobStatusResponse(CamelModel):
     finished_at: datetime | None = None
     pipeline: list[StageEntry] = Field(
         default_factory=list,
-        description="Прогресс и шаги пайплайна (ТЗ §9.1.2).",
+        description="Прогресс и шаги пайплайна.",
     )
 
 

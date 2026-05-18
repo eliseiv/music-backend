@@ -1,4 +1,3 @@
-"""Формат ошибок: ТЗ §13 — `{"error": {"code", "message", "details"}, "requestId": "..."}`."""
 from __future__ import annotations
 
 
@@ -15,7 +14,6 @@ async def test_error_envelope_shape(app_client, auth_headers):
 
 
 async def test_error_codes_are_upper_snake(app_client):
-    """ТЗ §13: коды UPPER_SNAKE_CASE."""
     # 401 при отсутствии Bearer
     r = await app_client.get(
         "/v1/beats",

@@ -1,4 +1,3 @@
-"""POST /v1/tracks/generate — golden path и edge cases (ТЗ §3, §6, §15)."""
 from __future__ import annotations
 
 import pytest

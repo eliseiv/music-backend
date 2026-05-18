@@ -1,15 +1,3 @@
-"""Recovery sweep on startup.
-
-1. Orphan jobs — jobs в queued/processing без provider_request_id (т.е. упали
-   до или сразу после submit). Освобождаем токены и помечаем failed.
-
-2. Received-but-not-applied webhooks (ТЗ §14.1 — 2-фазная обработка):
-   если процесс упал между `try_record(outcome="received")` и
-   `mark_applied`, событие останется в outcome="received". Логируем для
-   ручного разбора (автоматическое переприменение сложное, потому что raw
-   payload не сохраняется — нужно либо хранить payload в processed_webhooks,
-   либо алертить оператору).
-"""
 from __future__ import annotations
 
 import logging

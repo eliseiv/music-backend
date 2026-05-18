@@ -1,9 +1,3 @@
-"""Tag taxonomy for music samples — фиксировано в ТЗ.
-
-Constants describe valid tag values per category group. Tags are stored as a
-Postgres `text[]` on the sample row; validation lives in Pydantic schemas and
-seed importers (not in the DB, so the taxonomy can evolve without migrations).
-"""
 from __future__ import annotations
 
 from typing import Final
@@ -42,7 +36,6 @@ DRUM_TAGS: Final[frozenset[str]] = frozenset(
     }
 )
 
-# Categories that carry tags. `mixing` and `sound_effects` per ТЗ are without
 # tags.
 HARMONIC_CATEGORIES: Final[frozenset[SampleCategory]] = frozenset(
     {
@@ -97,8 +90,6 @@ def validate_tags(category: SampleCategory, tags: list[str]) -> list[str]:
         normalized.append(normalized_tag)
     return normalized
 
-
-# --- Production / Pitch enumerations from ТЗ ---
 
 PRODUCTION_VALUES: Final[frozenset[str]] = frozenset(
     {

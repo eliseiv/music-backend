@@ -1,4 +1,3 @@
-"""Billing webhooks: Adapty + RuStore (ТЗ §10.1)."""
 from __future__ import annotations
 
 import hashlib

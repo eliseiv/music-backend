@@ -1,20 +1,3 @@
-"""GenerationService — оркестрация create_job/finalize.
-
-Тонкий wrapper над Pipeline + WalletService.
-
-create_job() (синхронная часть, до возврата HTTP-ответа):
-  1. SubscriptionGate.ensure_active
-  2. Проверка beat
-  3. Idempotency-Key — если найдено существующее job, возвращаем его
-  4. URL HEAD-проверка (ТЗ §6.3)
-  5. PricingService — расчёт required_tokens_for_precharge
-  6. Создать job-строку, WalletService.reserve
-  7. Pipeline.start(job_id) — запускает 8-стадийный пайплайн
-
-finalize_from_webhook() (вызывается из webhook-обработчика):
-  - completed → Pipeline.advance(completed_stage, audio_url, ...)
-  - failed/canceled → Pipeline.fail(failed_stage, error_code, error_message)
-"""
 from __future__ import annotations
 
 import logging

@@ -1,19 +1,3 @@
-"""Pipeline — оркестрация 8 стадий генерации трека (ТЗ §11).
-
-Стадии:
-  1. prepare_prompt        — inline: собирает текстовый prompt
-  2. lyrics                — inline: bookkeeping, если lyrics_prompt передан
-  3. music_generation      — async fal: submit_music_generation, ждём webhook
-  4. audio_to_audio_refine — async fal: submit_audio_to_audio_refine (если beat_id)
-  5. vocal_tts             — async fal: submit_speech (если voice_url)
-  6. mix_master            — inline: bookkeeping
-  7. upload_cdn            — inline: bookkeeping (fal уже отдаёт hosted URL)
-  8. finalize              — inline: INSERT tracks, capture токенов, mark succeeded
-
-Каждая стадия записывает status в job_stage_log: pending → running → succeeded|failed|skipped.
-Между двумя async submit'ами обновляется jobs.current_stage и jobs.provider_request_id —
-по нему webhook понимает, какую стадию завершает.
-"""
 from __future__ import annotations
 
 import logging

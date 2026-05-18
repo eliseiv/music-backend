@@ -1,11 +1,3 @@
-"""Применение нормализованного билинг-события к подписке и кошельку.
-
-ТЗ §10.1.4: атомарное применение к подписке И токенам — в одной транзакции.
-ТЗ §14.1: 2-фазная обработка — try_record(outcome="received") до применения,
-mark_applied после успеха. При падении посередине транзакция откатится,
-processed_webhooks останется в outcome="received" и его подберёт
-`recover_received_webhooks` при следующем старте.
-"""
 from __future__ import annotations
 
 import logging

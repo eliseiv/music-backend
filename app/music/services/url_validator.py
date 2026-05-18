@@ -1,10 +1,3 @@
-"""URL reachability validator (ТЗ §6.3).
-
-Параллельно HEAD-запросом проверяет, что каждый URL отвечает 2xx/3xx.
-При 405 Method Not Allowed — fallback на GET с Range: bytes=0-0.
-При любой ошибке (timeout, 4xx, 5xx) поднимает InvalidSampleUrl с
-указанием конкретного URL в details.
-"""
 from __future__ import annotations
 
 import asyncio

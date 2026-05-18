@@ -58,7 +58,6 @@ class Settings(BaseSettings):
     MUSIC_DEFAULT_TRACK_DURATION_SECONDS: int = 60
     MUSIC_JOB_HARD_TIMEOUT_SECONDS: int = 1800
 
-    # ТЗ §6.3: HEAD-проверка sample_url / voice_url перед резервом токенов.
     MUSIC_URL_CHECK_ENABLED: bool = True
     MUSIC_URL_CHECK_TIMEOUT_SECONDS: float = 3.0
 

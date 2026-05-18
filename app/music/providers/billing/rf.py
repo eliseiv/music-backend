@@ -1,8 +1,3 @@
-"""RuStore (РФ) billing webhook parser.
-
-Точная схема прилёт от Сергея — мы поддерживаем минимум, который
-покрывает 5 нормализованных событий из ТЗ.
-"""
 from __future__ import annotations
 
 import hashlib

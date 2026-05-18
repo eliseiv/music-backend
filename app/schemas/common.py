@@ -41,7 +41,7 @@ class ErrorDetail(BaseModel):
 
 
 class ErrorResponse(BaseModel):
-    """Формат ошибок ТЗ §13: `{"error": {...}, "requestId": "..."}`."""
+    """Формат ошибок `{"error": {...}, "requestId": "..."}`."""
 
     model_config = ConfigDict(
         populate_by_name=True,

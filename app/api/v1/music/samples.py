@@ -33,7 +33,7 @@ def _get_catalog_service(
     summary="Sound-элементы по 10 категориям",
     description=(
         "Возвращает все активные sound-элементы, сгруппированные по 10 "
-        "категориям (ТЗ дизайн):\n\n"
+        "категориям:\n\n"
         "**Harmonic** (instrument groups, с тегами):\n"
         "* `bass` — Bass\n"
         "* `lead` — Lead\n"

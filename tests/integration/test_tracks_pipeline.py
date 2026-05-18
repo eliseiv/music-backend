@@ -1,7 +1,3 @@
-"""Полный жизненный цикл пайплайна: generate → fal webhooks → track.
-
-Покрывает state machine (ТЗ §11): stages + pipeline в JobStatusResponse.
-"""
 from __future__ import annotations
 
 import pytest

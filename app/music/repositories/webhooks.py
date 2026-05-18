@@ -23,11 +23,7 @@ class WebhooksRepository:
         outcome: str = "received",
         meta: dict[str, Any] | None = None,
     ) -> bool:
-        """INSERT ON CONFLICT DO NOTHING. Returns True if new row, False if duplicate.
 
-        Используем `outcome="received"` для 2-фазной обработки (ТЗ §14.1).
-        После успешного применения вызвать `mark_applied`.
-        """
         stmt = (
             pg_insert(ProcessedWebhook)
             .values(

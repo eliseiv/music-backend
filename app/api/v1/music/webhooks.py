@@ -69,7 +69,7 @@ def _get_generation_service(
         "**Идемпотентность:** по `(provider, event_id)` в "
         "`processed_webhooks`. Повторный webhook возвращает "
         "`{\"status\": \"duplicate\"}` без эффекта.\n\n"
-        "**2-фазная обработка** (ТЗ §14.1): сначала `outcome=received`, "
+        "**2-фазная обработка**: сначала `outcome=received`, "
         "после успешного применения — `applied`. При падении посередине "
         "событие останется в `received` и попадёт в recovery sweep при старте."
     ),
@@ -145,7 +145,7 @@ def _get_billing_service(
         "**Идемпотентность:** по `event_id` (повторное событие → "
         "`{\"status\": \"duplicate\"}`).\n\n"
         "**Атомарность:** user, subscription_state, wallet, ledger и "
-        "processed_webhooks применяются в одной транзакции (ТЗ §10.1.4)."
+        "processed_webhooks применяются в одной транзакции."
     ),
     responses={
         k: v

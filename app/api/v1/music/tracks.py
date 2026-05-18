@@ -64,21 +64,9 @@ def _get_generation_service(
     response_model_by_alias=True,
     summary="Запустить генерацию трека",
     description=(
-        "Создаёт асинхронное задание на генерацию музыки через fal.ai. "
-        "Поэтапно:\n\n"
-        "1. **Проверка подписки** — без активной подписки `402 "
-        "SUBSCRIPTION_REQUIRED` (или `SUBSCRIPTION_EXPIRED` если истекла).\n"
-        "2. **HEAD-проверка URL** — все `sampleUrl` и `voiceUrl` должны быть "
-        "доступны (ТЗ §6.3). При недоступности — `400 INVALID_SAMPLE_URL`.\n"
-        "3. **Резерв токенов** — рассчитывается по активному `pricing_rule` "
-        "(per_track / per_minute). При нехватке — `402 INSUFFICIENT_TOKENS`.\n"
-        "4. **Запуск пайплайна** — последовательность из 8 стадий, fal.ai "
-        "присылает webhook'и на каждой async-стадии.\n"
-        "5. **Возврат `jobId`** — статус `processing`. Опрашивайте через "
-        "`GET /v1/tracks/jobs/{jobId}`.\n\n"
         "### Idempotency-Key\n\n"
         "Опциональный header `Idempotency-Key: <строка ≤128 символов>` "
-        "(ТЗ §14.1). При повторном вызове с тем же ключом для того же "
+        "При повторном вызове с тем же ключом для того же "
         "`X-User-Id` вернётся ранее созданный `jobId` без повторного "
         "списания токенов. Используйте для безопасного retry при сетевых "
         "сбоях.\n\n"
@@ -113,7 +101,6 @@ async def generate_track(
                 "Опциональный ключ для безопасного retry. При повторном "
                 "вызове с тем же ключом и тем же пользователем вернётся "
                 "ранее созданный jobId без повторного списания токенов "
-                "(ТЗ §14.1). Длина 1..128."
             ),
             max_length=128,
         ),
@@ -146,7 +133,7 @@ async def generate_track(
         "(`queued|processing|succeeded|failed|canceled`), `stage` "
         "(текущая стадия пайплайна) и `pipeline` — массив всех 8 стадий "
         "с их статусами (`pending|running|succeeded|failed|skipped`) "
-        "и таймстампами (ТЗ §9.1.2, §11).\n\n"
+        "и таймстампами.\n\n"
         "При успехе содержит `trackId` — по нему можно забрать готовый "
         "трек через `GET /v1/tracks/{trackId}`."
     ),
@@ -187,7 +174,7 @@ async def get_job(
         "* `audioUrl` — URL аудио-файла на CDN fal.\n"
         "* `durationSeconds` — фактическая длительность.\n"
         "* `stems` — карта стемов (vocals, drums, bass, …), **только** если "
-        "при запросе генерации был передан `storeStems: true` (ТЗ §3.4 §15).\n\n"
+        "при запросе генерации был передан `storeStems: true`\n\n"
         "Трек становится доступным после успешного завершения пайплайна "
         "(`status: succeeded` в `/v1/tracks/jobs/{jobId}`)."
     ),

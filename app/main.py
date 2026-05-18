@@ -108,29 +108,10 @@ def create_app(
         title="Music Generation API",
         summary="Backend генерации музыки через fal.ai с токенами и подписками",
         description=(
-            "## О сервисе\n\n"
-            "Backend для генерации музыки через **fal.ai** с монетизацией "
-            "на токенах и подписками (Adapty / RuStore). Реализует все "
-            "разделы технического задания (§1–§15).\n\n"
             "**Базовый префикс всех эндпоинтов:** `/v1/...`\n\n"
             "---\n\n"
-            "## Авторизация\n\n"
-            "Все запросы под `/v1/` (кроме webhook'ов) требуют **два заголовка**:\n\n"
-            "```\n"
-            "Authorization: Bearer <API_KEY>\n"
-            "X-User-Id: <стабильный идентификатор клиента>\n"
-            "```\n\n"
-            "* **`API_KEY`** — статический Bearer-ключ, зашитый в мобильном клиенте.\n"
-            "* **`X-User-Id`** — стабильный идентификатор устройства/профиля "
-            "(например, Adapty profile id). По нему backend ведёт записи в БД.\n\n"
-            "Webhook'и (`/v1/webhooks/...`) **не используют** Bearer — они "
-            "авторизуются подписью провайдера (HMAC-SHA256 или Bearer-секретом).\n\n"
-            "**В Swagger UI** нажмите кнопку **Authorize** 🔓 в правом верхнем "
-            "углу и введите ваш `API_KEY`. Заголовок `X-User-Id` для каждого "
-            "запроса вводится отдельно (в секции *Parameters*).\n\n"
-            "---\n\n"
             "## Формат ошибок\n\n"
-            "Все 4xx/5xx ответы возвращают единый envelope (ТЗ §13):\n\n"
+            "Все 4xx/5xx ответы возвращаются в таком виде:\n\n"
             "```json\n"
             "{\n"
             "  \"error\": {\n"
@@ -148,8 +129,6 @@ def create_app(
             "`WEBHOOK_SIGNATURE_INVALID`, `WEBHOOK_PAYLOAD_INVALID`, "
             "`PROVIDER_FAILED`, `PROVIDER_TIMEOUT`, `INTERNAL_ERROR`, "
             "`RATE_LIMITED`.\n\n"
-            "Заголовок `X-Request-Id` дублируется во всех ответах — для "
-            "поиска в логах. Можно прислать свой `X-Request-Id` в запросе.\n\n"
             "---\n\n"
             "## Сценарий генерации трека\n\n"
             "1. **`POST /v1/uploads/voice`** *(опционально)* — загрузить файл "
@@ -163,13 +142,7 @@ def create_app(
             "6. **`GET /v1/tracks/{trackId}`** — забрать готовый трек "
             "(`audioUrl`, длительность, опционально `stems`).\n\n"
             "---\n\n"
-            "## Webhook'и\n\n"
-            "* `POST /v1/webhooks/fal` — fal.ai сообщает о завершении стадии "
-            "пайплайна (HMAC-SHA256 в `X-Fal-Signature`).\n"
-            "* `POST /v1/webhooks/billing/adapty` — Adapty присылает события "
-            "подписки/покупки (Bearer-секрет в `Authorization`).\n"
-            "* `POST /v1/webhooks/billing/rf` — RuStore присылает события "
-            "(HMAC-SHA256 в `X-RuStore-Signature`).\n"
+
         ),
         version="1.0.0",
         default_response_class=ORJSONResponse,
@@ -178,12 +151,11 @@ def create_app(
             {
                 "name": "Генерация треков",
                 "description": (
-                    "Запуск и контроль генерации музыки через fal.ai. "
                     "Полный пайплайн из 8 стадий: `prepare_prompt → lyrics → "
                     "music_generation → audio_to_audio_refine → vocal_tts → "
-                    "mix_master → upload_cdn → finalize` (ТЗ §11).\n\n"
+                    "mix_master → upload_cdn → finalize`.\n\n"
                     "Требует **активной подписки** и **достаточного баланса "
-                    "токенов** (gate-проверка перед резервом)."
+                    "токенов**"
                 ),
             },
             {
@@ -194,7 +166,7 @@ def create_app(
                     "closed_hi_hat / open_hi_hat / auxiliary / mixing / "
                     "sound_effects.\n\n"
                     "URL'ы в ответах пригодны для демо-воспроизведения "
-                    "на устройстве (ТЗ §9.2)."
+                    "на устройстве."
                 ),
             },
             {

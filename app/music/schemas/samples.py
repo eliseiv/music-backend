@@ -33,9 +33,9 @@ class SampleItem(CamelModel):
 
 
 class SamplesByCategoryResponse(CamelModel):
-    """Сэмплы, сгруппированные по 10 категориям в формате ТЗ.
+    """Сэмплы, сгруппированные по 10 категориям в формате.
 
-    Поля категорий из ТЗ называются `kick`, `snare`, `closed_hi_hat`,
+    Поля категорий из называются `kick`, `snare`, `closed_hi_hat`,
     `open_hi_hat`, `auxiliary`, `bass`, `lead`, `chord`, `mixing`,
     `sound_effects` — в ответ отдаём именно их (без префиксов
     `harmonic_`/`drums_`), чтобы UI получил структуру as-is.
@@ -103,7 +103,6 @@ def group_samples_by_category(samples) -> dict[str, list[SampleItem]]:
     for s in samples:
         key = category_response_key(s.category)
         grouped[key].append(SampleItem(id=s.id, url=s.audio_url, tags=list(s.tags)))
-    # Ensure all 10 categories are present (даже если пусто), порядок per ТЗ.
     ordered: dict[str, list[SampleItem]] = {}
     for cat in (
         SampleCategory.harmonic_bass,

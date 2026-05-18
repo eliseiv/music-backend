@@ -33,7 +33,7 @@ def _get_catalog_service(
     summary="Каталог битов (5 жанров)",
     description=(
         "Возвращает активные биты, опционально отфильтрованные по жанру.\n\n"
-        "**Жанры** (ТЗ дизайн):\n"
+        "**Жанры**:\n"
         "* `electronic_dance` — Electronic Dance\n"
         "* `rap` — Rap Beats\n"
         "* `lofi` — Lo-Fi\n"

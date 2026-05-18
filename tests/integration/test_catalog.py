@@ -1,4 +1,3 @@
-"""Catalog endpoints: /v1/beats и /v1/samples (ТЗ §9.2 + дизайн)."""
 from __future__ import annotations
 
 

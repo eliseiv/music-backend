@@ -1,6 +1,6 @@
 # Music Generation Backend
 
-Backend для генерации музыки через **fal.ai** с монетизацией на токенах, подписками (Adapty / RuStore), кошельком и webhooks. Полностью соответствует ТЗ §1–§15.
+Backend для генерации музыки через **fal.ai** с монетизацией на токенах, подписками (Adapty / RuStore), кошельком и webhooks
 
 **Стек:** Python 3.12, FastAPI, SQLAlchemy 2 (async), PostgreSQL 16, Alembic, httpx, Docker Compose.
 
@@ -61,7 +61,7 @@ camelCase JSON, например `POST /v1/tracks/generate`:
 }
 ```
 
-### Ошибки (ТЗ §13)
+### Ошибки
 
 Все ошибки 4xx/5xx возвращают единый envelope:
 
@@ -118,7 +118,7 @@ camelCase JSON, например `POST /v1/tracks/generate`:
 
 ---
 
-## Логика генерации (ТЗ §11 — state machine)
+## Логика генерации
 
 Pipeline на **8 стадий**, оркеструемых через fal-webhook'и:
 
@@ -166,8 +166,6 @@ prepare_prompt → lyrics → music_generation → audio_to_audio_refine
 
 ## Voice flow (двухшаговый)
 
-ТЗ §3.5 описывает voice как файл в payload. Реально: **два шага**, чтобы не смешивать multipart с JSON-payload'ом дорогостоящего `/tracks/generate`:
-
 ```
 1. POST /v1/uploads/voice (multipart, file=audio/wav|mp3|m4a, max 25 MiB)
    → response: { "voiceUrl": "https://fal-cdn/.../voice.wav" }
@@ -180,7 +178,7 @@ prepare_prompt → lyrics → music_generation → audio_to_audio_refine
 
 ---
 
-## Idempotency-Key (ТЗ §14.1)
+## Idempotency-Key
 
 `POST /v1/tracks/generate` принимает опциональный header:
 
@@ -192,7 +190,7 @@ Idempotency-Key: client-uuid-or-any-string-up-to-128
 
 ---
 
-## Валидация payload (ТЗ §6)
+## Валидация payload
 
 `POST /v1/tracks/generate` принимает strict JSON (extra fields → 400):
 
@@ -236,7 +234,7 @@ Idempotency-Key: client-uuid-or-any-string-up-to-128
 
 ---
 
-## Токены и кошелёк (ТЗ §8)
+## Токены и кошелёк
 
 Все операции — **append-only ledger** + `with_for_update()` на `token_wallets` и `subscription_state`.
 
@@ -251,7 +249,7 @@ CHECK CONSTRAINT'ы в БД: `available_tokens >= 0`, `reserved_tokens >= 0` —
 
 ---
 
-## Ценообразование (ТЗ §4)
+## Ценообразование
 
 Конфигурируется через таблицу `pricing_rules`:
 
@@ -269,7 +267,7 @@ Capture после fal: `required_tokens_for_capture(rule, actual_duration_secon
 
 ---
 
-## Billing webhooks (ТЗ §10.1)
+## Billing webhooks
 
 Оба провайдера (Adapty + RuStore) нормализуются в `NormalizedBillingEvent` с 6 типами:
 
@@ -279,9 +277,9 @@ Capture после fal: `required_tokens_for_capture(rule, actual_duration_secon
 - `ONE_TIME_PURCHASE` → резолв `token_products.token_amount` по `(platform, external_product_id)` → credit
 - `REFUND` → debit с clamp в 0
 
-**Атомарность** (ТЗ §10.1.4): user, subscription_state, wallet, ledger, processed_webhooks применяются в **одной транзакции**. При падении посередине — полный rollback.
+**Атомарность**: user, subscription_state, wallet, ledger, processed_webhooks применяются в **одной транзакции**. При падении посередине — полный rollback.
 
-**2-фазная обработка** (ТЗ §14.1): сначала `INSERT processed_webhooks(outcome='received')`, после успешного применения — `UPDATE outcome='applied'`. Recovery sweep при старте находит застрявшие `received`-события и алертит.
+**2-фазная обработка**: сначала `INSERT processed_webhooks(outcome='received')`, после успешного применения — `UPDATE outcome='applied'`. Recovery sweep при старте находит застрявшие `received`-события и алертит.
 
 **Защита от reorder**: `subscription_state.last_event_occurred_at` — событие со старым timestamp применяется консервативно (логируется, не понижает `expires_at`).
 
@@ -304,7 +302,7 @@ Capture после fal: `required_tokens_for_capture(rule, actual_duration_secon
 | `FAL_MUSIC_MODEL` / `FAL_REFINE_MODEL` / `FAL_SPEECH_MODEL` | Имена моделей |
 | `ADAPTY_WEBHOOK_SECRET` | Bearer Adapty в `Authorization` |
 | `RF_BILLING_WEBHOOK_SECRET` | HMAC-секрет RuStore |
-| `MUSIC_URL_CHECK_ENABLED` | HEAD-проверка sample/voice URL (ТЗ §6.3); `false` для dev |
+| `MUSIC_URL_CHECK_ENABLED` | HEAD-проверка sample/voice URL; `false` для dev |
 | `MUSIC_URL_CHECK_TIMEOUT_SECONDS` | Таймаут одной HEAD (3.0 default) |
 | `MUSIC_VOICE_MAX_BYTES` | Лимит голосового файла (25 MiB) |
 | `MUSIC_VOICE_ALLOWED_CONTENT_TYPES` | CSV allowlist |
