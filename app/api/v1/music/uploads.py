@@ -51,15 +51,10 @@ def _get_fal_provider(request: Request) -> FalProvider:
     response_model_by_alias=True,
     summary="Загрузить голосовой референс (multipart)",
     description=(
-        "Принимает аудио-файл с голосом (multipart/form-data, поле `file`), "
-        "проксирует его в fal storage и возвращает URL.\n\n"
         "**Двухшаговый flow для генерации с голосом:**\n"
         "1. `POST /v1/uploads/voice` → получить `voiceUrl`.\n"
         "2. `POST /v1/tracks/generate` с полем `\"voiceUrl\": \"<полученный url>\"`.\n\n"
         "**Ограничения:**\n"
-        "* Content-Type из allowlist: `audio/mpeg`, `audio/wav`, "
-        "`audio/mp4`, `audio/x-m4a` (настраивается через "
-        "`MUSIC_VOICE_ALLOWED_CONTENT_TYPES`).\n"
         "* Размер файла до 25 MiB (`MUSIC_VOICE_MAX_BYTES`)."
     ),
     responses={

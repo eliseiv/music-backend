@@ -193,8 +193,6 @@ def create_app(
                     "с тегами): bass / lead / chord / kick / snare / "
                     "closed_hi_hat / open_hi_hat / auxiliary / mixing / "
                     "sound_effects.\n\n"
-                    "URL'ы в ответах пригодны для демо-воспроизведения "
-                    "на устройстве."
                 ),
             },
             {

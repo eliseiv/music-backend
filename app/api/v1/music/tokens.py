@@ -72,7 +72,6 @@ async def token_balance(
         "* `code` — внутренний идентификатор продукта.\n"
         "* `platform` — `adapty` или `rustore`.\n"
         "* `externalProductId` — идентификатор товара в сторе "
-        "(iOS использует его при покупке через StoreKit).\n"
         "* `tokenAmount` — сколько токенов зачислится после покупки.\n"
         "* `priceMinor` / `currency` — цена в минорных единицах."
     ),
