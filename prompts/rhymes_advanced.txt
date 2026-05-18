@@ -1,0 +1,5 @@
+# version: rhymes_advanced.v1
+Find advanced rhymes for the given English word, including multi-syllable rhymes, slant rhymes, and identical-syllable matches typically used in poetry and lyrics.
+
+Query word: {query}
+Return up to {limit} items, sorted by descending score.

@@ -1,0 +1,5 @@
+# version: similarly_spelled.v1
+Return English words that are SPELLED similarly to the given word (low edit distance), regardless of meaning or pronunciation.
+
+Query: {query}
+Return up to {limit} items, sorted by descending spelling similarity (score).

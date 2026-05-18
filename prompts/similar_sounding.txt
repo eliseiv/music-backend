@@ -1,0 +1,5 @@
+# version: similar_sounding.v1
+Return English words that SOUND similar to the given word (close phonetically), regardless of spelling.
+
+Query: {query}
+Return up to {limit} items, sorted by descending phonetic similarity (score).

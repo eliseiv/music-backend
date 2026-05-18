@@ -1,0 +1,5 @@
+# version: related_words.v1
+Return English words semantically related to the given query — including hypernyms, hyponyms, meronyms, holonyms, and associated concepts.
+
+Query: {query}
+Return up to {limit} items, sorted by descending semantic relatedness (score).

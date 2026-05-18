@@ -1,0 +1,5 @@
+# version: near_rhymes.v1
+Find near rhymes (slant rhymes, half rhymes) for the given English word — words whose final sounds are similar but not identical.
+
+Query word: {query}
+Return up to {limit} items, sorted by descending score.

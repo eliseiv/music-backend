@@ -1,0 +1,5 @@
+# version: descriptive_words.v1
+Return adjectives and descriptive phrases that are commonly used to describe the given noun.
+
+Query (noun): {query}
+Return up to {limit} items, sorted by descending typical co-occurrence (score).

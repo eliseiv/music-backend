@@ -1,0 +1,90 @@
+[
+  {
+    "category": "harmonic_bass",
+    "tags": ["all_instruments", "jazz_trio"],
+    "title": "Upright Walk",
+    "audio_url": "https://placeholder.example/samples/harmonic_bass/upright_walk.wav",
+    "duration_seconds": 4,
+    "sort_order": 1
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": ["all_instruments", "synth_haven"],
+    "title": "Sub Saw",
+    "audio_url": "https://placeholder.example/samples/harmonic_bass/sub_saw.wav",
+    "duration_seconds": 4,
+    "sort_order": 2
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": ["all_instruments", "chill_keys"],
+    "title": "Rhodes Sparkle",
+    "audio_url": "https://placeholder.example/samples/harmonic_lead/rhodes_sparkle.wav",
+    "duration_seconds": 4,
+    "sort_order": 1
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": ["all_instruments", "soft_rock"],
+    "title": "Acoustic Strum",
+    "audio_url": "https://placeholder.example/samples/harmonic_chord/acoustic_strum.wav",
+    "duration_seconds": 4,
+    "sort_order": 1
+  },
+  {
+    "category": "drums_kick",
+    "tags": ["all_drums", "trap_808"],
+    "title": "808 Boom",
+    "audio_url": "https://placeholder.example/samples/drums_kick/808_boom.wav",
+    "duration_seconds": 1,
+    "sort_order": 1
+  },
+  {
+    "category": "drums_snare",
+    "tags": ["all_drums", "acoustic"],
+    "title": "Studio Snare",
+    "audio_url": "https://placeholder.example/samples/drums_snare/studio_snare.wav",
+    "duration_seconds": 1,
+    "sort_order": 1
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": ["all_drums", "edm"],
+    "title": "Tight Hat",
+    "audio_url": "https://placeholder.example/samples/drums_closed_hihat/tight_hat.wav",
+    "duration_seconds": 1,
+    "sort_order": 1
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": ["all_drums", "vintage_electronic"],
+    "title": "Open Sizzle",
+    "audio_url": "https://placeholder.example/samples/drums_open_hihat/open_sizzle.wav",
+    "duration_seconds": 1,
+    "sort_order": 1
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": ["all_drums", "experimental"],
+    "title": "Glitch FX",
+    "audio_url": "https://placeholder.example/samples/drums_auxiliary/glitch_fx.wav",
+    "duration_seconds": 2,
+    "sort_order": 1
+  },
+  {
+    "category": "mixing",
+    "tags": [],
+    "title": "Master Bus Saturator",
+    "audio_url": "https://placeholder.example/samples/mixing/master_saturator.wav",
+    "duration_seconds": 0,
+    "sort_order": 1
+  },
+  {
+    "category": "sound_effects",
+    "tags": [],
+    "title": "Riser",
+    "audio_url": "https://placeholder.example/samples/sound_effects/riser.wav",
+    "duration_seconds": 2,
+    "sort_order": 1
+  }
+]

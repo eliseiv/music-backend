@@ -1,0 +1,29 @@
+[
+  {
+    "code": "tokens_10",
+    "platform": "adapty",
+    "external_product_id": "com.appstorepro.tokens_10",
+    "token_amount": 10,
+    "price_minor": 99,
+    "currency": "USD",
+    "active": true
+  },
+  {
+    "code": "tokens_50",
+    "platform": "adapty",
+    "external_product_id": "com.appstorepro.tokens_50",
+    "token_amount": 50,
+    "price_minor": 399,
+    "currency": "USD",
+    "active": true
+  },
+  {
+    "code": "tokens_200",
+    "platform": "adapty",
+    "external_product_id": "com.appstorepro.tokens_200",
+    "token_amount": 200,
+    "price_minor": 1299,
+    "currency": "USD",
+    "active": true
+  }
+]

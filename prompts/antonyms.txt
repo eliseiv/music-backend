@@ -1,0 +1,5 @@
+# version: antonyms.v1
+Return antonyms (words with opposite meaning) for the given English word.
+
+Query: {query}
+Return up to {limit} items, sorted by descending oppositeness (score).

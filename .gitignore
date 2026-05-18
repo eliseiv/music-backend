@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.local
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+.idea/
+.vscode/
+*.log
+
+# Production deploy artifacts (генерируются на сервере)
+deploy/.env
+deploy/.env.image
+deploy/certbot/conf/
+deploy/certbot/www/
+deploy/nginx/conf.d.live/

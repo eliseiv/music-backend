@@ -1,0 +1,5 @@
+# version: match_consonants.v1
+Return English words whose consonant pattern matches the given consonant skeleton. The query is treated as a sequence of consonants (vowels in the query are ignored). Returned words must contain those consonants in the same relative order.
+
+Query (consonant skeleton): {query}
+Return up to {limit} items, sorted by descending closeness to the requested skeleton (score).

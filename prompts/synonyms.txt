@@ -1,0 +1,5 @@
+# version: synonyms.v1
+Return synonyms for the given English word or phrase. Prefer common, idiomatic synonyms with similar register.
+
+Query: {query}
+Return up to {limit} items, sorted by descending semantic similarity (score).

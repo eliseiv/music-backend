@@ -1,0 +1,5 @@
+# version: unscramble.v1
+Return valid English words that are anagrams (or partial anagrams) of the given letters. Use each letter at most as many times as it appears in the query.
+
+Query letters: {query}
+Return up to {limit} items, sorted by descending length and commonness (score).

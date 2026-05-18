@@ -1,0 +1,5 @@
+# version: definitions.v1
+Return concise dictionary-style definitions for the given English word or phrase. Each "text" must be a short definition (one sentence preferred). Include up to a few different senses.
+
+Query: {query}
+Return up to {limit} items. "score" reflects how primary the sense is (1.0 for the most common sense).

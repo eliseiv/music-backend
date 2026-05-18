@@ -1,0 +1,5 @@
+# version: phrase_rhymes.v1
+Return English multi-word phrases that rhyme with the given word or phrase.
+
+Query: {query}
+Return up to {limit} items, sorted by descending rhyme quality (score).

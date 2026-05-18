@@ -1,0 +1,5 @@
+# version: phrases.v1
+Return common English phrases (collocations, idioms, multi-word expressions) that contain the given query.
+
+Query: {query}
+Return up to {limit} items, sorted by descending frequency/familiarity (score).

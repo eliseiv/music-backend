@@ -1,0 +1,5 @@
+# version: match_letters.v1
+Return English words that contain the given letters in the same order (the query may use "?" as a wildcard for any single letter; "*" as a wildcard for any sequence). The match is case-insensitive.
+
+Query pattern: {query}
+Return up to {limit} items, sorted by descending pattern match strength (score).

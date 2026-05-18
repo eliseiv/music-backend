@@ -1,0 +1,5 @@
+# version: homophones.v1
+Return English homophones for the given word — words that are pronounced the same but spelled differently and have different meanings.
+
+Query: {query}
+Return up to {limit} items. "score" should be 1.0 for true homophones and lower for near-homophones.

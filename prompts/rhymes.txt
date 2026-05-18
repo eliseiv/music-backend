@@ -1,0 +1,5 @@
+# version: rhymes.v1
+Find perfect rhymes for the given English word. Perfect rhymes share the same final stressed vowel sound and any sounds following it.
+
+Query word: {query}
+Return up to {limit} items, sorted by descending score.
