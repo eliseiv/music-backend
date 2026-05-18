@@ -16,20 +16,10 @@ from app.middleware.rate_limit import RateLimitMiddleware
 from app.middleware.request_context import RequestContextMiddleware
 from app.music.providers.fal.client import FalAiProvider
 from app.music.providers.fal.stub import StubFalProvider
-from app.music.services.recovery import recover_orphan_jobs
+from app.music.services.recovery import recover_orphan_jobs, report_received_webhooks
 from app.music.services.wallet_service import WalletService
-from app.providers.llm.openai_provider import OpenAIProvider
-from app.providers.word_tools.llm_prompt_provider import LLMPromptWordToolsProvider
-from app.providers.word_tools.prompt_loader import PromptLoader
 
 logger = logging.getLogger(__name__)
-
-
-def _default_llm_factory(settings: Settings):
-    return OpenAIProvider(
-        api_key=settings.OPENAI_API_KEY.get_secret_value(),
-        base_url=settings.OPENAI_BASE_URL,
-    )
 
 
 def _default_fal_factory(settings: Settings):
@@ -60,8 +50,6 @@ def _default_fal_factory(settings: Settings):
 def create_app(
     settings: Settings | None = None,
     *,
-    llm_factory=None,
-    word_tools_provider_factory=None,
     fal_factory=None,
     sessionmaker=None,
     engine=None,
@@ -82,22 +70,6 @@ def create_app(
             if sessionmaker is not None:
                 app.state.sessionmaker = sessionmaker
 
-        loader = PromptLoader(settings.WORD_TOOLS_PROMPTS_DIR)
-        loader.load()
-        app.state.prompt_loader = loader
-
-        llm = (llm_factory or _default_llm_factory)(settings)
-        app.state.llm = llm
-
-        if word_tools_provider_factory is not None:
-            provider = word_tools_provider_factory(settings, llm, loader)
-        else:
-            provider = LLMPromptWordToolsProvider(
-                llm=llm, loader=loader, settings=settings
-            )
-        app.state.word_tools_provider = provider
-
-        # Music: fal provider + recovery sweep
         fal = (fal_factory or _default_fal_factory)(settings)
         app.state.fal_provider = fal
 
@@ -108,6 +80,14 @@ def create_app(
             )
             if recovered:
                 logger.info("Recovered %d orphan jobs on startup", recovered)
+            stuck = await report_received_webhooks(
+                sessionmaker=app.state.sessionmaker
+            )
+            if stuck:
+                logger.warning(
+                    "Found %d webhooks stuck in 'received' (manual review needed)",
+                    stuck,
+                )
         except Exception:
             logger.exception("Recovery sweep failed on startup")
 
@@ -125,72 +105,125 @@ def create_app(
                 await local_engine.dispose()
 
     app = FastAPI(
-        title="AI Backend — AI Chat, Word Tools, Music Generation",
+        title="Music Generation API",
+        summary="Backend генерации музыки через fal.ai с токенами и подписками",
         description=(
-            "Backend для AI-чата, поиска слов и генерации музыки через "
-            "fal.ai с монетизацией на токенах.\n\n"
-            "**Авторизация:** на каждом запросе (кроме `/healthz` и "
-            "webhook-эндпоинтов) передавайте `Authorization: Bearer <API_KEY>`. "
-            "Для music-эндпоинтов дополнительно нужен заголовок "
-            "`X-User-Id` (Adapty profile id или аналогичный устойчивый "
-            "идентификатор устройства).\n\n"
-            "В Swagger UI нажмите кнопку **Authorize** в правом верхнем углу "
-            "и введите ваш `API_KEY`."
+            "## О сервисе\n\n"
+            "Backend для генерации музыки через **fal.ai** с монетизацией "
+            "на токенах и подписками (Adapty / RuStore). Реализует все "
+            "разделы технического задания (§1–§15).\n\n"
+            "**Базовый префикс всех эндпоинтов:** `/v1/...`\n\n"
+            "---\n\n"
+            "## Авторизация\n\n"
+            "Все запросы под `/v1/` (кроме webhook'ов) требуют **два заголовка**:\n\n"
+            "```\n"
+            "Authorization: Bearer <API_KEY>\n"
+            "X-User-Id: <стабильный идентификатор клиента>\n"
+            "```\n\n"
+            "* **`API_KEY`** — статический Bearer-ключ, зашитый в мобильном клиенте.\n"
+            "* **`X-User-Id`** — стабильный идентификатор устройства/профиля "
+            "(например, Adapty profile id). По нему backend ведёт записи в БД.\n\n"
+            "Webhook'и (`/v1/webhooks/...`) **не используют** Bearer — они "
+            "авторизуются подписью провайдера (HMAC-SHA256 или Bearer-секретом).\n\n"
+            "**В Swagger UI** нажмите кнопку **Authorize** 🔓 в правом верхнем "
+            "углу и введите ваш `API_KEY`. Заголовок `X-User-Id` для каждого "
+            "запроса вводится отдельно (в секции *Parameters*).\n\n"
+            "---\n\n"
+            "## Формат ошибок\n\n"
+            "Все 4xx/5xx ответы возвращают единый envelope (ТЗ §13):\n\n"
+            "```json\n"
+            "{\n"
+            "  \"error\": {\n"
+            "    \"code\": \"INSUFFICIENT_TOKENS\",\n"
+            "    \"message\": \"Not enough tokens to perform the operation\",\n"
+            "    \"details\": { \"required\": 2, \"available\": 0 }\n"
+            "  },\n"
+            "  \"requestId\": \"b5830b11dc4747d4b6b85217eff10177\"\n"
+            "}\n"
+            "```\n\n"
+            "Коды (UPPER_SNAKE_CASE): `INVALID_INPUT`, `INVALID_SAMPLE_URL`, "
+            "`MISSING_X_USER_ID`, `UNAUTHORIZED`, `SUBSCRIPTION_REQUIRED`, "
+            "`SUBSCRIPTION_EXPIRED`, `INSUFFICIENT_TOKENS`, `FORBIDDEN`, "
+            "`BEAT_NOT_FOUND`, `JOB_NOT_FOUND`, `TRACK_NOT_FOUND`, "
+            "`WEBHOOK_SIGNATURE_INVALID`, `WEBHOOK_PAYLOAD_INVALID`, "
+            "`PROVIDER_FAILED`, `PROVIDER_TIMEOUT`, `INTERNAL_ERROR`, "
+            "`RATE_LIMITED`.\n\n"
+            "Заголовок `X-Request-Id` дублируется во всех ответах — для "
+            "поиска в логах. Можно прислать свой `X-Request-Id` в запросе.\n\n"
+            "---\n\n"
+            "## Сценарий генерации трека\n\n"
+            "1. **`POST /v1/uploads/voice`** *(опционально)* — загрузить файл "
+            "голоса, получить `voiceUrl`.\n"
+            "2. **`GET /v1/beats`** — выбрать бит из 5 жанров.\n"
+            "3. **`GET /v1/samples`** — собрать набор sample-элементов (10 категорий).\n"
+            "4. **`POST /v1/tracks/generate`** — запустить генерацию. Сервис проверит "
+            "активность подписки, доступность URL, резервирует токены и вернёт `jobId`.\n"
+            "5. **`GET /v1/tracks/jobs/{jobId}`** — опрашивать статус, "
+            "получая `pipeline` со списком стадий.\n"
+            "6. **`GET /v1/tracks/{trackId}`** — забрать готовый трек "
+            "(`audioUrl`, длительность, опционально `stems`).\n\n"
+            "---\n\n"
+            "## Webhook'и\n\n"
+            "* `POST /v1/webhooks/fal` — fal.ai сообщает о завершении стадии "
+            "пайплайна (HMAC-SHA256 в `X-Fal-Signature`).\n"
+            "* `POST /v1/webhooks/billing/adapty` — Adapty присылает события "
+            "подписки/покупки (Bearer-секрет в `Authorization`).\n"
+            "* `POST /v1/webhooks/billing/rf` — RuStore присылает события "
+            "(HMAC-SHA256 в `X-RuStore-Signature`).\n"
         ),
         version="1.0.0",
         default_response_class=ORJSONResponse,
         lifespan=lifespan,
         openapi_tags=[
             {
-                "name": "chat",
+                "name": "Генерация треков",
                 "description": (
-                    "AI-чат: создание conversation и обмен сообщениями "
-                    "с учётом истории."
+                    "Запуск и контроль генерации музыки через fal.ai. "
+                    "Полный пайплайн из 8 стадий: `prepare_prompt → lyrics → "
+                    "music_generation → audio_to_audio_refine → vocal_tts → "
+                    "mix_master → upload_cdn → finalize` (ТЗ §11).\n\n"
+                    "Требует **активной подписки** и **достаточного баланса "
+                    "токенов** (gate-проверка перед резервом)."
                 ),
             },
             {
-                "name": "word-tools",
+                "name": "Каталог",
                 "description": (
-                    "Поиск слов и фраз по 16 языковым критериям "
-                    "(рифмы, синонимы, антонимы и т. д.). Все запросы "
-                    "выполняются на английском языке."
+                    "Каталог битов (5 жанров) и sound-элементов (10 категорий "
+                    "с тегами): bass / lead / chord / kick / snare / "
+                    "closed_hi_hat / open_hi_hat / auxiliary / mixing / "
+                    "sound_effects.\n\n"
+                    "URL'ы в ответах пригодны для демо-воспроизведения "
+                    "на устройстве (ТЗ §9.2)."
                 ),
             },
             {
-                "name": "music-catalog",
+                "name": "Баланс и тарифы",
                 "description": (
-                    "Каталог битов и sound-элементов. Требует `X-User-Id`."
+                    "Текущий баланс токенов пользователя (`available` / "
+                    "`reserved` / `frozen`) и каталог токен-паков для покупки "
+                    "через Adapty/RuStore."
                 ),
             },
             {
-                "name": "music-tracks",
+                "name": "Загрузка файлов",
                 "description": (
-                    "Генерация треков через fal.ai (gate → reserve → submit → "
-                    "webhook → capture). Требует `X-User-Id` и активной "
-                    "подписки."
+                    "Загрузка голосового референса (multipart) в fal "
+                    "storage. Возвращает `voiceUrl`, который потом "
+                    "подставляется в `POST /v1/tracks/generate`."
                 ),
             },
             {
-                "name": "music-tokens",
+                "name": "Webhooks",
                 "description": (
-                    "Баланс токенов и каталог токен-паков."
+                    "Эндпоинты для входящих webhook'ов от внешних провайдеров: "
+                    "fal.ai (завершение стадий генерации), Adapty (события "
+                    "App Store / Google Play подписок), RuStore (РФ биллинг). "
+                    "Авторизуются подписью провайдера, **Bearer не нужен**."
                 ),
             },
             {
-                "name": "music-uploads",
-                "description": (
-                    "Загрузка пользовательских ресурсов (voice) в fal storage."
-                ),
-            },
-            {
-                "name": "music-webhooks",
-                "description": (
-                    "Webhook-эндпоинты для fal.ai, Adapty и RuStore. "
-                    "Авторизуются подписью провайдера, не через Bearer."
-                ),
-            },
-            {
-                "name": "system",
+                "name": "Система",
                 "description": "Служебные эндпоинты (healthcheck).",
             },
         ],
@@ -213,9 +246,12 @@ def create_app(
 
     @app.get(
         "/healthz",
-        tags=["system"],
+        tags=["Система"],
         summary="Healthcheck",
-        description="Проверка живости сервиса. Не требует авторизации.",
+        description=(
+            "Проверка живости сервиса. Не требует авторизации. "
+            "Используется в docker-compose healthcheck и в smoke-тестах CI."
+        ),
     )
     async def healthz() -> dict[str, str]:
         return {"status": "ok"}

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import uuid
 from functools import lru_cache
-from pathlib import Path
 from typing import Literal
 from uuid import UUID
 
@@ -32,23 +31,6 @@ class Settings(BaseSettings):
 
     API_KEY: str | None = None
 
-    OPENAI_API_KEY: SecretStr = SecretStr("")
-    OPENAI_BASE_URL: str | None = None
-    OPENAI_CHAT_MODEL: str = "gpt-4o-mini"
-    OPENAI_WORDTOOLS_MODEL: str = "gpt-4o-mini"
-    LLM_CHAT_TIMEOUT_SECONDS: float = 20.0
-    LLM_WORDTOOLS_TIMEOUT_SECONDS: float = 8.0
-    LLM_MAX_INPUT_TOKENS: int = 6000
-    LLM_MAX_OUTPUT_TOKENS: int = 1024
-
-    MAX_MESSAGE_CHARS: int = 8000
-    HISTORY_MAX_MESSAGES: int = 30
-    CHAT_SYSTEM_PROMPT: str = "You are a helpful assistant."
-
-    WORD_TOOLS_PROMPTS_DIR: Path = Path("prompts")
-    WORD_TOOLS_DEFAULT_LIMIT: int = 50
-    WORD_TOOLS_MAX_LIMIT: int = 200
-
     RATE_LIMIT_PER_MINUTE: int = 0
     RATE_LIMIT_BURST: int = 60
 
@@ -76,7 +58,11 @@ class Settings(BaseSettings):
     MUSIC_DEFAULT_TRACK_DURATION_SECONDS: int = 60
     MUSIC_JOB_HARD_TIMEOUT_SECONDS: int = 1800
 
-    @field_validator("OPENAI_BASE_URL", "API_KEY", mode="before")
+    # ТЗ §6.3: HEAD-проверка sample_url / voice_url перед резервом токенов.
+    MUSIC_URL_CHECK_ENABLED: bool = True
+    MUSIC_URL_CHECK_TIMEOUT_SECONDS: float = 3.0
+
+    @field_validator("API_KEY", mode="before")
     @classmethod
     def _empty_str_to_none(cls, v: object) -> object:
         if isinstance(v, str) and v.strip() == "":

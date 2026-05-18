@@ -28,7 +28,7 @@ from app.music.services.webhook_billing import BillingWebhookService
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(tags=["music-webhooks"])
+router = APIRouter(tags=["Webhooks"])
 
 
 def _get_fal_provider(request: Request) -> FalProvider:
@@ -59,11 +59,19 @@ def _get_generation_service(
 @router.post(
     "/webhooks/fal",
     status_code=status.HTTP_200_OK,
-    summary="Webhook от fal.ai",
+    summary="Webhook от fal.ai (завершение стадии генерации)",
     description=(
-        "Принимает событие завершения генерации от fal.ai. "
-        "Требует валидной подписи `X-Fal-Signature` (HMAC-SHA256 от raw body "
-        "с секретом из `FAL_WEBHOOK_SECRET`). Идемпотентен по `event_id`."
+        "Принимает событие завершения async-стадии пайплайна от fal.ai "
+        "(`music_generation`, `audio_to_audio_refine`, `vocal_tts`).\n\n"
+        "**Авторизация:** HMAC-SHA256 от raw body в заголовке "
+        "`X-Fal-Signature`, секрет — `FAL_WEBHOOK_SECRET` из `.env`. "
+        "Без подписи → `401 WEBHOOK_SIGNATURE_INVALID`.\n\n"
+        "**Идемпотентность:** по `(provider, event_id)` в "
+        "`processed_webhooks`. Повторный webhook возвращает "
+        "`{\"status\": \"duplicate\"}` без эффекта.\n\n"
+        "**2-фазная обработка** (ТЗ §14.1): сначала `outcome=received`, "
+        "после успешного применения — `applied`. При падении посередине "
+        "событие останется в `received` и попадёт в recovery sweep при старте."
     ),
     responses={
         k: v
@@ -81,6 +89,7 @@ async def fal_webhook(
 ) -> dict[str, str]:
     raw = await request.body()
     event = fal.parse_webhook_event(headers=request.headers, raw_body=raw)
+    # Phase 1: claim event (outcome="received") для 2-фазной обработки.
     async with sessionmaker() as session:
         async with session.begin():
             repo = WebhooksRepository(session)
@@ -88,11 +97,17 @@ async def fal_webhook(
                 provider=WebhookProvider.fal,
                 event_id=event.event_id,
                 payload_digest=event.payload_digest,
-                outcome="applied",
+                outcome="received",
             )
     if not recorded:
         return {"status": "duplicate"}
+    # Phase 2: применить пайплайн, при успехе пометить applied.
     await service.finalize_from_webhook(event)
+    async with sessionmaker() as session:
+        async with session.begin():
+            await WebhooksRepository(session).mark_applied(
+                provider=WebhookProvider.fal, event_id=event.event_id
+            )
     return {"status": "ok"}
 
 
@@ -108,14 +123,29 @@ def _get_billing_service(
 @router.post(
     "/webhooks/billing/adapty",
     status_code=status.HTTP_200_OK,
-    summary="Webhook от Adapty",
+    summary="Webhook от Adapty (App Store / Google Play)",
     description=(
-        "Принимает событие подписки/покупки от Adapty.\n\n"
-        "**Авторизация:** Adapty передаёт значение `ADAPTY_WEBHOOK_SECRET` "
-        "в заголовке `Authorization` (с префиксом `Bearer` или без — оба "
-        "варианта поддерживаются).\n\n"
-        "При подключении хука Adapty шлёт тестовый POST с пустым телом — "
-        "сервис вернёт 200 `test_ping` (после проверки Authorization)."
+        "Принимает события подписки и покупок токен-паков от Adapty:\n\n"
+        "* `subscription_started` → `SUBSCRIPTION_PURCHASED` "
+        "(активация подписки, размораживание кошелька, кредит токенов).\n"
+        "* `subscription_renewed` → `SUBSCRIPTION_RENEWED`.\n"
+        "* `subscription_cancelled` → `SUBSCRIPTION_CANCELED` "
+        "(доступ до конца периода).\n"
+        "* `subscription_expired` → `SUBSCRIPTION_EXPIRED` "
+        "(`wallet.frozen=true`, токены сохраняются).\n"
+        "* `non_subscription_purchase` → `ONE_TIME_PURCHASE` "
+        "(резолв количества токенов через `token_products`).\n"
+        "* `refund` → `REFUND` (debit с clamp в 0).\n\n"
+        "**Авторизация:** значение `ADAPTY_WEBHOOK_SECRET` в заголовке "
+        "`Authorization` (поддерживаются оба формата: `Bearer <secret>` "
+        "и просто `<secret>`).\n\n"
+        "**Test-ping:** при подключении хука в кабинете Adapty шлёт "
+        "тестовый POST с пустым телом — сервис проверит Authorization и "
+        "вернёт `200 {\"status\": \"test_ping\"}`.\n\n"
+        "**Идемпотентность:** по `event_id` (повторное событие → "
+        "`{\"status\": \"duplicate\"}`).\n\n"
+        "**Атомарность:** user, subscription_state, wallet, ledger и "
+        "processed_webhooks применяются в одной транзакции (ТЗ §10.1.4)."
     ),
     responses={
         k: v
@@ -162,9 +192,19 @@ def _is_test_payload(raw: bytes) -> bool:
     status_code=status.HTTP_200_OK,
     summary="Webhook от RuStore (РФ биллинг)",
     description=(
-        "Принимает событие подписки/покупки от РФ-биллинга. Подпись — "
-        "HMAC-SHA256 в `X-RuStore-Signature` с секретом "
-        "`RF_BILLING_WEBHOOK_SECRET`."
+        "Принимает события подписки и покупок от РФ-биллинга (RuStore):\n\n"
+        "* `SUBSCRIPTION_PURCHASED` — активация подписки.\n"
+        "* `SUBSCRIPTION_RENEWED` — продление.\n"
+        "* `SUBSCRIPTION_CANCELED` — отмена.\n"
+        "* `SUBSCRIPTION_EXPIRED` — истечение, кошелёк frozen.\n"
+        "* `ONE_TIME_PURCHASE` — покупка токен-пака.\n"
+        "* `REFUND` — возврат.\n\n"
+        "**Авторизация:** HMAC-SHA256 от raw body в заголовке "
+        "`X-RuStore-Signature`, секрет — `RF_BILLING_WEBHOOK_SECRET` "
+        "из `.env`. Без подписи → `401 WEBHOOK_SIGNATURE_INVALID`.\n\n"
+        "**Test-ping:** пустой POST → `200 {\"status\": \"test_ping\"}` "
+        "(подпись для пустого body не проверяется).\n\n"
+        "**Идемпотентность + атомарность** — как у Adapty."
     ),
     responses={
         k: v

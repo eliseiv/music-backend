@@ -1,7 +1,7 @@
-"""music schema
+"""initial music schema
 
-Revision ID: 0002
-Revises: 0001
+Revision ID: 0001
+Revises:
 Create Date: 2026-05-09
 
 """
@@ -11,8 +11,8 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-revision = "0002"
-down_revision = "0001"
+revision = "0001"
+down_revision = None
 branch_labels = None
 depends_on = None
 

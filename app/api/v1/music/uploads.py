@@ -20,7 +20,7 @@ from app.deps import get_music_user, get_settings_dep
 from app.music.models import MusicUser
 from app.music.providers.fal.base import FalProvider
 
-router = APIRouter(tags=["music-uploads"])
+router = APIRouter(tags=["Загрузка файлов"])
 
 logger = logging.getLogger(__name__)
 
@@ -49,17 +49,21 @@ def _get_fal_provider(request: Request) -> FalProvider:
     "/uploads/voice",
     response_model=VoiceUploadResponse,
     response_model_by_alias=True,
-    summary="Загрузить голосовой референс",
+    summary="Загрузить голосовой референс (multipart)",
     description=(
-        "Принимает аудио-файл (multipart), проксирует в fal storage, "
-        "возвращает URL для подстановки в `POST /tracks/generate` в "
-        "поле `voiceUrl`.\n\n"
-        "Ограничения: content-type из allowlist (по умолчанию "
-        "`audio/mpeg`, `audio/wav`, `audio/mp4`, `audio/x-m4a`); размер "
-        "до 25 MiB."
+        "Принимает аудио-файл с голосом (multipart/form-data, поле `file`), "
+        "проксирует его в fal storage и возвращает URL.\n\n"
+        "**Двухшаговый flow для генерации с голосом:**\n"
+        "1. `POST /v1/uploads/voice` → получить `voiceUrl`.\n"
+        "2. `POST /v1/tracks/generate` с полем `\"voiceUrl\": \"<полученный url>\"`.\n\n"
+        "**Ограничения:**\n"
+        "* Content-Type из allowlist: `audio/mpeg`, `audio/wav`, "
+        "`audio/mp4`, `audio/x-m4a` (настраивается через "
+        "`MUSIC_VOICE_ALLOWED_CONTENT_TYPES`).\n"
+        "* Размер файла до 25 MiB (`MUSIC_VOICE_MAX_BYTES`)."
     ),
     responses={
-        413: {"description": "Слишком большой файл"},
+        413: {"description": "Файл превышает MUSIC_VOICE_MAX_BYTES"},
         **{
             k: v
             for k, v in MUSIC_ERROR_RESPONSES.items()

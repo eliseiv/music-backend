@@ -18,45 +18,17 @@ class CamelModel(BaseModel):
     )
 
 
-class ErrorResponse(BaseModel):
-    model_config = ConfigDict(
-        populate_by_name=True,
-        json_schema_extra={
-            "examples": [
-                {
-                    "code": "validation_error",
-                    "message": "Request validation failed",
-                    "details": {
-                        "errors": [
-                            {
-                                "type": "string_too_short",
-                                "loc": ["body", "message"],
-                                "msg": "String should have at least 1 character",
-                            }
-                        ]
-                    },
-                    "requestId": "b5830b11dc4747d4b6b85217eff10177",
-                },
-                {
-                    "code": "auth_error",
-                    "message": "Invalid or missing API key",
-                    "requestId": "ecb265cdcce14a889ebcf1c5c8665068",
-                },
-                {
-                    "code": "conversation_not_found",
-                    "message": "Conversation not found",
-                    "requestId": "71244931bce24d31b0914c3933838cdf",
-                },
-            ]
-        },
-    )
+class ErrorDetail(BaseModel):
+    """Тело ошибки внутри обёртки `error`."""
+
+    model_config = ConfigDict(populate_by_name=True)
 
     code: str = Field(
         description=(
-            "Машинно-читаемый код ошибки "
-            "(validation_error, auth_error, conversation_not_found, ...)."
+            "Машинно-читаемый код ошибки в UPPER_SNAKE_CASE "
+            "(INVALID_INPUT, SUBSCRIPTION_REQUIRED, INSUFFICIENT_TOKENS, ...)."
         ),
-        examples=["validation_error"],
+        examples=["INVALID_INPUT"],
     )
     message: str = Field(
         description="Человеко-читаемое описание ошибки.",
@@ -66,6 +38,44 @@ class ErrorResponse(BaseModel):
         default=None,
         description="Дополнительные детали (опционально).",
     )
+
+
+class ErrorResponse(BaseModel):
+    """Формат ошибок ТЗ §13: `{"error": {...}, "requestId": "..."}`."""
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "error": {
+                        "code": "INVALID_INPUT",
+                        "message": "Request validation failed",
+                        "details": {
+                            "errors": [
+                                {
+                                    "type": "string_too_short",
+                                    "loc": ["body", "message"],
+                                    "msg": "String should have at least 1 character",
+                                }
+                            ]
+                        },
+                    },
+                    "requestId": "b5830b11dc4747d4b6b85217eff10177",
+                },
+                {
+                    "error": {
+                        "code": "INSUFFICIENT_TOKENS",
+                        "message": "Not enough tokens to generate track",
+                        "details": {"required": 2, "available": 0},
+                    },
+                    "requestId": "ecb265cdcce14a889ebcf1c5c8665068",
+                },
+            ]
+        },
+    )
+
+    error: ErrorDetail
     request_id: str | None = Field(
         default=None,
         alias="requestId",

@@ -20,7 +20,7 @@ from app.music.schemas.tokens import (
 from app.music.services.tokens_service import TokensService
 from app.music.services.wallet_service import WalletService
 
-router = APIRouter(tags=["music-tokens"])
+router = APIRouter(tags=["Баланс и тарифы"])
 
 
 def _get_tokens_service(
@@ -36,8 +36,16 @@ def _get_tokens_service(
     "/tokens/balance",
     response_model=TokenBalanceResponse,
     response_model_by_alias=True,
-    summary="Баланс токенов текущего пользователя",
-    description="Возвращает `available`, `reserved` и флаг `frozen` (true, если подписка истекла).",
+    summary="Текущий баланс токенов",
+    description=(
+        "Возвращает баланс токен-кошелька пользователя (ТЗ §8):\n\n"
+        "* `available` — токены, доступные для генерации (`>= 0`, "
+        "CHECK CONSTRAINT в БД).\n"
+        "* `reserved` — токены, зарезервированные под активные jobs "
+        "(будут списаны при `succeeded` или возвращены при `failed`).\n"
+        "* `frozen` — `true`, если подписка истекла. Токены сохраняются, "
+        "но новые резервы запрещены до продления подписки (ТЗ §3.2)."
+    ),
     responses={
         k: v for k, v in MUSIC_ERROR_RESPONSES.items() if k in {400, 401}
     },
@@ -58,10 +66,16 @@ async def token_balance(
     "/tokens/products",
     response_model=TokenProductsResponse,
     response_model_by_alias=True,
-    summary="Каталог токен-паков",
+    summary="Каталог токен-паков (Adapty / RuStore)",
     description=(
-        "Список активных продуктов для покупки токенов через Adapty/RuStore. "
-        "iOS использует `external_product_id` при покупке."
+        "Список активных продуктов для покупки токенов через сторы "
+        "(App Store/Google Play через Adapty, либо RuStore).\n\n"
+        "* `code` — внутренний идентификатор продукта.\n"
+        "* `platform` — `adapty` или `rustore`.\n"
+        "* `externalProductId` — идентификатор товара в сторе "
+        "(iOS использует его при покупке через StoreKit).\n"
+        "* `tokenAmount` — сколько токенов зачислится после покупки.\n"
+        "* `priceMinor` / `currency` — цена в минорных единицах."
     ),
     responses={
         k: v for k, v in MUSIC_ERROR_RESPONSES.items() if k in {400, 401}

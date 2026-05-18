@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
-# Первичная настройка сервера Ubuntu 22.04+ для AI-Backend.
+# Первичная настройка сервера Ubuntu 22.04+ для music-backend.
 # Запускать один раз на свежей машине от root или sudo-юзера.
+#
+# Usage:
+#   DEPLOY_USER=ubuntu REPO_URL=https://github.com/<owner>/music-backend.git ./init-server.sh
 set -euo pipefail
 
-DEPLOY_DIR="${DEPLOY_DIR:-/opt/aibased}"
+DEPLOY_DIR="${DEPLOY_DIR:-/opt/music-backend}"
 DEPLOY_USER="${DEPLOY_USER:-${SUDO_USER:-$(id -un)}}"
+REPO_URL="${REPO_URL:-}"
 
 log() { printf '\n\033[1;36m[init-server]\033[0m %s\n' "$*"; }
 
@@ -106,8 +110,21 @@ setup_unattended_upgrades() {
 
 prepare_deploy_dir() {
     log "Готовлю каталог $DEPLOY_DIR"
-    $SUDO mkdir -p "$DEPLOY_DIR"/{nginx/conf.d,nginx/conf.d.bootstrap,certbot/conf,certbot/www,scripts}
+    $SUDO mkdir -p "$DEPLOY_DIR"/{nginx/conf.d,nginx/conf.d.bootstrap,certbot/conf,certbot/www,scripts,repo}
     $SUDO chown -R "$DEPLOY_USER":"$DEPLOY_USER" "$DEPLOY_DIR"
+}
+
+clone_repo() {
+    if [ -z "$REPO_URL" ]; then
+        log "REPO_URL не задан — пропускаю git clone (склонируйте вручную в $DEPLOY_DIR/repo)"
+        return
+    fi
+    if [ -d "$DEPLOY_DIR/repo/.git" ]; then
+        log "Repo уже склонирован в $DEPLOY_DIR/repo"
+        return
+    fi
+    log "Клонирую $REPO_URL в $DEPLOY_DIR/repo"
+    sudo -u "$DEPLOY_USER" git clone "$REPO_URL" "$DEPLOY_DIR/repo"
 }
 
 setup_disk_cleanup_cron() {
@@ -124,13 +141,19 @@ main() {
     setup_firewall
     setup_unattended_upgrades
     prepare_deploy_dir
+    clone_repo
     setup_disk_cleanup_cron
 
     log "Готово."
     if [ "$DEPLOY_USER" != "root" ]; then
         log "Перелогиньтесь (или выполните 'newgrp docker'), чтобы получить группу docker без sudo."
     fi
-    log "Дальше: скопируйте содержимое каталога deploy/ в $DEPLOY_DIR и запустите init-letsencrypt.sh"
+    log "Дальше:"
+    log "  1) Скопируйте содержимое каталога deploy/ в $DEPLOY_DIR (cp -r repo/deploy/. .)"
+    log "  2) Замените your-domain.com на ваш домен (sed -i 's/your-domain.com/example.com/g' nginx/conf.d/*.conf nginx/conf.d.bootstrap/*.conf)"
+    log "  3) Заполните .env (см. .env.production.example в репо)"
+    log "  4) Запустите ./scripts/init-letsencrypt.sh"
+    log "  5) Запустите ./scripts/deploy.sh для первого деплоя"
 }
 
 main "$@"

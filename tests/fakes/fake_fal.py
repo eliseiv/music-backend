@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 from collections import deque
 from typing import Any, Mapping
 
 from app.api.errors import WebhookPayloadInvalid, WebhookSignatureInvalid
 from app.music.providers.fal.base import FalSubmitResult, FalWebhookEvent
-from app.music.providers.fal.signature import body_digest
+from app.music.providers.fal.signature import SIGNATURE_HEADER, body_digest
 
 
 class FakeFal:
@@ -91,7 +93,14 @@ class FakeFal:
         if self._webhook_events:
             event = self._webhook_events.popleft()
             return event
-        # Fallback: parse JSON directly, no signature check.
+        # Real fal-like path: verify HMAC signature.
+        from app.music.providers.fal.signature import verify_signature
+
+        verify_signature(
+            secret=self.webhook_secret,
+            raw_body=raw_body,
+            headers=headers,
+        )
         try:
             data = json.loads(raw_body.decode("utf-8"))
         except Exception as exc:
@@ -115,3 +124,66 @@ class FakeFal:
 
     async def aclose(self) -> None:
         pass
+
+    # --- test helpers for end-to-end pipeline tests ---
+
+    def build_webhook_payload(
+        self,
+        *,
+        request_id: str,
+        status: str = "completed",
+        audio_url: str | None = None,
+        duration_seconds: float | None = None,
+        stems: dict[str, Any] | None = None,
+        error: str | None = None,
+        event_id: str | None = None,
+    ) -> tuple[bytes, dict[str, str]]:
+        """Build raw body + headers (with valid HMAC signature) for POST /v1/webhooks/fal."""
+        body: dict[str, Any] = {"request_id": request_id, "status": status}
+        if event_id is not None:
+            body["event_id"] = event_id
+        result: dict[str, Any] = {}
+        if audio_url is not None:
+            result["audio_url"] = audio_url
+        if duration_seconds is not None:
+            result["duration_seconds"] = duration_seconds
+        if stems is not None:
+            result["stems"] = stems
+        if result:
+            body["result"] = result
+        if error is not None:
+            body["error"] = error
+        raw = json.dumps(body).encode("utf-8")
+        sig = hmac.new(
+            self.webhook_secret.encode("utf-8"), raw, hashlib.sha256
+        ).hexdigest()
+        return raw, {
+            SIGNATURE_HEADER: sig,
+            "Content-Type": "application/json",
+        }
+
+    async def emit_webhook(
+        self,
+        client,
+        *,
+        request_id: str,
+        status: str = "completed",
+        audio_url: str | None = None,
+        duration_seconds: float | None = None,
+        stems: dict[str, Any] | None = None,
+        error: str | None = None,
+        event_id: str | None = None,
+    ):
+        """POST a signed webhook to /v1/webhooks/fal via an AsyncClient."""
+        raw, headers = self.build_webhook_payload(
+            request_id=request_id,
+            status=status,
+            audio_url=audio_url,
+            duration_seconds=duration_seconds,
+            stems=stems,
+            error=error,
+            event_id=event_id,
+        )
+        return await client.post(
+            "/v1/webhooks/fal", content=raw, headers=headers
+        )

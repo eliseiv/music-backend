@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY pyproject.toml ./
 COPY app ./app
-RUN pip install --prefix=/install ".[dev]"
+RUN pip install --prefix=/install "."
 
 # ---------- runtime ----------
 FROM python:3.12-slim AS runtime
@@ -31,7 +31,6 @@ COPY --from=builder /install /usr/local
 
 WORKDIR /app
 COPY app ./app
-COPY prompts ./prompts
 COPY migrations ./migrations
 COPY alembic.ini ./alembic.ini
 COPY entrypoint.sh ./entrypoint.sh

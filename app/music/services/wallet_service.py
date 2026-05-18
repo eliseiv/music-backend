@@ -17,7 +17,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from app.api.errors import InsufficientTokens, SubscriptionInactive
+from app.api.errors import InsufficientTokens, SubscriptionExpired
 from app.music.enums import TokenLedgerKind
 from app.music.models import TokenLedgerEntry, TokenWallet
 from app.music.repositories.ledger import LedgerRepository
@@ -83,7 +83,7 @@ class WalletService:
                         reserved=wallet.reserved_tokens,
                     )
                 if wallet.frozen:
-                    raise SubscriptionInactive(
+                    raise SubscriptionExpired(
                         details={"reason": "wallet_frozen"}
                     )
                 if wallet.available_tokens < amount:
@@ -304,6 +304,82 @@ class WalletService:
                 reserved=wallet.reserved_tokens,
                 frozen=wallet.frozen,
             )
+
+    # --- session-aware варианты для использования внутри общей транзакции
+    # (ТЗ §10.1.4: атомарное применение к подписке и токенам). Вызывать
+    # ВНУТРИ открытого `async with session.begin()`.
+
+    @staticmethod
+    async def set_frozen_in_session(
+        session: AsyncSession, *, user_id: UUID, frozen: bool
+    ) -> None:
+        wallets = WalletsRepository(session)
+        wallet = await wallets.ensure_exists(user_id)
+        wallet.frozen = frozen
+        await session.flush()
+
+    @staticmethod
+    async def credit_in_session(
+        session: AsyncSession,
+        *,
+        user_id: UUID,
+        amount: int,
+        kind: TokenLedgerKind,
+        ref_type: str,
+        ref_id: str,
+        meta: dict[str, Any] | None = None,
+    ) -> WalletOpResult:
+        if amount == 0:
+            raise ValueError("amount must be non-zero")
+        wallets = WalletsRepository(session)
+        ledger = LedgerRepository(session)
+        wallet = await wallets.ensure_exists(user_id)
+        key = ledger.make_idempotency_key(ref_type, ref_id, kind)
+        existing = await WalletService._find_existing_entry(session, key)
+        if existing is not None:
+            return WalletOpResult(
+                entry=existing,
+                inserted=False,
+                available=wallet.available_tokens,
+                reserved=wallet.reserved_tokens,
+            )
+        applied_amount = amount
+        clamped_shortfall = 0
+        if amount < 0:
+            abs_amount = -amount
+            if abs_amount > wallet.available_tokens:
+                clamped_shortfall = abs_amount - wallet.available_tokens
+                applied_amount = -wallet.available_tokens
+        wallet.available_tokens += applied_amount
+        entry, inserted = await ledger.insert_or_get(
+            user_id=user_id,
+            wallet_id=wallet.id,
+            kind=kind,
+            amount=applied_amount,
+            balance_after_available=wallet.available_tokens,
+            balance_after_reserved=wallet.reserved_tokens,
+            ref_type=ref_type,
+            ref_id=ref_id,
+            meta=meta,
+        )
+        if clamped_shortfall > 0:
+            await ledger.insert_or_get(
+                user_id=user_id,
+                wallet_id=wallet.id,
+                kind=TokenLedgerKind.debit_adjustment,
+                amount=-clamped_shortfall,
+                balance_after_available=wallet.available_tokens,
+                balance_after_reserved=wallet.reserved_tokens,
+                ref_type=ref_type,
+                ref_id=ref_id + ":clamp",
+                meta={"reason": "refund_clamped_to_zero"},
+            )
+        return WalletOpResult(
+            entry=entry,
+            inserted=inserted,
+            available=wallet.available_tokens,
+            reserved=wallet.reserved_tokens,
+        )
 
     @staticmethod
     async def _find_existing_entry(

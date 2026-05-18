@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
-# Первичный выпуск Let's Encrypt сертификата для appstorepro.store.
+# Первичный выпуск Let's Encrypt сертификата для music-backend.
 # Запускать ОДИН раз после init-server.sh, когда:
 #   - DNS A-запись уже указывает на сервер
-#   - содержимое deploy/ скопировано в /opt/aibased
-#   - .env заполнен (хотя бы POSTGRES_PASSWORD, API_KEY, OPENAI_API_KEY, API_IMAGE)
+#   - содержимое deploy/ скопировано в /opt/music-backend
+#   - .env заполнен (см. .env.production.example)
+#
+# Usage:
+#   DOMAIN=example.com LETSENCRYPT_EMAIL=you@example.com ./init-letsencrypt.sh
+#   STAGING=1 — тест против LE staging (без rate limits, сертификат невалидный)
 set -euo pipefail
 
-DEPLOY_DIR="${DEPLOY_DIR:-/opt/aibased}"
-DOMAIN="${DOMAIN:-appstorepro.store}"
+DEPLOY_DIR="${DEPLOY_DIR:-/opt/music-backend}"
+DOMAIN="${DOMAIN:?Set DOMAIN=example.com}"
 EMAIL="${LETSENCRYPT_EMAIL:?Set LETSENCRYPT_EMAIL=your@email}"
 STAGING="${STAGING:-0}"  # 1 = тест против LE staging (не считается в rate limit)
 

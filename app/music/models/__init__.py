@@ -4,6 +4,7 @@ from app.music.models.ledger import TokenLedgerEntry
 from app.music.models.pricing import PricingRule
 from app.music.models.product import TokenProduct
 from app.music.models.sample import Sample
+from app.music.models.stage_log import JobStageLog
 from app.music.models.subscription import SubscriptionState
 from app.music.models.track import Track
 from app.music.models.user import MusicUser
@@ -15,6 +16,7 @@ __all__ = [
     "Beat",
     "Sample",
     "Job",
+    "JobStageLog",
     "Track",
     "TokenWallet",
     "TokenLedgerEntry",

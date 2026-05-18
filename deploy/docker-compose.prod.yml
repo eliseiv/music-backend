@@ -1,25 +1,31 @@
+# Production compose для music-backend.
+# Используется на сервере как /opt/music-backend/docker-compose.yml.
+# Build api делается на сервере (`docker compose build api`) — без registry.
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-aibased}
+      POSTGRES_USER: ${POSTGRES_USER:-music}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB:-aibased}
+      POSTGRES_DB: ${POSTGRES_DB:-music}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aibased} -d ${POSTGRES_DB:-aibased}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-music} -d ${POSTGRES_DB:-music}"]
       interval: 5s
       timeout: 3s
       retries: 10
 
   api:
-    image: ${API_IMAGE}
+    build:
+      context: ./repo
+      dockerfile: Dockerfile
+    image: music-backend-api:local
     restart: unless-stopped
     env_file: .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-aibased}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-aibased}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-music}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-music}
     depends_on:
       postgres:
         condition: service_healthy
@@ -49,6 +55,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+    # каждые 6 часов перезагружаем конфиг, чтобы подхватить обновлённые сертификаты
     command: >
       /bin/sh -c "while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g 'daemon off;'"
 
@@ -58,7 +65,9 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet --keep-until-expiring; sleep 12h & wait $${!}; done"
+    # каждые 12 часов проверяем сертификаты на обновление
+    entrypoint: >
+      /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet --keep-until-expiring; sleep 12h & wait $${!}; done"
 
 volumes:
   pgdata:

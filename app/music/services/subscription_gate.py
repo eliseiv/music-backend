@@ -2,8 +2,9 @@
 
 Если состояние active, но `expires_at <= now()`, переводим в `expired`,
 замораживаем кошелёк (`wallet.frozen = true`) и бросаем
-`SubscriptionInactive`. Изменения коммитятся ДО исключения, иначе
-`async with session.begin()` откатит lazy-expire.
+`SubscriptionExpired`. Для status=none/canceled-after-expiry — `SubscriptionRequired`.
+Изменения коммитятся ДО исключения, иначе `async with session.begin()`
+откатит lazy-expire.
 """
 from __future__ import annotations
 
@@ -12,7 +13,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from app.api.errors import SubscriptionInactive
+from app.api.errors import SubscriptionExpired, SubscriptionRequired
 from app.music.enums import SubscriptionStatus
 from app.music.models import SubscriptionState
 from app.music.repositories.subscriptions import SubscriptionsRepository
@@ -58,4 +59,7 @@ class SubscriptionGate:
                 "Subscription expired on access",
                 extra={"user_id": str(user_id)},
             )
-        raise SubscriptionInactive(details={"reason": reason})
+        # SUBSCRIPTION_EXPIRED для истёкших, SUBSCRIPTION_REQUIRED для остальных.
+        if reason == "expired" or reason == SubscriptionStatus.expired.value:
+            raise SubscriptionExpired(details={"reason": reason})
+        raise SubscriptionRequired(details={"reason": reason})

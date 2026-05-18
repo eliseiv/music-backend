@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
 from app.deps import get_sessionmaker
 
-router = APIRouter(tags=["music-catalog"])
+router = APIRouter(tags=["Каталог"])
 
 
 def _get_catalog_service(
@@ -30,10 +30,16 @@ def _get_catalog_service(
     "/beats",
     response_model=BeatsResponse,
     response_model_by_alias=True,
-    summary="Список битов",
+    summary="Каталог битов (5 жанров)",
     description=(
-        "Возвращает активные биты, отфильтрованные по жанру (опционально). "
-        "Требует `Authorization: Bearer <API_KEY>` и `X-User-Id`."
+        "Возвращает активные биты, опционально отфильтрованные по жанру.\n\n"
+        "**Жанры** (ТЗ дизайн):\n"
+        "* `electronic_dance` — Electronic Dance\n"
+        "* `rap` — Rap Beats\n"
+        "* `lofi` — Lo-Fi\n"
+        "* `global_groove` — Global Groove\n"
+        "* `relaxing_meditation` — Relaxing Meditation\n\n"
+        "Поле `audioUrl` пригодно для демо-воспроизведения на устройстве."
     ),
     responses={
         k: v for k, v in MUSIC_ERROR_RESPONSES.items() if k in {400, 401}
@@ -44,10 +50,10 @@ async def list_beats(
     catalog: Annotated[CatalogService, Depends(_get_catalog_service)],
     genre: Annotated[
         BeatGenre | None,
-        Query(description="Фильтр по жанру (опц)."),
+        Query(description="Фильтр по жанру (опционально)."),
     ] = None,
-    limit: Annotated[int, Query(ge=1, le=200)] = 200,
-    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=200, description="Сколько вернуть.")] = 200,
+    offset: Annotated[int, Query(ge=0, description="Сдвиг для пагинации.")] = 0,
 ) -> BeatsResponse:
     beats = await catalog.list_beats(genre=genre, limit=limit, offset=offset)
     return BeatsResponse(

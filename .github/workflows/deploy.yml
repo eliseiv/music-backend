@@ -1,71 +1,20 @@
-name: Build and Deploy
+name: Deploy to server
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build & push image
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    outputs:
-      image: ${{ steps.meta.outputs.tags }}
-      sha_tag: ${{ steps.meta.outputs.version }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=sha,format=short
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          provenance: false
-
   deploy:
-    name: Deploy to server
+    name: SSH deploy (git pull + docker compose build)
     runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
     steps:
-      - name: Pick image to deploy
-        id: pick
-        run: |
-          # Берём sha-тег как основной (immutable), latest используется только локально для удобства.
-          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7}"
-          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
-
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -76,23 +25,42 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -p ${{ secrets.SSH_PORT || 22 }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy
+      - name: Run remote deploy
         env:
-          API_IMAGE: ${{ steps.pick.outputs.image }}
-          GHCR_USER: ${{ github.actor }}
-          GHCR_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
+          DEPLOY_DIR: ${{ secrets.DEPLOY_DIR || '/opt/music-backend' }}
+          BRANCH: ${{ github.ref_name }}
         run: |
-          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "set -e; \
-             cd /opt/aibased; \
-             echo \"$GHCR_TOKEN\" | docker login ghcr.io -u \"$GHCR_USER\" --password-stdin; \
-             API_IMAGE=\"$API_IMAGE\" bash scripts/deploy.sh"
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" bash -s <<EOF
+            set -euo pipefail
+            cd "$DEPLOY_DIR/repo"
+            git fetch origin "$BRANCH"
+            git reset --hard "origin/$BRANCH"
+            # Если в репо обновился deploy/ — синхронизируем (сохраняя certbot/ и .env)
+            cd "$DEPLOY_DIR"
+            rsync -a --delete \
+              --exclude='/certbot' \
+              --exclude='/.env' \
+              --exclude='/repo' \
+              ./repo/deploy/ ./
+            bash scripts/deploy.sh
+          EOF
 
       - name: Smoke test
+        env:
+          DOMAIN: ${{ secrets.DEPLOY_DOMAIN }}
         run: |
-          for i in $(seq 1 20); do
-            if curl -fsS https://appstorepro.store/healthz; then
-              echo "Smoke OK"; exit 0
+          if [ -z "$DOMAIN" ]; then
+            echo "DEPLOY_DOMAIN secret не задан — пропускаю внешний smoke"
+            exit 0
+          fi
+          for i in $(seq 1 30); do
+            if curl -fsS "https://$DOMAIN/healthz"; then
+              echo ""
+              echo "Smoke OK"
+              exit 0
             fi
             sleep 3
           done

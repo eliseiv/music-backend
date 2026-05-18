@@ -1,23 +1,24 @@
 """GenerationService — оркестрация create_job/finalize.
 
+Тонкий wrapper над Pipeline + WalletService.
+
 create_job() (синхронная часть, до возврата HTTP-ответа):
   1. SubscriptionGate.ensure_active
-  2. PricingService.resolve_active_rule + required_tokens_for_precharge
-  3. Создать job-строку, WalletService.reserve(reserved_tokens)
-  4. Сабмитить в fal (submit_music_generation)
-  5. Сохранить provider_request_id и stage=music_generation
-  6. Вернуть {jobId, status=queued/processing, tokensReserved}
+  2. Проверка beat
+  3. Idempotency-Key — если найдено существующее job, возвращаем его
+  4. URL HEAD-проверка (ТЗ §6.3)
+  5. PricingService — расчёт required_tokens_for_precharge
+  6. Создать job-строку, WalletService.reserve
+  7. Pipeline.start(job_id) — запускает 8-стадийный пайплайн
 
 finalize_from_webhook() (вызывается из webhook-обработчика):
-  - succeeded → wallet.capture(actual_tokens, prev_reserved) + INSERT tracks
-  - failed/canceled → wallet.release(reserved)
-  - идемпотентно по job_id (двойной webhook не даст эффекта)
+  - completed → Pipeline.advance(completed_stage, audio_url, ...)
+  - failed/canceled → Pipeline.fail(failed_stage, error_code, error_message)
 """
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID
 
@@ -33,12 +34,14 @@ from app.api.errors import (
 )
 from app.config import Settings
 from app.music.enums import JobStage, JobStatus
-from app.music.models import Beat, Job, Track
+from app.music.models import Beat, Job, JobStageLog, Track
 from app.music.providers.fal.base import FalProvider, FalWebhookEvent
 from app.music.repositories.jobs import JobsRepository
 from app.music.repositories.tracks import TracksRepository
+from app.music.services.pipeline import Pipeline
 from app.music.services.pricing_service import PricingService
 from app.music.services.subscription_gate import SubscriptionGate
+from app.music.services.url_validator import validate_urls_reachable
 from app.music.services.wallet_service import WalletService
 
 logger = logging.getLogger(__name__)
@@ -67,6 +70,7 @@ class GenerationService:
         self._pricing = pricing
         self._gate = gate
         self._settings = settings
+        self._pipeline = Pipeline(sessionmaker, fal, wallet, pricing, settings)
 
     async def create_job(
         self,
@@ -75,25 +79,58 @@ class GenerationService:
         request_payload: dict[str, Any],
         store_stems: bool,
         desired_duration_seconds: int | None,
+        client_idempotency_key: str | None = None,
     ) -> CreateJobResult:
         # 1. Подписка
         await self._gate.ensure_active(user_id)
-        # 2. Проверим, что beat существует
+
+        # 2. Beat существует
         async with self._sessionmaker() as session:
             beat = await session.get(Beat, request_payload.get("beat_id"))
             if beat is None or not beat.active:
                 raise BeatNotFound()
 
-        # 3. Pricing
+        # 3. Idempotency-Key — возможно job уже создан
+        if client_idempotency_key:
+            async with self._sessionmaker() as session:
+                repo = JobsRepository(session)
+                existing = await repo.get_by_idempotency_key(
+                    user_id=user_id, key=client_idempotency_key
+                )
+            if existing is not None:
+                logger.info(
+                    "Idempotent generate: returning existing job=%s for key=%s",
+                    existing.id,
+                    client_idempotency_key,
+                )
+                return CreateJobResult(
+                    job_id=existing.id,
+                    status=existing.status,
+                    tokens_reserved=existing.reserved_tokens,
+                )
+
+        # 4. URL HEAD-проверка
+        urls = _collect_urls(request_payload)
+        await validate_urls_reachable(
+            urls,
+            timeout_seconds=self._settings.MUSIC_URL_CHECK_TIMEOUT_SECONDS,
+            enabled=self._settings.MUSIC_URL_CHECK_ENABLED,
+        )
+
+        # 5. Pricing
         rule = await self._pricing.resolve_active_rule(
             provider_model=self._settings.FAL_MUSIC_MODEL
         )
         reserved_tokens = self._pricing.required_tokens_for_precharge(
-            rule,
-            requested_duration_seconds=desired_duration_seconds,
+            rule, requested_duration_seconds=desired_duration_seconds
         )
 
-        # 4. Создаём job + резерв токенов в одной транзакции
+        # Сохраняем desired_duration в payload, чтобы Pipeline мог использовать
+        request_payload = dict(request_payload)
+        if desired_duration_seconds is not None:
+            request_payload["desired_duration_seconds"] = desired_duration_seconds
+
+        # 6. Создаём job + резерв токенов
         async with self._sessionmaker() as session:
             async with session.begin():
                 jobs = JobsRepository(session)
@@ -104,6 +141,7 @@ class GenerationService:
                     reserved_tokens=reserved_tokens,
                     input_payload=request_payload,
                     store_stems=store_stems,
+                    client_idempotency_key=client_idempotency_key,
                 )
                 job_id = job.id
         await self._wallet.reserve(
@@ -113,18 +151,10 @@ class GenerationService:
             ref_id=str(job_id),
         )
 
-        # 5. Сабмит в fal (синхронно — fal сам queue'ит и пришлёт webhook)
-        prompt = _compose_prompt(request_payload, beat)
-        webhook_url = self._webhook_url()
+        # 7. Запускаем пайплайн (start выполняет prepare_prompt + lyrics inline
+        # и сабмитит первый async stage music_generation)
         try:
-            submit = await self._fal.submit_music_generation(
-                prompt=prompt,
-                duration_seconds=desired_duration_seconds,
-                lyrics=request_payload.get("lyrics_prompt"),
-                reference_audio_url=request_payload.get("voice_url"),
-                webhook_url=webhook_url,
-                idempotency_key=str(job_id),
-            )
+            await self._pipeline.start(job_id)
         except (FalProviderError, FalTimeout) as exc:
             # Откатываем job + возвращаем токены
             await self._wallet.release(
@@ -143,15 +173,6 @@ class GenerationService:
                     )
             raise
 
-        # 6. Сохраняем provider_request_id, переводим в processing
-        async with self._sessionmaker() as session:
-            async with session.begin():
-                jobs = JobsRepository(session)
-                await jobs.update_after_submit(
-                    job_id=job_id,
-                    provider_request_id=submit.request_id,
-                    stage=JobStage.music_generation,
-                )
         return CreateJobResult(
             job_id=job_id,
             status=JobStatus.processing,
@@ -191,6 +212,21 @@ class GenerationService:
             session.expunge(track)
             return track
 
+    async def list_stage_events(
+        self, *, user_id: UUID, job_id: UUID
+    ) -> list[JobStageLog]:
+        async with self._sessionmaker() as session:
+            job = await session.get(Job, job_id)
+            if job is None:
+                raise JobNotFound()
+            if job.user_id != user_id:
+                raise JobForbidden()
+            repo = JobsRepository(session)
+            events = await repo.list_stage_events(job_id)
+            for e in events:
+                session.expunge(e)
+            return events
+
     async def finalize_from_webhook(self, event: FalWebhookEvent) -> None:
         async with self._sessionmaker() as session:
             jobs_repo = JobsRepository(session)
@@ -201,7 +237,11 @@ class GenerationService:
                 event.request_id,
             )
             return
-        if job.status in {JobStatus.succeeded, JobStatus.failed, JobStatus.canceled}:
+        if job.status in {
+            JobStatus.succeeded,
+            JobStatus.failed,
+            JobStatus.canceled,
+        }:
             logger.info(
                 "fal webhook for already-finished job=%s (status=%s) — skipping",
                 job.id,
@@ -209,123 +249,69 @@ class GenerationService:
             )
             return
 
+        # Текущая async-стадия определяется по current_stage
+        current = job.current_stage or JobStage.music_generation
+
         if event.status in {"failed", "canceled"}:
-            await self._wallet.release(
-                user_id=job.user_id,
-                amount=job.reserved_tokens,
-                ref_type="job",
-                ref_id=str(job.id),
+            await self._pipeline.fail(
+                job_id=job.id,
+                failed_stage=current,
+                error_code=(
+                    "PROVIDER_FAILED"
+                    if event.status == "failed"
+                    else "PROVIDER_CANCELED"
+                ),
+                error_message=event.error_message or event.status,
             )
-            async with self._sessionmaker() as session:
-                async with session.begin():
-                    repo = JobsRepository(session)
-                    await repo.mark_failed(
-                        job_id=job.id,
-                        error_code=("fal_canceled" if event.status == "canceled" else "fal_failed"),
-                        error_message=event.error_message or event.status,
-                    )
             return
 
         if event.status != "completed":
-            # in_progress — обновим stage и выходим
+            # in_progress — ничего не делаем
             return
 
-        # completed
-        rule = await self._pricing.resolve_active_rule(
-            provider_model=job.provider_model
-        )
-        actual_duration = event.duration_seconds or 0.0
-        captured_tokens = (
-            self._pricing.required_tokens_for_capture(
-                rule, actual_duration_seconds=actual_duration
+        try:
+            await self._pipeline.advance(
+                job_id=job.id,
+                completed_stage=current,
+                audio_url=event.audio_url,
+                duration_seconds=event.duration_seconds,
+                stems=event.stems,
+                event_id=event.event_id,
             )
-            if actual_duration > 0
-            else job.reserved_tokens
-        )
-        captured_tokens = min(captured_tokens, job.reserved_tokens)
-
-        await self._wallet.capture(
-            user_id=job.user_id,
-            amount=captured_tokens,
-            previously_reserved=job.reserved_tokens,
-            ref_type="job",
-            ref_id=str(job.id),
-        )
-        if not event.audio_url:
-            # Странно — completed без audio_url; помечаем failed.
-            async with self._sessionmaker() as session:
-                async with session.begin():
-                    repo = JobsRepository(session)
-                    await repo.mark_failed(
-                        job_id=job.id,
-                        error_code="fal_no_audio",
-                        error_message="completed event missing audio_url",
-                    )
-            return
-        async with self._sessionmaker() as session:
-            async with session.begin():
-                tracks = TracksRepository(session)
-                existing = await tracks.get_by_job_id(job.id)
-                if existing is None:
-                    await tracks.add(
-                        job_id=job.id,
-                        user_id=job.user_id,
-                        audio_url=event.audio_url,
-                        duration_seconds=actual_duration,
-                        stems=event.stems if job.store_stems else None,
-                        meta={"event_id": event.event_id},
-                    )
-                repo = JobsRepository(session)
-                await repo.mark_succeeded(
-                    job_id=job.id,
-                    captured_tokens=captured_tokens,
-                )
-
-    def _webhook_url(self) -> str | None:
-        base = (self._settings.PUBLIC_BASE_URL or "").rstrip("/")
-        if not base:
-            return None
-        return f"{base}/api/v1/music/webhooks/fal"
+        except (FalProviderError, FalTimeout) as exc:
+            await self._pipeline.fail(
+                job_id=job.id,
+                failed_stage=current,
+                error_code=exc.code,
+                error_message=exc.message,
+            )
 
 
-def _compose_prompt(request: dict[str, Any], beat: Beat) -> str:
-    eq = request.get("equalizer") or {}
-    instruments = request.get("instruments") or {}
-    lyrics = request.get("lyrics_prompt")
-    parts = [
-        f"Genre: {beat.genre}",
-        f"BPM: {eq.get('tempo') or beat.bpm}",
-    ]
-    if request.get("production"):
-        parts.append(f"Production: {request['production']}")
-    if request.get("pitch"):
-        parts.append(f"Pitch: {request['pitch']}")
-    if lyrics:
-        parts.append(f"Lyrics theme: {lyrics}")
-    densities = (
-        f"densities: lead={eq.get('lead_density')}, bass={eq.get('bass_density')}, "
-        f"chord={eq.get('chord_density')}, drum={eq.get('drum_density')}"
-    )
-    parts.append(densities)
-    parts.append(f"reference_beat={beat.audio_url}")
-    if instruments:
-        parts.append(f"instruments_count={_count_samples(instruments)}")
-    return " | ".join(parts)
-
-
-def _count_samples(instr: dict[str, Any]) -> int:
-    count = 0
+def _collect_urls(payload: dict[str, Any]) -> list[str]:
+    urls: list[str] = []
+    instr = payload.get("instruments") or {}
     harmonic = instr.get("harmonic") or {}
     for key in ("bass", "lead", "chord"):
-        if harmonic.get(key):
-            count += 1
+        ref = harmonic.get(key) or {}
+        url = ref.get("sample_url")
+        if url:
+            urls.append(url)
     drums = instr.get("drums") or {}
     for key in ("kick", "snare", "open_hihat", "closed_hihat"):
-        if drums.get(key):
-            count += 1
-    count += len(drums.get("auxiliary") or [])
-    if instr.get("mixing"):
-        count += 1
-    if instr.get("sound_effects"):
-        count += 1
-    return count
+        ref = drums.get(key) or {}
+        url = ref.get("sample_url")
+        if url:
+            urls.append(url)
+    for aux in drums.get("auxiliary") or []:
+        url = (aux or {}).get("sample_url")
+        if url:
+            urls.append(url)
+    for key in ("mixing", "sound_effects"):
+        ref = instr.get(key) or {}
+        url = ref.get("sample_url")
+        if url:
+            urls.append(url)
+    voice = payload.get("voice_url")
+    if voice:
+        urls.append(voice)
+    return urls

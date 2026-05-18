@@ -1,0 +1,50 @@
+name: Test
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    name: pytest
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: music
+          POSTGRES_PASSWORD: music
+          POSTGRES_DB: music_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U music"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://music:music@localhost:5432/music_test
+      API_KEY: testkey
+      FAL_WEBHOOK_SECRET: test-secret
+      ADAPTY_WEBHOOK_SECRET: test-adapty-secret
+      RF_BILLING_WEBHOOK_SECRET: test-rf-secret
+      MUSIC_URL_CHECK_ENABLED: "false"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest --tb=short

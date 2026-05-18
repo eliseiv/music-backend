@@ -5,7 +5,7 @@
 # для немедленного renew + reload.
 set -euo pipefail
 
-DEPLOY_DIR="${DEPLOY_DIR:-/opt/aibased}"
+DEPLOY_DIR="${DEPLOY_DIR:-/opt/music-backend}"
 cd "$DEPLOY_DIR"
 
 echo "[renew] Forcing certbot renewal check"

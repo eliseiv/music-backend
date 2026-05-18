@@ -1,35 +1,50 @@
+"""Формат ошибок: ТЗ §13 — `{"error": {"code", "message", "details"}, "requestId": "..."}`."""
 from __future__ import annotations
 
 
-async def test_error_envelope_has_request_id(app_client):
-    r = await app_client.post(
-        "/api/v1/chat/conversations", json={"title": "x"}, headers={}
-    )
-    assert r.status_code == 401
+async def test_error_envelope_shape(app_client, auth_headers):
+    headers = auth_headers()
+    headers.pop("X-User-Id", None)
+    r = await app_client.get("/v1/beats", headers=headers)
     body = r.json()
-    assert body["code"] == "auth_error"
-    assert "message" in body
+    assert "error" in body
     assert "requestId" in body
-    rid = body["requestId"]
-    assert rid is None or isinstance(rid, str)
-    assert "x-request-id" in {k.lower() for k in r.headers.keys()}
+    assert set(body["error"].keys()) >= {"code", "message"}
+    # детали опциональны
+    assert body["error"]["code"] == "MISSING_X_USER_ID"
 
 
-async def test_request_id_is_propagated_from_header(app_client):
-    r = await app_client.post(
-        "/api/v1/chat/conversations",
-        json={"title": "x"},
-        headers={"X-Request-Id": "test-rid-123"},
+async def test_error_codes_are_upper_snake(app_client):
+    """ТЗ §13: коды UPPER_SNAKE_CASE."""
+    # 401 при отсутствии Bearer
+    r = await app_client.get(
+        "/v1/beats",
+        headers={"Authorization": "", "X-User-Id": "u1"},
     )
-    assert r.headers.get("x-request-id") == "test-rid-123"
-    body = r.json()
-    if r.status_code >= 400:
-        assert body.get("requestId") == "test-rid-123"
+    code = r.json()["error"]["code"]
+    assert code == code.upper()
+    assert "_" in code or code.isupper()
 
 
-async def test_validation_error_envelope(app_client):
-    r = await app_client.post("/api/v1/chat/messages", json={"message": ""})
+async def test_request_id_propagated_from_header(app_client, auth_headers):
+    rid = "test-req-12345"
+    headers = auth_headers()
+    headers["X-Request-Id"] = rid
+    r = await app_client.get(
+        "/v1/tokens/balance", headers=headers
+    )
+    assert r.status_code == 200
+    assert r.headers.get("X-Request-Id") == rid
+
+
+async def test_validation_error_format(app_client, auth_headers, seed_beats, seed_pricing):
+    """422 при invalid body превращается в INVALID_INPUT."""
+    r = await app_client.post(
+        "/v1/tracks/generate",
+        headers=auth_headers(),
+        json={"beatId": "not-uuid"},
+    )
     assert r.status_code == 400
     body = r.json()
-    assert body["code"] == "validation_error"
-    assert "details" in body
+    assert body["error"]["code"] == "INVALID_INPUT"
+    assert "errors" in body["error"]["details"]

@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.api.errors import TrackNotFound
@@ -23,6 +23,7 @@ from app.music.schemas.tracks import (
     GenerateTrackRequest,
     GenerateTrackResponse,
     JobStatusResponse,
+    StageEntry,
     TrackResponse,
 )
 from app.music.services.generation_service import GenerationService
@@ -30,7 +31,7 @@ from app.music.services.pricing_service import PricingService
 from app.music.services.subscription_gate import SubscriptionGate
 from app.music.services.wallet_service import WalletService
 
-router = APIRouter(tags=["music-tracks"])
+router = APIRouter(tags=["Генерация треков"])
 
 
 def _get_fal_provider(request: Request) -> FalProvider:
@@ -61,16 +62,42 @@ def _get_generation_service(
     status_code=status.HTTP_200_OK,
     response_model=GenerateTrackResponse,
     response_model_by_alias=True,
-    summary="Создать задание на генерацию трека",
+    summary="Запустить генерацию трека",
     description=(
-        "Запускает асинхронную генерацию музыки через fal.ai. Поэтапно:\n\n"
-        "1. Проверка активной подписки (`subscription_inactive` → 402).\n"
-        "2. Расчёт стоимости через активный pricing rule и резервирование "
-        "токенов (`insufficient_tokens` → 402).\n"
-        "3. Отправка в fal.ai с webhook callback.\n"
-        "4. Возврат `jobId` (статус `queued/processing`).\n\n"
-        "По завершении fal вызовет `POST /webhooks/fal`, и сервис создаст "
-        "`tracks` строку. Опросить статус — `GET /tracks/jobs/{jobId}`."
+        "Создаёт асинхронное задание на генерацию музыки через fal.ai. "
+        "Поэтапно:\n\n"
+        "1. **Проверка подписки** — без активной подписки `402 "
+        "SUBSCRIPTION_REQUIRED` (или `SUBSCRIPTION_EXPIRED` если истекла).\n"
+        "2. **HEAD-проверка URL** — все `sampleUrl` и `voiceUrl` должны быть "
+        "доступны (ТЗ §6.3). При недоступности — `400 INVALID_SAMPLE_URL`.\n"
+        "3. **Резерв токенов** — рассчитывается по активному `pricing_rule` "
+        "(per_track / per_minute). При нехватке — `402 INSUFFICIENT_TOKENS`.\n"
+        "4. **Запуск пайплайна** — последовательность из 8 стадий, fal.ai "
+        "присылает webhook'и на каждой async-стадии.\n"
+        "5. **Возврат `jobId`** — статус `processing`. Опрашивайте через "
+        "`GET /v1/tracks/jobs/{jobId}`.\n\n"
+        "### Idempotency-Key\n\n"
+        "Опциональный header `Idempotency-Key: <строка ≤128 символов>` "
+        "(ТЗ §14.1). При повторном вызове с тем же ключом для того же "
+        "`X-User-Id` вернётся ранее созданный `jobId` без повторного "
+        "списания токенов. Используйте для безопасного retry при сетевых "
+        "сбоях.\n\n"
+        "### Voice (опционально)\n\n"
+        "`voiceUrl` — URL голосового референса. Получается через "
+        "`POST /v1/uploads/voice` (двухшаговый flow).\n\n"
+        "### Поля payload\n\n"
+        "* `beatId` — UUID одного из битов из `/v1/beats`.\n"
+        "* `instruments` — sample-элементы для всех 10 категорий "
+        "(`auxiliary` — ровно 3 элемента).\n"
+        "* `equalizer.tempo`: 30..160, `*Density`: 0..10.\n"
+        "* `production` — null или одно из 13 значений: studio, loFi, "
+        "ethereal, aggressive, radio, live, acapella, autotuned, reverb, "
+        "compressed, warm, crisp, distorted.\n"
+        "* `pitch` — null или одно из 9: bass, baritone, tenor, alto, "
+        "soprano, falsetto, whisper, chest, balanced.\n"
+        "* `storeStems` — если `true`, готовый трек будет содержать `stems`.\n"
+        "* `desiredDurationSeconds` — 5..600 секунд, используется для "
+        "расчёта токенов в режиме `per_minute`."
     ),
     responses=MUSIC_ERROR_RESPONSES,
 )
@@ -78,14 +105,29 @@ async def generate_track(
     body: GenerateTrackRequest,
     user: Annotated[MusicUser, Depends(get_music_user)],
     service: Annotated[GenerationService, Depends(_get_generation_service)],
+    idempotency_key: Annotated[
+        str | None,
+        Header(
+            alias="Idempotency-Key",
+            description=(
+                "Опциональный ключ для безопасного retry. При повторном "
+                "вызове с тем же ключом и тем же пользователем вернётся "
+                "ранее созданный jobId без повторного списания токенов "
+                "(ТЗ §14.1). Длина 1..128."
+            ),
+            max_length=128,
+        ),
+    ] = None,
 ) -> GenerateTrackResponse:
     payload = body.model_dump(mode="json", by_alias=False)
     payload["beat_id"] = str(body.beat_id)  # JSON-friendly
+    key = (idempotency_key or "").strip() or None
     result = await service.create_job(
         user_id=user.id,
         request_payload=payload,
         store_stems=body.store_stems,
         desired_duration_seconds=body.desired_duration_seconds,
+        client_idempotency_key=key,
     )
     return GenerateTrackResponse(
         job_id=result.job_id,
@@ -98,8 +140,16 @@ async def generate_track(
     "/tracks/jobs/{job_id}",
     response_model=JobStatusResponse,
     response_model_by_alias=True,
-    summary="Статус задания на генерацию",
-    description="Возвращает текущий статус и stage задания.",
+    summary="Статус задания генерации (с pipeline)",
+    description=(
+        "Возвращает текущее состояние задания: `status` "
+        "(`queued|processing|succeeded|failed|canceled`), `stage` "
+        "(текущая стадия пайплайна) и `pipeline` — массив всех 8 стадий "
+        "с их статусами (`pending|running|succeeded|failed|skipped`) "
+        "и таймстампами (ТЗ §9.1.2, §11).\n\n"
+        "При успехе содержит `trackId` — по нему можно забрать готовый "
+        "трек через `GET /v1/tracks/{trackId}`."
+    ),
     responses={
         k: v
         for k, v in MUSIC_ERROR_RESPONSES.items()
@@ -113,6 +163,7 @@ async def get_job(
 ) -> JobStatusResponse:
     job = await service.get_job(user_id=user.id, job_id=job_id)
     track = await service.get_track_for_job(user_id=user.id, job_id=job_id)
+    stage_events = await service.list_stage_events(user_id=user.id, job_id=job_id)
     return JobStatusResponse(
         job_id=job.id,
         status=job.status,
@@ -122,6 +173,7 @@ async def get_job(
         track_id=track.id if track else None,
         created_at=job.created_at,
         finished_at=job.finished_at,
+        pipeline=[StageEntry.model_validate(e) for e in stage_events],
     )
 
 
@@ -129,10 +181,15 @@ async def get_job(
     "/tracks/{track_id}",
     response_model=TrackResponse,
     response_model_by_alias=True,
-    summary="Финальный трек",
+    summary="Готовый трек (audioUrl + опционально stems)",
     description=(
-        "Возвращает `audioUrl`, длительность и (если `storeStems=true` при "
-        "запросе генерации) карту стемов."
+        "Возвращает финальный результат генерации:\n\n"
+        "* `audioUrl` — URL аудио-файла на CDN fal.\n"
+        "* `durationSeconds` — фактическая длительность.\n"
+        "* `stems` — карта стемов (vocals, drums, bass, …), **только** если "
+        "при запросе генерации был передан `storeStems: true` (ТЗ §3.4 §15).\n\n"
+        "Трек становится доступным после успешного завершения пайплайна "
+        "(`status: succeeded` в `/v1/tracks/jobs/{jobId}`)."
     ),
     responses={
         k: v

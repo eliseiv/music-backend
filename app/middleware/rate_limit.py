@@ -13,7 +13,7 @@ from starlette.responses import JSONResponse, Response
 
 from app.auth.api_keys import ApiKeyResolver, extract_bearer
 from app.logging_config import request_id_var
-from app.schemas.common import ErrorResponse
+from app.schemas.common import ErrorDetail, ErrorResponse
 
 
 @dataclass
@@ -39,13 +39,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     SKIP_PATHS = frozenset(
         {
             "/healthz",
-            "/api/v1/word-tools/criteria",
             "/docs",
             "/redoc",
             "/openapi.json",
-            "/api/v1/music/webhooks/fal",
-            "/api/v1/music/webhooks/billing/adapty",
-            "/api/v1/music/webhooks/billing/rf",
+            "/v1/webhooks/fal",
+            "/v1/webhooks/billing/adapty",
+            "/v1/webhooks/billing/rf",
         }
     )
 
@@ -95,9 +94,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         if not allowed:
             retry = max(1, math.ceil(retry_after))
             body = ErrorResponse(
-                code="rate_limited",
-                message="Rate limit exceeded",
-                details={"retry_after_seconds": retry},
+                error=ErrorDetail(
+                    code="RATE_LIMITED",
+                    message="Rate limit exceeded",
+                    details={"retry_after_seconds": retry},
+                ),
                 requestId=request_id_var.get(),
             ).model_dump(by_alias=True, exclude_none=True)
             return JSONResponse(

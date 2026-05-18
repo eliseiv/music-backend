@@ -164,6 +164,21 @@ class GenerateTrackResponse(CamelModel):
     tokens_reserved: int
 
 
+class StageEntry(CamelModel):
+    """Запись о статусе одной стадии пайплайна (ТЗ §9.1.2 — прогресс и шаги)."""
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    stage: JobStage
+    status: str = Field(
+        description="pending | running | succeeded | failed | skipped",
+        examples=["succeeded"],
+    )
+    started_at: datetime | None = None
+    finished_at: datetime | None = None
+    error: str | None = None
+
+
 class JobStatusResponse(CamelModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -175,6 +190,10 @@ class JobStatusResponse(CamelModel):
     track_id: UUID | None = None
     created_at: datetime
     finished_at: datetime | None = None
+    pipeline: list[StageEntry] = Field(
+        default_factory=list,
+        description="Прогресс и шаги пайплайна (ТЗ §9.1.2).",
+    )
 
 
 class TrackResponse(CamelModel):

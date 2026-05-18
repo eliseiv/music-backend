@@ -1,7 +1,7 @@
 """music seed: pricing rules + token products
 
-Revision ID: 0003
-Revises: 0002
+Revision ID: 0002
+Revises: 0001
 Create Date: 2026-05-09
 
 Inserts the canonical pricing rules and token products. Uses
@@ -17,8 +17,8 @@ from alembic import op
 
 from app.music.seed import importers
 
-revision = "0003"
-down_revision = "0002"
+revision = "0002"
+down_revision = "0001"
 branch_labels = None
 depends_on = None
 

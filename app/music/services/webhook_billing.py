@@ -1,4 +1,11 @@
-"""Применение нормализованного билинг-события к подписке и кошельку."""
+"""Применение нормализованного билинг-события к подписке и кошельку.
+
+ТЗ §10.1.4: атомарное применение к подписке И токенам — в одной транзакции.
+ТЗ §14.1: 2-фазная обработка — try_record(outcome="received") до применения,
+mark_applied после успеха. При падении посередине транзакция откатится,
+processed_webhooks останется в outcome="received" и его подберёт
+`recover_received_webhooks` при следующем старте.
+"""
 from __future__ import annotations
 
 import logging
@@ -42,18 +49,20 @@ class BillingWebhookService:
     async def apply(self, event: NormalizedBillingEvent) -> str:
         """Returns 'applied' | 'duplicate'."""
         webhook_provider = _WEBHOOK_PROVIDER[event.provider]
+
+        # --- Phase 1: try to claim event (outcome="received") ---
         async with self._sessionmaker() as session:
             async with session.begin():
                 recorded = await WebhooksRepository(session).try_record(
                     provider=webhook_provider,
                     event_id=event.event_id,
                     payload_digest=event.payload_digest,
-                    outcome="applied",
+                    outcome="received",
                 )
         if not recorded:
             return "duplicate"
 
-        # Resolve user
+        # --- Phase 2: единая транзакция — user, subscription, wallet ---
         async with self._sessionmaker() as session:
             async with session.begin():
                 user = await MusicUsersRepository(session).get_or_create(
@@ -61,12 +70,8 @@ class BillingWebhookService:
                 )
                 user_id = user.id
 
-        # Subscription state
-        async with self._sessionmaker() as session:
-            async with session.begin():
                 subs = SubscriptionsRepository(session)
                 state = await subs.ensure_exists(user_id)
-                # Reorder protection
                 if (
                     state.last_event_occurred_at is not None
                     and state.last_event_occurred_at > event.occurred_at
@@ -82,15 +87,33 @@ class BillingWebhookService:
                     state.last_event_occurred_at or event.occurred_at,
                     event.occurred_at,
                 )
+                await session.flush()
 
-        # Wallet effects
+                await self._apply_wallet_effects(session, user_id, event)
+
+                # mark applied внутри той же транзакции
+                await WebhooksRepository(session).mark_applied(
+                    provider=webhook_provider, event_id=event.event_id
+                )
+
+        return "applied"
+
+    async def _apply_wallet_effects(
+        self,
+        session: AsyncSession,
+        user_id,
+        event: NormalizedBillingEvent,
+    ) -> None:
         if event.kind in {
             BillingEventKind.subscription_purchased,
             BillingEventKind.subscription_renewed,
         }:
-            await self._wallet.set_frozen(user_id=user_id, frozen=False)
+            await WalletService.set_frozen_in_session(
+                session, user_id=user_id, frozen=False
+            )
             if event.token_amount and event.token_amount > 0:
-                await self._wallet.credit(
+                await WalletService.credit_in_session(
+                    session,
                     user_id=user_id,
                     amount=event.token_amount,
                     kind=TokenLedgerKind.credit_subscription_grant,
@@ -99,13 +122,16 @@ class BillingWebhookService:
                     meta={"product": event.product_external_id},
                 )
         elif event.kind == BillingEventKind.subscription_expired:
-            await self._wallet.set_frozen(user_id=user_id, frozen=True)
+            await WalletService.set_frozen_in_session(
+                session, user_id=user_id, frozen=True
+            )
         elif event.kind == BillingEventKind.one_time_purchase:
             tokens_to_credit = await self._resolve_tokens_for_product(
-                event=event
+                session=session, event=event
             )
             if tokens_to_credit > 0:
-                await self._wallet.credit(
+                await WalletService.credit_in_session(
+                    session,
                     user_id=user_id,
                     amount=tokens_to_credit,
                     kind=TokenLedgerKind.credit_purchase,
@@ -117,10 +143,13 @@ class BillingWebhookService:
             amount = (
                 event.token_amount
                 if event.token_amount is not None
-                else await self._resolve_tokens_for_product(event=event)
+                else await self._resolve_tokens_for_product(
+                    session=session, event=event
+                )
             )
             if amount > 0:
-                await self._wallet.credit(
+                await WalletService.credit_in_session(
+                    session,
                     user_id=user_id,
                     amount=-amount,
                     kind=TokenLedgerKind.credit_refund,
@@ -128,10 +157,10 @@ class BillingWebhookService:
                     ref_id=event.event_id,
                     meta={"product": event.product_external_id},
                 )
-        return "applied"
 
+    @staticmethod
     async def _resolve_tokens_for_product(
-        self, *, event: NormalizedBillingEvent
+        *, session: AsyncSession, event: NormalizedBillingEvent
     ) -> int:
         if not event.product_external_id:
             return 0
@@ -140,9 +169,9 @@ class BillingWebhookService:
             if event.provider == BillingProvider.adapty
             else BillingPlatform.rustore
         )
-        async with self._sessionmaker() as session:
-            repo = TokenProductsRepository(session)
-            products: list[TokenProduct] = await repo.list_active()
+        products: list[TokenProduct] = await TokenProductsRepository(
+            session
+        ).list_active()
         for p in products:
             if (
                 p.platform == platform

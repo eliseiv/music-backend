@@ -8,13 +8,13 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.logging_config import request_id_var
-from app.schemas.common import ErrorResponse
+from app.schemas.common import ErrorDetail, ErrorResponse
 
 logger = logging.getLogger(__name__)
 
 
 class APIError(Exception):
-    code: str = "error"
+    code: str = "ERROR"
     http_status: int = 500
     message: str = "Internal error"
 
@@ -36,125 +36,144 @@ class APIError(Exception):
         super().__init__(self.message)
 
 
+# --- Generic ---
+
+
 class ValidationFailed(APIError):
-    code = "validation_error"
+    code = "INVALID_INPUT"
     http_status = 400
     message = "Validation failed"
 
 
-class InvalidQueryForCriterion(APIError):
-    code = "invalid_query_for_criterion"
-    http_status = 422
-    message = "Query is not suitable for the selected criterion"
-
-
-class ConversationNotFound(APIError):
-    code = "conversation_not_found"
-    http_status = 404
-    message = "Conversation not found"
-
-
-class ConversationForbidden(APIError):
-    code = "conversation_forbidden"
-    http_status = 403
-    message = "Conversation does not belong to the current user"
-
-
 class RateLimited(APIError):
-    code = "rate_limited"
+    code = "RATE_LIMITED"
     http_status = 429
     message = "Rate limit exceeded"
 
 
-class LLMTimeout(APIError):
-    code = "llm_timeout"
-    http_status = 504
-    message = "LLM provider timed out"
-
-
-class LLMProviderError(APIError):
-    code = "llm_provider_error"
-    http_status = 502
-    message = "LLM provider failed"
-
-
 class AuthError(APIError):
-    code = "auth_error"
+    code = "UNAUTHORIZED"
     http_status = 401
     message = "Invalid or missing API key"
 
 
-# --- Music module errors ---
+# --- Music: header / access ---
 
 
 class MissingXUserId(APIError):
-    code = "missing_x_user_id"
+    code = "MISSING_X_USER_ID"
     http_status = 400
     message = "Missing or invalid X-User-Id header"
 
 
-class SubscriptionInactive(APIError):
-    code = "subscription_inactive"
+class Forbidden(APIError):
+    code = "FORBIDDEN"
+    http_status = 403
+    message = "Resource belongs to another user"
+
+
+# --- Music: subscription / tokens ---
+
+
+class SubscriptionRequired(APIError):
+    code = "SUBSCRIPTION_REQUIRED"
     http_status = 402
     message = "Active subscription required"
 
 
+class SubscriptionExpired(SubscriptionRequired):
+    """Частный случай: подписка была, но истекла.
+
+    Наследуется от SubscriptionRequired — `except SubscriptionRequired`
+    отлавливает оба класса.
+    """
+
+    code = "SUBSCRIPTION_EXPIRED"
+    http_status = 402
+    message = "Subscription has expired"
+
+
+# Backward-compat alias: некоторые внутренние участки кода до рефакторинга
+# поднимали SubscriptionInactive. Оставляем как алиас на SubscriptionRequired,
+# чтобы старый код продолжил работать; при необходимости явно используйте
+# SubscriptionExpired для истёкших подписок.
+SubscriptionInactive = SubscriptionRequired
+
+
 class InsufficientTokens(APIError):
-    code = "insufficient_tokens"
+    code = "INSUFFICIENT_TOKENS"
     http_status = 402
     message = "Not enough tokens to perform the operation"
 
 
+# --- Music: resources ---
+
+
 class JobNotFound(APIError):
-    code = "job_not_found"
+    code = "JOB_NOT_FOUND"
     http_status = 404
     message = "Generation job not found"
 
 
 class JobForbidden(APIError):
-    code = "job_forbidden"
+    code = "FORBIDDEN"
     http_status = 403
     message = "Generation job belongs to another user"
 
 
 class TrackNotFound(APIError):
-    code = "track_not_found"
+    code = "TRACK_NOT_FOUND"
     http_status = 404
     message = "Track not found"
 
 
 class BeatNotFound(APIError):
-    code = "beat_not_found"
+    code = "BEAT_NOT_FOUND"
     http_status = 404
     message = "Beat not found"
 
 
+# --- Music: validation ---
+
+
+class InvalidSampleUrl(APIError):
+    code = "INVALID_SAMPLE_URL"
+    http_status = 400
+    message = "Sample URL is not reachable or not allowed"
+
+
+# --- Music: webhooks ---
+
+
 class WebhookSignatureInvalid(APIError):
-    code = "webhook_signature_invalid"
+    code = "WEBHOOK_SIGNATURE_INVALID"
     http_status = 401
     message = "Webhook signature verification failed"
 
 
 class WebhookPayloadInvalid(APIError):
-    code = "webhook_payload_invalid"
+    code = "WEBHOOK_PAYLOAD_INVALID"
     http_status = 400
     message = "Webhook payload is malformed"
 
 
+# --- Music: internal ---
+
+
 class PricingRuleMissing(APIError):
-    code = "pricing_rule_missing"
+    code = "PRICING_RULE_MISSING"
     http_status = 500
     message = "No active pricing rule configured for the provider model"
 
 
 class FalProviderError(APIError):
-    code = "fal_provider_error"
+    code = "PROVIDER_FAILED"
     http_status = 502
     message = "fal.ai provider returned an error"
 
 
 class FalTimeout(APIError):
-    code = "fal_timeout"
+    code = "PROVIDER_TIMEOUT"
     http_status = 504
     message = "fal.ai provider timed out"
 
@@ -169,9 +188,7 @@ def _envelope(
     headers: dict[str, str] | None = None,
 ) -> JSONResponse:
     body = ErrorResponse(
-        code=code,
-        message=message,
-        details=details,
+        error=ErrorDetail(code=code, message=message, details=details),
         requestId=request_id,
     ).model_dump(by_alias=True, exclude_none=True)
     return JSONResponse(body, status_code=status_code, headers=headers)
@@ -203,7 +220,7 @@ def register_exception_handlers(app: FastAPI) -> None:
         request: Request, exc: RequestValidationError
     ) -> JSONResponse:
         return _envelope(
-            code="validation_error",
+            code="INVALID_INPUT",
             message="Request validation failed",
             status_code=400,
             details={"errors": exc.errors()},
@@ -214,7 +231,7 @@ def register_exception_handlers(app: FastAPI) -> None:
     async def unhandled_handler(request: Request, exc: Exception) -> JSONResponse:
         logger.exception("Unhandled exception")
         return _envelope(
-            code="internal_error",
+            code="INTERNAL_ERROR",
             message="Internal server error",
             status_code=500,
             details=None,
