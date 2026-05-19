@@ -1,52 +1,195 @@
 [
   {
     "genre": "electronic_dance",
-    "tags": ["house", "edm"],
-    "title": "Pulse 124",
-    "audio_url": "https://appsprobek.shop/static/audio/beats/electronic_dance.mp3",
-    "duration_seconds": 17,
+    "tags": [
+      "house",
+      "edm"
+    ],
+    "title": "House Pulse 124",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/electronic_dance_1.mp3",
+    "duration_seconds": 32,
     "bpm": 124,
     "key": "Am",
     "sort_order": 1
   },
   {
-    "genre": "rap",
-    "tags": ["trap", "phonk"],
-    "title": "Trap Cinematic",
-    "audio_url": "https://appsprobek.shop/static/audio/beats/rap.mp3",
-    "duration_seconds": 10,
-    "bpm": 90,
-    "key": "Gm",
+    "genre": "electronic_dance",
+    "tags": [
+      "techno",
+      "edm"
+    ],
+    "title": "Techno Driver",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/electronic_dance_2.mp3",
+    "duration_seconds": 14,
+    "bpm": 130,
+    "key": "Dm",
     "sort_order": 2
   },
   {
-    "genre": "lofi",
-    "tags": ["lofi_hip_hop", "rainy"],
-    "title": "Rainy Window",
-    "audio_url": "https://appsprobek.shop/static/audio/beats/lofi.mp3",
-    "duration_seconds": 22,
-    "bpm": 75,
-    "key": "Cmaj7",
+    "genre": "electronic_dance",
+    "tags": [
+      "dubstep",
+      "drum_and_bass"
+    ],
+    "title": "Dub Pressure",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/electronic_dance_3.mp3",
+    "duration_seconds": 14,
+    "bpm": 140,
+    "key": "Cm",
     "sort_order": 3
   },
   {
-    "genre": "global_groove",
-    "tags": ["afrobeat", "world"],
-    "title": "Afro Sunrise",
-    "audio_url": "https://appsprobek.shop/static/audio/beats/global_groove.mp3",
+    "genre": "rap",
+    "tags": [
+      "trap",
+      "phonk"
+    ],
+    "title": "Trap Cinematic",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/rap_1.mp3",
     "duration_seconds": 10,
-    "bpm": 110,
-    "key": "Em",
+    "bpm": 90,
+    "key": "Gm",
     "sort_order": 4
   },
   {
+    "genre": "rap",
+    "tags": [
+      "boom_bap",
+      "old_school"
+    ],
+    "title": "Boom Bap Classic",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/rap_2.mp3",
+    "duration_seconds": 40,
+    "bpm": 95,
+    "key": "Am",
+    "sort_order": 5
+  },
+  {
+    "genre": "rap",
+    "tags": [
+      "drill"
+    ],
+    "title": "Drill Tension",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/rap_3.mp3",
+    "duration_seconds": 29,
+    "bpm": 140,
+    "key": "Em",
+    "sort_order": 6
+  },
+  {
+    "genre": "lofi",
+    "tags": [
+      "lofi_hip_hop",
+      "rainy"
+    ],
+    "title": "Rainy Window",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/lofi_1.mp3",
+    "duration_seconds": 48,
+    "bpm": 75,
+    "key": "Cmaj7",
+    "sort_order": 7
+  },
+  {
+    "genre": "lofi",
+    "tags": [
+      "chillhop",
+      "jazz_lofi"
+    ],
+    "title": "Chillhop Cafe",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/lofi_2.mp3",
+    "duration_seconds": 46,
+    "bpm": 80,
+    "key": "Fmaj7",
+    "sort_order": 8
+  },
+  {
+    "genre": "lofi",
+    "tags": [
+      "study_beats",
+      "vinyl"
+    ],
+    "title": "Study Vinyl",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/lofi_3.mp3",
+    "duration_seconds": 13,
+    "bpm": 70,
+    "key": "Dmaj7",
+    "sort_order": 9
+  },
+  {
+    "genre": "global_groove",
+    "tags": [
+      "afrobeat",
+      "world"
+    ],
+    "title": "Afro Sunrise",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/global_groove_1.mp3",
+    "duration_seconds": 38,
+    "bpm": 110,
+    "key": "Em",
+    "sort_order": 10
+  },
+  {
+    "genre": "global_groove",
+    "tags": [
+      "latin",
+      "samba"
+    ],
+    "title": "Latin Heat",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/global_groove_2.mp3",
+    "duration_seconds": 32,
+    "bpm": 120,
+    "key": "Am",
+    "sort_order": 11
+  },
+  {
+    "genre": "global_groove",
+    "tags": [
+      "reggaeton"
+    ],
+    "title": "Reggaeton Vibes",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/global_groove_3.mp3",
+    "duration_seconds": 28,
+    "bpm": 95,
+    "key": "Dm",
+    "sort_order": 12
+  },
+  {
     "genre": "relaxing_meditation",
-    "tags": ["ambient", "nature"],
+    "tags": [
+      "ambient",
+      "nature"
+    ],
     "title": "Forest Breath",
-    "audio_url": "https://appsprobek.shop/static/audio/beats/relaxing_meditation.mp3",
-    "duration_seconds": 18,
+    "audio_url": "https://appsprobek.shop/static/audio/beats/relaxing_meditation_1.mp3",
+    "duration_seconds": 55,
     "bpm": 60,
     "key": "Dmaj",
-    "sort_order": 5
+    "sort_order": 13
+  },
+  {
+    "genre": "relaxing_meditation",
+    "tags": [
+      "drone",
+      "spa"
+    ],
+    "title": "Spa Drone",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/relaxing_meditation_2.mp3",
+    "duration_seconds": 47,
+    "bpm": 55,
+    "key": "Cmaj",
+    "sort_order": 14
+  },
+  {
+    "genre": "relaxing_meditation",
+    "tags": [
+      "binaural",
+      "sleep"
+    ],
+    "title": "Sleep Waves",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/relaxing_meditation_3.mp3",
+    "duration_seconds": 30,
+    "bpm": 50,
+    "key": "Gmaj",
+    "sort_order": 15
   }
 ]
