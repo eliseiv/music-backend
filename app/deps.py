@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import Depends, Request, Security
+from fastapi import Depends, Header, Request, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -67,14 +67,24 @@ async def get_music_user(
     sessionmaker: Annotated[
         async_sessionmaker[AsyncSession], Depends(get_sessionmaker)
     ],
+    x_user_id: Annotated[
+        str | None,
+        Header(
+            alias="X-User-Id",
+            description=(
+                "Стабильный идентификатор устройства/пользователя "
+                "(например, Adapty profile id). По нему backend ведёт "
+                "записи в music_users."
+            ),
+            examples=["adapty-profile-12345"],
+            max_length=_MAX_EXTERNAL_ID_LEN,
+        ),
+    ] = None,
 ) -> MusicUser:
     cached = getattr(request.state, "music_user", None)
     if isinstance(cached, MusicUser):
         return cached
-    external_id_raw = request.headers.get("X-User-Id") or request.headers.get(
-        "x-user-id"
-    )
-    external_id = (external_id_raw or "").strip()
+    external_id = (x_user_id or "").strip()
     if not external_id:
         raise MissingXUserId(details={"reason": "header_missing"})
     if len(external_id) > _MAX_EXTERNAL_ID_LEN:
