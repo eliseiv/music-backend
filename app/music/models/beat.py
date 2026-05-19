@@ -13,7 +13,7 @@ from sqlalchemy import (
     UniqueConstraint,
     text,
 )
-from sqlalchemy.dialects.postgresql import JSONB, UUID as PgUUID
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID as PgUUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, TimestampMixin
@@ -25,6 +25,7 @@ class Beat(Base, TimestampMixin):
     __table_args__ = (
         UniqueConstraint("audio_url", name="uq_beats_audio_url"),
         Index("ix_beats_genre_active_sort_order", "genre", "active", "sort_order"),
+        Index("ix_beats_tags_gin", "tags", postgresql_using="gin"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -35,6 +36,10 @@ class Beat(Base, TimestampMixin):
     )
     genre: Mapped[BeatGenre] = mapped_column(
         SAEnum(BeatGenre, name="beat_genre", native_enum=True), nullable=False
+    )
+    # Поджанры (house, edm, trap, lofi_hip_hop и т.п.) — для фильтрации в UI.
+    tags: Mapped[list[str]] = mapped_column(
+        ARRAY(Text), nullable=False, default=list, server_default=text("'{}'::text[]")
     )
     title: Mapped[str] = mapped_column(String(160), nullable=False)
     audio_url: Mapped[str] = mapped_column(Text, nullable=False)

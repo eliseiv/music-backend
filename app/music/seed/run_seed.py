@@ -26,11 +26,12 @@ logger = logging.getLogger("app.music.seed")
 BEATS_UPSERT = text(
     """
     INSERT INTO beats (
-        genre, title, audio_url, duration_seconds, bpm, key,
+        genre, tags, title, audio_url, duration_seconds, bpm, key,
         preview_url, active, sort_order, meta
     )
     VALUES (
         CAST(:genre AS beat_genre),
+        :tags,
         :title,
         :audio_url,
         :duration_seconds,
@@ -43,6 +44,7 @@ BEATS_UPSERT = text(
     )
     ON CONFLICT (audio_url) DO UPDATE SET
         genre = EXCLUDED.genre,
+        tags = EXCLUDED.tags,
         title = EXCLUDED.title,
         duration_seconds = EXCLUDED.duration_seconds,
         bpm = EXCLUDED.bpm,
@@ -86,6 +88,8 @@ SAMPLES_UPSERT = text(
 
 def _row_for_beat(seed: importers.BeatSeed) -> dict:
     row = seed.to_row()
+    # asyncpg expects a Python list for text[] columns.
+    row["tags"] = list(row.get("tags") or [])
     if row.get("meta") is not None:
         import json
 

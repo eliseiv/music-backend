@@ -17,6 +17,7 @@ class BeatItem(CamelModel):
                 {
                     "id": "f2bf8c34-4125-4c98-a838-40c22fabb148",
                     "genre": "electronic_dance",
+                    "tags": ["house", "edm"],
                     "title": "Pulse 124",
                     "audioUrl": "https://cdn.example/beats/pulse_124.mp3",
                     "previewUrl": None,
@@ -30,6 +31,13 @@ class BeatItem(CamelModel):
 
     id: UUID
     genre: BeatGenre
+    tags: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Поджанры (house, edm, trap, lofi_hip_hop и т.п.). "
+            "Допустимые значения зависят от genre — см. BEAT_SUBGENRE_TAGS."
+        ),
+    )
     title: str
     audio_url: str
     preview_url: str | None = None

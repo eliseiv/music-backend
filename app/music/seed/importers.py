@@ -20,12 +20,13 @@ from app.music.enums import (
     RoundingMode,
     SampleCategory,
 )
-from app.music.tags import validate_tags
+from app.music.tags import validate_beat_tags, validate_tags
 
 
 @dataclass(frozen=True)
 class BeatSeed:
     genre: str
+    tags: list[str]
     title: str
     audio_url: str
     duration_seconds: int | None
@@ -97,9 +98,11 @@ def parse_beats(path: Path) -> list[BeatSeed]:
     parsed: list[BeatSeed] = []
     for i, row in enumerate(rows):
         try:
-            genre = BeatGenre(row["genre"]).value
+            genre_enum = BeatGenre(row["genre"])
+            tags = validate_beat_tags(genre_enum, list(row.get("tags", [])))
             seed = BeatSeed(
-                genre=genre,
+                genre=genre_enum.value,
+                tags=tags,
                 title=str(row["title"]).strip(),
                 audio_url=str(row["audio_url"]).strip(),
                 duration_seconds=row.get("duration_seconds"),

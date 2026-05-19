@@ -17,6 +17,7 @@ class SampleItem(CamelModel):
             "examples": [
                 {
                     "id": "7457f283-b166-4d29-830c-dae127dd799d",
+                    "name": "Upright Walk",
                     "url": "https://cdn.example/samples/upright_walk.wav",
                     "tags": ["all_instruments", "jazz_trio"],
                 }
@@ -25,6 +26,10 @@ class SampleItem(CamelModel):
     )
 
     id: UUID
+    name: str = Field(
+        description="Человекочитаемое имя сэмпла (для UI).",
+        examples=["Upright Walk"],
+    )
     url: str = Field(
         description="URL аудио-файла сэмпла.",
         examples=["https://cdn.example/samples/upright_walk.wav"],
@@ -50,6 +55,7 @@ class SamplesByCategoryResponse(CamelModel):
                         "bass": [
                             {
                                 "id": "uuid",
+                                "name": "Sub Saw",
                                 "url": "https://cdn.example/samples/sub_saw.wav",
                                 "tags": ["all_instruments", "synth_haven"],
                             }
@@ -64,6 +70,7 @@ class SamplesByCategoryResponse(CamelModel):
                         "mixing": [
                             {
                                 "id": "uuid",
+                                "name": "Master Bus Saturator",
                                 "url": "https://cdn.example/samples/master.wav",
                                 "tags": [],
                             }
@@ -102,7 +109,9 @@ def group_samples_by_category(samples) -> dict[str, list[SampleItem]]:
     grouped: dict[str, list[SampleItem]] = defaultdict(list)
     for s in samples:
         key = category_response_key(s.category)
-        grouped[key].append(SampleItem(id=s.id, url=s.audio_url, tags=list(s.tags)))
+        grouped[key].append(
+            SampleItem(id=s.id, name=s.title, url=s.audio_url, tags=list(s.tags))
+        )
     ordered: dict[str, list[SampleItem]] = {}
     for cat in (
         SampleCategory.harmonic_bass,

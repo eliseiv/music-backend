@@ -1,6 +1,7 @@
 [
   {
     "genre": "electronic_dance",
+    "tags": ["house", "edm"],
     "title": "Pulse 124",
     "audio_url": "https://appsprobek.shop/static/audio/beats/electronic_dance.mp3",
     "duration_seconds": 17,
@@ -10,6 +11,7 @@
   },
   {
     "genre": "rap",
+    "tags": ["trap", "phonk"],
     "title": "Trap Cinematic",
     "audio_url": "https://appsprobek.shop/static/audio/beats/rap.mp3",
     "duration_seconds": 10,
@@ -19,6 +21,7 @@
   },
   {
     "genre": "lofi",
+    "tags": ["lofi_hip_hop", "rainy"],
     "title": "Rainy Window",
     "audio_url": "https://appsprobek.shop/static/audio/beats/lofi.mp3",
     "duration_seconds": 22,
@@ -28,6 +31,7 @@
   },
   {
     "genre": "global_groove",
+    "tags": ["afrobeat", "world"],
     "title": "Afro Sunrise",
     "audio_url": "https://appsprobek.shop/static/audio/beats/global_groove.mp3",
     "duration_seconds": 10,
@@ -37,6 +41,7 @@
   },
   {
     "genre": "relaxing_meditation",
+    "tags": ["ambient", "nature"],
     "title": "Forest Breath",
     "audio_url": "https://appsprobek.shop/static/audio/beats/relaxing_meditation.mp3",
     "duration_seconds": 18,
