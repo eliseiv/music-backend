@@ -2,7 +2,7 @@
   {
     "genre": "electronic_dance",
     "title": "Pulse 124",
-    "audio_url": "https://v3b.fal.media/files/b/0a9ad210/TwM3mwWzw5ks_ezfKQLce_beat_electronic_dance.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/electronic_dance.mp3",
     "duration_seconds": 17,
     "bpm": 124,
     "key": "Am",
@@ -11,7 +11,7 @@
   {
     "genre": "rap",
     "title": "Trap Cinematic",
-    "audio_url": "https://v3b.fal.media/files/b/0a9ad211/JCcm5hI6O9i3K-Q_U4HjG_beat_rap.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/rap.mp3",
     "duration_seconds": 10,
     "bpm": 90,
     "key": "Gm",
@@ -20,7 +20,7 @@
   {
     "genre": "lofi",
     "title": "Rainy Window",
-    "audio_url": "https://v3b.fal.media/files/b/0a9ad212/O31JivDaglzXOFxSrgCe2_beat_lofi.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/lofi.mp3",
     "duration_seconds": 22,
     "bpm": 75,
     "key": "Cmaj7",
@@ -29,7 +29,7 @@
   {
     "genre": "global_groove",
     "title": "Afro Sunrise",
-    "audio_url": "https://v3b.fal.media/files/b/0a9ad213/jQ2bEjMA7Av2dOk7gyAjY_beat_global_groove.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/global_groove.mp3",
     "duration_seconds": 10,
     "bpm": 110,
     "key": "Em",
@@ -38,7 +38,7 @@
   {
     "genre": "relaxing_meditation",
     "title": "Forest Breath",
-    "audio_url": "https://v3b.fal.media/files/b/0a9ad213/nSm4tGWE35-DOXTmFQfga_beat_relaxing_meditation.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/beats/relaxing_meditation.mp3",
     "duration_seconds": 18,
     "bpm": 60,
     "key": "Dmaj",
