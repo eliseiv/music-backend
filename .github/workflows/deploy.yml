@@ -38,12 +38,15 @@ jobs:
             cd "$DEPLOY_DIR/repo"
             git fetch origin "$BRANCH"
             git reset --hard "origin/$BRANCH"
-            # Если в репо обновился deploy/ — синхронизируем (сохраняя certbot/ и .env)
+            # Если в репо обновился deploy/ — синхронизируем (сохраняя certbot/,
+            # .env, static/ — пользовательский контент и репо).
             cd "$DEPLOY_DIR"
             rsync -a --delete \
               --exclude='/certbot' \
               --exclude='/.env' \
               --exclude='/repo' \
+              --exclude='/static' \
+              --exclude='/backups' \
               ./repo/deploy/ ./
             bash scripts/deploy.sh
           EOF
