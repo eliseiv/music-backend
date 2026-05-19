@@ -2,8 +2,8 @@
   {
     "genre": "electronic_dance",
     "title": "Pulse 124",
-    "audio_url": "https://download.samplelib.com/wav/sample-12s.wav",
-    "duration_seconds": 12,
+    "audio_url": "https://v3b.fal.media/files/b/0a9ad210/TwM3mwWzw5ks_ezfKQLce_beat_electronic_dance.mp3",
+    "duration_seconds": 17,
     "bpm": 124,
     "key": "Am",
     "sort_order": 1
@@ -11,37 +11,37 @@
   {
     "genre": "rap",
     "title": "Trap Cinematic",
-    "audio_url": "https://download.samplelib.com/wav/sample-9s.wav",
-    "duration_seconds": 9,
+    "audio_url": "https://v3b.fal.media/files/b/0a9ad211/JCcm5hI6O9i3K-Q_U4HjG_beat_rap.mp3",
+    "duration_seconds": 10,
     "bpm": 90,
     "key": "Gm",
-    "sort_order": 1
+    "sort_order": 2
   },
   {
     "genre": "lofi",
     "title": "Rainy Window",
-    "audio_url": "https://download.samplelib.com/wav/sample-6s.wav",
-    "duration_seconds": 6,
+    "audio_url": "https://v3b.fal.media/files/b/0a9ad212/O31JivDaglzXOFxSrgCe2_beat_lofi.mp3",
+    "duration_seconds": 22,
     "bpm": 75,
     "key": "Cmaj7",
-    "sort_order": 1
+    "sort_order": 3
   },
   {
     "genre": "global_groove",
     "title": "Afro Sunrise",
-    "audio_url": "https://download.samplelib.com/wav/sample-3s.wav",
-    "duration_seconds": 3,
+    "audio_url": "https://v3b.fal.media/files/b/0a9ad213/jQ2bEjMA7Av2dOk7gyAjY_beat_global_groove.mp3",
+    "duration_seconds": 10,
     "bpm": 110,
     "key": "Em",
-    "sort_order": 1
+    "sort_order": 4
   },
   {
     "genre": "relaxing_meditation",
     "title": "Forest Breath",
-    "audio_url": "https://download.samplelib.com/wav/sample-15s.wav",
-    "duration_seconds": 15,
+    "audio_url": "https://v3b.fal.media/files/b/0a9ad213/nSm4tGWE35-DOXTmFQfga_beat_relaxing_meditation.mp3",
+    "duration_seconds": 18,
     "bpm": 60,
     "key": "Dmaj",
-    "sort_order": 1
+    "sort_order": 5
   }
 ]

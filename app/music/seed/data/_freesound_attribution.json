@@ -1,0 +1,695 @@
+[
+  {
+    "kind": "beat",
+    "genre": "electronic_dance",
+    "source": "freesound.org/s/152670",
+    "author": "sumsun",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "beat",
+    "genre": "rap",
+    "source": "freesound.org/s/332064",
+    "author": "AlonnaAllen",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "beat",
+    "genre": "lofi",
+    "source": "freesound.org/s/806474",
+    "author": "CVLTIV8R",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "beat",
+    "genre": "global_groove",
+    "source": "freesound.org/s/371843",
+    "author": "Mrthenoronha",
+    "license": "https://creativecommons.org/licenses/by-nc/4.0/"
+  },
+  {
+    "kind": "beat",
+    "genre": "relaxing_meditation",
+    "source": "freesound.org/s/572560",
+    "author": "CarlosCarty",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "all_instruments",
+    "source": "freesound.org/s/424451",
+    "author": "__stone__",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "acoustic_guitars",
+    "source": "freesound.org/s/82931",
+    "author": "NoiseCollector",
+    "license": "http://creativecommons.org/licenses/by/3.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "global_ensemble",
+    "source": "freesound.org/s/545863",
+    "author": "jalastram",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "acoustic_instruments",
+    "source": "freesound.org/s/112567",
+    "author": "juskiddink",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "chill_keys",
+    "source": "freesound.org/s/632255",
+    "author": "Cloud-10",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "seventies_fusion",
+    "source": "freesound.org/s/545862",
+    "author": "jalastram",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "jazz_trio",
+    "source": "freesound.org/s/545861",
+    "author": "jalastram",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "rock_n_roll",
+    "source": "freesound.org/s/193777",
+    "author": "Ionicsmusic",
+    "license": "http://creativecommons.org/licenses/by-nc/3.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "soft_rock",
+    "source": "freesound.org/s/545860",
+    "author": "jalastram",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "classical_strings",
+    "source": "freesound.org/s/342091",
+    "author": "Terry93D",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "synth_haven",
+    "source": "freesound.org/s/3441",
+    "author": "patchen",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "smooth_pop",
+    "source": "freesound.org/s/435371",
+    "author": "dekstromoramid",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "carolina_trap_set",
+    "source": "freesound.org/s/396781",
+    "author": "GhostSyndicate",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_bass",
+    "tag": "brass_and_winds",
+    "source": "freesound.org/s/536010",
+    "author": "BaDoink",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "all_instruments",
+    "source": "freesound.org/s/261214",
+    "author": "Stereo Surgeon",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "acoustic_guitars",
+    "source": "freesound.org/s/528363",
+    "author": "deleted_user_6725533",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "global_ensemble",
+    "source": "freesound.org/s/424400",
+    "author": "@realdavidfloat",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "acoustic_instruments",
+    "source": "freesound.org/s/112566",
+    "author": "juskiddink",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "chill_keys",
+    "source": "freesound.org/s/528222",
+    "author": "ohhsnapp",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "seventies_fusion",
+    "source": "freesound.org/s/424395",
+    "author": "@realdavidfloat",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "jazz_trio",
+    "source": "freesound.org/s/18124",
+    "author": "SampleBasement",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "rock_n_roll",
+    "source": "freesound.org/s/625661",
+    "author": "Joh155",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "soft_rock",
+    "source": "freesound.org/s/18123",
+    "author": "SampleBasement",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "classical_strings",
+    "source": "freesound.org/s/342090",
+    "author": "Terry93D",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "synth_haven",
+    "source": "freesound.org/s/27386",
+    "author": "ocea",
+    "license": "https://creativecommons.org/licenses/by-nc/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "smooth_pop",
+    "source": "freesound.org/s/18122",
+    "author": "SampleBasement",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "carolina_trap_set",
+    "source": "freesound.org/s/261209",
+    "author": "Stereo Surgeon",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_lead",
+    "tag": "brass_and_winds",
+    "source": "freesound.org/s/18120",
+    "author": "SampleBasement",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "all_instruments",
+    "source": "freesound.org/s/840528",
+    "author": "CAT-FOX_ALEX",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "acoustic_guitars",
+    "source": "freesound.org/s/800556",
+    "author": "CVLTIV8R",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "global_ensemble",
+    "source": "freesound.org/s/800552",
+    "author": "CVLTIV8R",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "acoustic_instruments",
+    "source": "freesound.org/s/112564",
+    "author": "juskiddink",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "chill_keys",
+    "source": "freesound.org/s/528223",
+    "author": "ohhsnapp",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "seventies_fusion",
+    "source": "freesound.org/s/800551",
+    "author": "CVLTIV8R",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "jazz_trio",
+    "source": "freesound.org/s/800550",
+    "author": "CVLTIV8R",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "rock_n_roll",
+    "source": "freesound.org/s/533847",
+    "author": "tosha73",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "soft_rock",
+    "source": "freesound.org/s/800549",
+    "author": "CVLTIV8R",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "classical_strings",
+    "source": "freesound.org/s/342089",
+    "author": "Terry93D",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "synth_haven",
+    "source": "freesound.org/s/122347",
+    "author": "Anillogic",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "smooth_pop",
+    "source": "freesound.org/s/800548",
+    "author": "CVLTIV8R",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "carolina_trap_set",
+    "source": "freesound.org/s/261208",
+    "author": "Stereo Surgeon",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "harmonic_chord",
+    "tag": "brass_and_winds",
+    "source": "freesound.org/s/800547",
+    "author": "CVLTIV8R",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_kick",
+    "tag": "all_drums",
+    "source": "freesound.org/s/673508",
+    "author": "TheEndOfACycle",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_kick",
+    "tag": "acoustic",
+    "source": "freesound.org/s/47952",
+    "author": "Jesterroot4",
+    "license": "http://creativecommons.org/licenses/sampling+/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_kick",
+    "tag": "dusty",
+    "source": "freesound.org/s/745125",
+    "author": "EtherAudio",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_kick",
+    "tag": "edm",
+    "source": "freesound.org/s/269716",
+    "author": "IanStarGem",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_kick",
+    "tag": "experimental",
+    "source": "freesound.org/s/360321",
+    "author": "BConstructSound",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_kick",
+    "tag": "trap_808",
+    "source": "freesound.org/s/808",
+    "author": "bdu",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_kick",
+    "tag": "vintage_electronic",
+    "source": "freesound.org/s/622917",
+    "author": "SkyernAklea",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_snare",
+    "tag": "all_drums",
+    "source": "freesound.org/s/673515",
+    "author": "TheEndOfACycle",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_snare",
+    "tag": "acoustic",
+    "source": "freesound.org/s/381930",
+    "author": "laffik",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_snare",
+    "tag": "dusty",
+    "source": "freesound.org/s/511957",
+    "author": "isaacMedina",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_snare",
+    "tag": "edm",
+    "source": "freesound.org/s/270276",
+    "author": "IanStarGem",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_snare",
+    "tag": "experimental",
+    "source": "freesound.org/s/559240",
+    "author": "bl31gt0",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_snare",
+    "tag": "trap_808",
+    "source": "freesound.org/s/278983",
+    "author": "dflee4",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_snare",
+    "tag": "vintage_electronic",
+    "source": "freesound.org/s/622920",
+    "author": "SkyernAklea",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_closed_hihat",
+    "tag": "all_drums",
+    "source": "freesound.org/s/811628",
+    "author": "M0nsterHD",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_closed_hihat",
+    "tag": "acoustic",
+    "source": "freesound.org/s/87725",
+    "author": "thealmightysound",
+    "license": "http://creativecommons.org/licenses/by/3.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_closed_hihat",
+    "tag": "dusty",
+    "source": "freesound.org/s/674296",
+    "author": "TheEndOfACycle",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_closed_hihat",
+    "tag": "edm",
+    "source": "freesound.org/s/475580",
+    "author": "mikobuntu",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_closed_hihat",
+    "tag": "experimental",
+    "source": "freesound.org/s/763444",
+    "author": "Soparnik",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_closed_hihat",
+    "tag": "trap_808",
+    "source": "freesound.org/s/183104",
+    "author": "DWSD",
+    "license": "http://creativecommons.org/licenses/by/3.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_closed_hihat",
+    "tag": "vintage_electronic",
+    "source": "freesound.org/s/503778",
+    "author": "reathance",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_open_hihat",
+    "tag": "all_drums",
+    "source": "freesound.org/s/674293",
+    "author": "TheEndOfACycle",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_open_hihat",
+    "tag": "acoustic",
+    "source": "freesound.org/s/87726",
+    "author": "thealmightysound",
+    "license": "http://creativecommons.org/licenses/by/3.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_open_hihat",
+    "tag": "dusty",
+    "source": "freesound.org/s/185273",
+    "author": "Selector",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_open_hihat",
+    "tag": "edm",
+    "source": "freesound.org/s/636055",
+    "author": "gmortizwavs",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_open_hihat",
+    "tag": "experimental",
+    "source": "freesound.org/s/317096",
+    "author": "shpira",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_open_hihat",
+    "tag": "trap_808",
+    "source": "freesound.org/s/183105",
+    "author": "DWSD",
+    "license": "http://creativecommons.org/licenses/by/3.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_open_hihat",
+    "tag": "vintage_electronic",
+    "source": "freesound.org/s/566892",
+    "author": "lennartgreen",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_auxiliary",
+    "tag": "all_drums",
+    "source": "freesound.org/s/375280",
+    "author": "sgossner",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_auxiliary",
+    "tag": "acoustic",
+    "source": "freesound.org/s/422416",
+    "author": "soneproject",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_auxiliary",
+    "tag": "dusty",
+    "source": "freesound.org/s/511964",
+    "author": "isaacMedina",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_auxiliary",
+    "tag": "edm",
+    "source": "freesound.org/s/337115",
+    "author": "Terry93D",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_auxiliary",
+    "tag": "experimental",
+    "source": "freesound.org/s/809198",
+    "author": "Soundsman23234",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_auxiliary",
+    "tag": "trap_808",
+    "source": "freesound.org/s/749695",
+    "author": "voxlab",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "drums_auxiliary",
+    "tag": "vintage_electronic",
+    "source": "freesound.org/s/802033",
+    "author": "CVLTIV8R",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "mixing",
+    "source": "freesound.org/s/173163",
+    "author": "Bliss",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "mixing",
+    "source": "freesound.org/s/545284",
+    "author": "jack13_89",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "mixing",
+    "source": "freesound.org/s/98946",
+    "author": "Tomlija",
+    "license": "http://creativecommons.org/licenses/by/3.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "sound_effects",
+    "source": "freesound.org/s/484402",
+    "author": "MikeOscarFoxtrot",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "sound_effects",
+    "source": "freesound.org/s/339452",
+    "author": "lulyc",
+    "license": "http://creativecommons.org/licenses/by/3.0/"
+  },
+  {
+    "kind": "sample",
+    "category": "sound_effects",
+    "source": "freesound.org/s/241146",
+    "author": "Speedenza",
+    "license": "https://creativecommons.org/licenses/by-nc/4.0/"
+  }
+]
