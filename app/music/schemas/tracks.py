@@ -119,7 +119,19 @@ class GenerateTrackRequest(CamelModel):
         ),
         examples=["sunset beach with sweet memories", "грустная песня про осень"],
     )
-    voice_url: str | None = Field(default=None, max_length=2048)
+    voice_url: str | None = Field(
+        default=None,
+        max_length=2048,
+        description=(
+            "URL аудио-референса голоса пользователя для **voice cloning**. "
+            "Бэкенд клонирует голос через fal-ai/minimax/voice-clone, "
+            "озвучит им сгенерированные lyrics через fal-ai/minimax/"
+            "speech-02-turbo, и микширует с music-треком через ffmpeg. "
+            "Если ffmpeg недоступен — vocal-трек попадает в `stems.vocal`. "
+            "Получить URL: POST /v1/uploads/voice (multipart)."
+        ),
+        examples=["https://appsprobek.shop/static/voices/user-123.wav"],
+    )
     production: str | None = None
     pitch: str | None = None
     store_stems: bool = False

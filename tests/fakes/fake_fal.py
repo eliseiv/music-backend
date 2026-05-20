@@ -100,6 +100,12 @@ class FakeFal:
             )
         return self.speech_results.popleft()
 
+    async def voice_clone(self, *, audio_url: str) -> str:
+        if not hasattr(self, "calls_voice_clone"):
+            self.calls_voice_clone = []
+        self.calls_voice_clone.append({"audio_url": audio_url})
+        return f"fake-cloned-voice-{len(self.calls_voice_clone)}"
+
     async def upload_to_storage(
         self, *, content: bytes, filename: str, content_type: str
     ) -> str:

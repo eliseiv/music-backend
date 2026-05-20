@@ -412,12 +412,10 @@ class Pipeline:
         await self._record_stage(job.id, JobStage.music_generation, "running")
         prompt = _compose_prompt(job.input_payload, beat)
         webhook_url = self._webhook_url()
-        # fal-ai/minimax-music требует reference_audio_url. Используем URL бита
-        # как стилевой референс (voice_url пойдёт в отдельную vocal_tts стадию).
-        reference_audio_url = (
-            (job.input_payload or {}).get("voice_url")
-            or (beat.audio_url if beat is not None else None)
-        )
+        # fal-ai/minimax-music принимает reference_audio_url как **стилевой
+        # референс**, не как референс голоса. Используем ТОЛЬКО URL бита.
+        # voice_url пойдёт в отдельную vocal_tts стадию через voice_clone.
+        reference_audio_url = beat.audio_url if beat is not None else None
         # lyrics — это уже сгенерированный LLM текст (из стадии lyrics).
         # Если LLM пропустили — берём lyrics_prompt как есть (backward-compat,
         # пользователь мог прислать готовый текст).
@@ -482,18 +480,55 @@ class Pipeline:
         await self._finalize(job.id, runtime)
 
     async def _submit_vocal_tts(self, job: Job) -> None:
-        voice_url = (job.input_payload or {}).get("voice_url")
-        lyrics = (job.input_payload or {}).get("lyrics_prompt")
+        """Клонирует голос пользователя и озвучивает им сгенерированные lyrics.
+
+        Flow:
+        1. voice_clone(voice_url) → custom_voice_id (через minimax/voice-clone)
+        2. submit_speech(text=_generated_lyrics, voice_id=custom_voice_id)
+        3. webhook принесёт vocal track → пойдёт в mix_master (вместе с music)
+        """
+        payload = job.input_payload or {}
+        voice_url = payload.get("voice_url")
+        # ВАЖНО: берём _generated_lyrics (вывод LLM-стадии), не lyrics_prompt.
+        # lyrics_prompt — это ТЕМА от пользователя, не текст для озвучки.
+        lyrics = payload.get("_generated_lyrics") or payload.get("lyrics_prompt")
         if not voice_url or not lyrics:
             await self._record_stage(job.id, JobStage.vocal_tts, "skipped")
-            runtime = (job.input_payload or {}).get("_runtime") or {}
+            runtime = payload.get("_runtime") or {}
             await self._finalize(job.id, runtime)
             return
         await self._record_stage(job.id, JobStage.vocal_tts, "running")
+        # Step 1: клонируем голос (sync, обычно ≤30s)
+        cloned_voice_id = payload.get("_cloned_voice_id")
+        if not cloned_voice_id:
+            try:
+                cloned_voice_id = await self._fal.voice_clone(audio_url=voice_url)
+            except (FalProviderError, FalTimeout) as exc:
+                logger.warning(
+                    "voice_clone failed for job=%s: %s — skipping vocal_tts",
+                    job.id,
+                    exc,
+                )
+                await self._record_stage(
+                    job.id, JobStage.vocal_tts, "failed", error=f"voice_clone: {exc}"
+                )
+                runtime = payload.get("_runtime") or {}
+                await self._finalize(job.id, runtime)
+                return
+            # Сохраним voice_id чтобы при retry не клонировать повторно
+            async with self._sessionmaker() as session:
+                async with session.begin():
+                    repo = JobsRepository(session)
+                    j = await repo.get_by_id_for_update(job.id)
+                    if j is not None:
+                        p = dict(j.input_payload or {})
+                        p["_cloned_voice_id"] = cloned_voice_id
+                        j.input_payload = p
+        # Step 2: TTS speech с клонированным голосом (через queue + webhook)
         try:
             submit = await self._fal.submit_speech(
                 text=lyrics,
-                voice=voice_url,
+                voice_id=cloned_voice_id,
                 webhook_url=self._webhook_url(),
                 idempotency_key=f"{job.id}:tts",
             )
@@ -501,7 +536,10 @@ class Pipeline:
             await self._record_stage(
                 job.id, JobStage.vocal_tts, "failed", error=str(exc)
             )
-            raise
+            # Не fail весь job — продолжаем с music без voice
+            runtime = payload.get("_runtime") or {}
+            await self._finalize(job.id, runtime)
+            return
         await self._set_current_stage(
             job.id, JobStage.vocal_tts, submit.request_id
         )
@@ -515,12 +553,15 @@ class Pipeline:
         for st in ASYNC_STAGES:
             if st not in existing:
                 await self._record_stage(job_id, st, "skipped")
-        # 6. mix_master (inline)
-        await self._record_stage(job_id, JobStage.mix_master, "succeeded")
+
+        # 6. mix_master — если есть и music и vocal_tts, делаем реальный микс
+        # через ffmpeg. Иначе bookkeeping skip.
+        runtime = await self._maybe_mix_master(job_id, runtime)
+
         # 7. upload_cdn (inline)
         await self._record_stage(job_id, JobStage.upload_cdn, "succeeded")
 
-        # Выбираем итоговый audio_url: refine > music_generation
+        # Выбираем итоговый audio_url: mix_master > refine > music_generation
         final_audio_url, final_duration, final_stems = _pick_final_output(runtime)
         if not final_audio_url:
             await self._record_stage(
@@ -594,6 +635,70 @@ class Pipeline:
                     job_id=job_id, captured_tokens=captured
                 )
         await self._record_stage(job_id, JobStage.finalize, "succeeded")
+
+    async def _maybe_mix_master(
+        self, job_id: UUID, runtime: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Если есть и music_generation и vocal_tts output — микшируем через
+        ffmpeg. Результат сохраняем в runtime['mix_master'] и возвращаем
+        обновлённый runtime. В случае ошибки помечаем mix_master skipped
+        и оставляем runtime как был.
+        """
+        from app.music.services.audio_mixer import (
+            ffmpeg_available,
+            mix_music_and_vocal,
+        )
+
+        music_url = (
+            runtime.get(JobStage.audio_to_audio_refine.value, {}).get("audio_url")
+            or runtime.get(JobStage.music_generation.value, {}).get("audio_url")
+        )
+        vocal_url = runtime.get(JobStage.vocal_tts.value, {}).get("audio_url")
+        if not music_url or not vocal_url:
+            await self._record_stage(job_id, JobStage.mix_master, "skipped")
+            return runtime
+        if not ffmpeg_available():
+            logger.warning(
+                "ffmpeg not available — mix_master skipped, vocal saved to stems"
+            )
+            await self._record_stage(
+                job_id, JobStage.mix_master, "skipped", error="ffmpeg not in PATH"
+            )
+            # Сохраняем vocal в stems чтобы клиент мог его микшировать сам
+            mg_key = JobStage.audio_to_audio_refine.value if JobStage.audio_to_audio_refine.value in runtime else JobStage.music_generation.value
+            stems = dict(runtime[mg_key].get("stems") or {})
+            stems["vocal"] = vocal_url
+            runtime[mg_key]["stems"] = stems
+            return runtime
+        await self._record_stage(job_id, JobStage.mix_master, "running")
+        try:
+            mix_url, mix_duration = await mix_music_and_vocal(
+                music_url=music_url,
+                vocal_url=vocal_url,
+                upload_fn=self._fal.upload_to_storage,
+            )
+        except Exception as e:
+            logger.warning("mix_master failed for job=%s: %s", job_id, e)
+            await self._record_stage(
+                job_id, JobStage.mix_master, "failed", error=str(e)[:200]
+            )
+            return runtime
+        if not mix_url:
+            await self._record_stage(
+                job_id, JobStage.mix_master, "failed", error="mix returned None"
+            )
+            return runtime
+        runtime["mix_master"] = {
+            "audio_url": mix_url,
+            "duration_seconds": mix_duration,
+            "stems": {"vocal": vocal_url, "music": music_url},
+        }
+        await self._record_stage(job_id, JobStage.mix_master, "succeeded")
+        logger.info(
+            "mix_master succeeded for job=%s: %s (%.2fs)",
+            job_id, mix_url, mix_duration or 0,
+        )
+        return runtime
 
     async def _set_current_stage(
         self, job_id: UUID, stage: JobStage, request_id: str
@@ -681,12 +786,20 @@ def _compose_prompt(payload: dict[str, Any] | None, beat: Beat | None) -> str:
 def _pick_final_output(
     runtime: dict[str, Any],
 ) -> tuple[str | None, float | None, dict[str, Any] | None]:
-    """Выбирает audio_url/duration/stems из последней успешной async-стадии.
+    """Выбирает audio_url/duration/stems финального трека.
 
-    Приоритет: vocal_tts > audio_to_audio_refine > music_generation.
+    Приоритет:
+    1. mix_master (если ffmpeg успешно смикшировал music + vocal)
+    2. audio_to_audio_refine (стилевая обработка)
+    3. music_generation (база)
+
+    vocal_tts НЕ выбирается напрямую — это просто vocal-layer, должен
+    быть смикширован с music через ffmpeg в mix_master. Если ffmpeg
+    недоступен или микс упал — финальным останется music (без vocal),
+    а vocal сохраняется в stems['vocal'].
     """
     for key in (
-        JobStage.vocal_tts.value,
+        "mix_master",
         JobStage.audio_to_audio_refine.value,
         JobStage.music_generation.value,
     ):

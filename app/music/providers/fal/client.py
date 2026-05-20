@@ -190,19 +190,57 @@ class FalAiProvider:
         self,
         *,
         text: str,
-        voice: str | None,
+        voice_id: str | None,
         webhook_url: str | None,
         idempotency_key: str,
     ) -> FalSubmitResult:
+        """TTS озвучка через minimax/speech-02-turbo.
+
+        voice_id может быть либо preset из каталога minimax
+        (например 'English_Trustworth_Man'), либо custom voice ID полученный
+        из /minimax/voice-clone.
+        """
         payload: dict[str, Any] = {"text": text}
-        if voice:
-            payload["voice"] = voice
+        if voice_id:
+            payload["voice_setting"] = {"voice_id": voice_id}
         return await self._submit(
             model=self._speech_model,
             payload=payload,
             webhook_url=webhook_url,
             idempotency_key=idempotency_key,
         )
+
+    async def voice_clone(self, *, audio_url: str) -> str:
+        """Клонирует голос пользователя через minimax/voice-clone.
+
+        Sync вызов (не queue): принимает audio_url с референс-голосом,
+        возвращает custom_voice_id для использования в submit_speech.
+        """
+        url = "https://fal.run/fal-ai/minimax/voice-clone"
+        body = {"audio_url": audio_url}
+        token = provider_var.set(self.PROVIDER_NAME)
+        try:
+            try:
+                resp = await self._client.post(url, json=body, timeout=120.0)
+            except httpx.TimeoutException as exc:
+                raise FalTimeout() from exc
+            except httpx.HTTPError as exc:
+                raise FalProviderError(
+                    f"voice_clone failed: {exc.__class__.__name__}: {exc}"
+                ) from exc
+            if resp.status_code >= 400:
+                raise FalProviderError(
+                    f"voice_clone returned {resp.status_code}: {resp.text[:200]}"
+                )
+            data = resp.json()
+            voice_id = data.get("custom_voice_id")
+            if not voice_id:
+                raise FalProviderError(
+                    f"voice_clone no custom_voice_id in response: {data}"
+                )
+            return str(voice_id)
+        finally:
+            provider_var.reset(token)
 
     # fal storage API живёт на rest.alpha.fal.ai (не queue.fal.run).
     # Upload — two-step: initiate (получаем presigned URL) → PUT с файлом.

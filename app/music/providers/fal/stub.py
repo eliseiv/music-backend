@@ -93,7 +93,7 @@ class StubFalProvider:
         self,
         *,
         text: str,
-        voice: str | None,
+        voice_id: str | None,
         webhook_url: str | None,
         idempotency_key: str,
     ) -> FalSubmitResult:
@@ -101,6 +101,9 @@ class StubFalProvider:
         return FalSubmitResult(
             request_id=request_id, status="queued", raw={"stub": True}
         )
+
+    async def voice_clone(self, *, audio_url: str) -> str:
+        return f"stub-voice-{uuid.uuid4().hex[:12]}"
 
     async def upload_to_storage(
         self, *, content: bytes, filename: str, content_type: str

@@ -116,10 +116,14 @@ class FalProvider(Protocol):
         self,
         *,
         text: str,
-        voice: str | None,
+        voice_id: str | None,
         webhook_url: str | None,
         idempotency_key: str,
     ) -> FalSubmitResult: ...
+
+    async def voice_clone(self, *, audio_url: str) -> str:
+        """Клонирует голос (minimax/voice-clone), возвращает custom_voice_id."""
+        ...
 
     async def upload_to_storage(
         self,
