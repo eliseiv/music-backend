@@ -414,6 +414,17 @@ class Pipeline:
             )
             return
 
+        # Если fal не вернул duration — пробуем прочитать из самого файла
+        if not final_duration or final_duration <= 0:
+            from app.music.services.audio_duration import probe_duration_seconds
+
+            probed = await probe_duration_seconds(final_audio_url)
+            if probed and probed > 0:
+                final_duration = probed
+                logger.info(
+                    "probed duration for job=%s: %.2fs", job_id, probed
+                )
+
         # Capture токенов
         async with self._sessionmaker() as session:
             job = await session.get(Job, job_id)
