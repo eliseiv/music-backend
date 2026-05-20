@@ -116,6 +116,8 @@ class Pipeline:
             # Все async-стадии завершены → переходим к финализации
             await self._finalize(job_id, runtime)
 
+    FALLBACK_MUSIC_MODEL = "fal-ai/stable-audio"
+
     async def fail(
         self,
         *,
@@ -124,7 +126,17 @@ class Pipeline:
         error_code: str,
         error_message: str,
     ) -> None:
-        """Вызывается из fal webhook на failed/canceled."""
+        """Вызывается из fal webhook/poller на failed/canceled.
+
+        Fallback: если music_generation упал с PROVIDER_FAILED от minimax-music —
+        пробуем stable-audio (один раз). Job остаётся `processing`, poller подхватит
+        новый provider_request_id.
+        """
+        if failed_stage == JobStage.music_generation and error_code == "PROVIDER_FAILED":
+            retried = await self._try_music_fallback(job_id, error_message)
+            if retried:
+                return
+
         await self._record_stage(
             job_id, failed_stage, "failed", error=error_message
         )
@@ -149,6 +161,85 @@ class Pipeline:
                     error_code=error_code,
                     error_message=error_message,
                 )
+
+    async def _try_music_fallback(
+        self, job_id: UUID, prev_error: str
+    ) -> bool:
+        """При сбое minimax-music — попробовать stable-audio (один раз)."""
+        async with self._sessionmaker() as session:
+            job = await session.get(Job, job_id)
+            if job is None:
+                return False
+            payload = dict(job.input_payload or {})
+            if payload.get("_music_fallback_used"):
+                return False
+            if job.provider_model == self.FALLBACK_MUSIC_MODEL:
+                # Уже сами на fallback модели — не зацикливаемся.
+                return False
+            session.expunge(job)
+
+        seconds = int(payload.get("desired_duration_seconds") or 30)
+        seconds = max(10, min(47, seconds))  # stable-audio: 1..47
+        # prompt берём из payload — можно простой, beat reference не нужен.
+        prompt = self._fallback_prompt(payload)
+        logger.info(
+            "music fallback: prev=%s seconds=%s prompt=%.60s",
+            prev_error[:80],
+            seconds,
+            prompt,
+        )
+        try:
+            submit = await self._fal.submit_stable_audio(
+                prompt=prompt,
+                seconds_total=seconds,
+                webhook_url=self._webhook_url(),
+                idempotency_key=f"{job_id}:music-fb",
+            )
+        except (FalProviderError, FalTimeout) as exc:
+            logger.warning(
+                "music fallback submit failed for job=%s: %s", job_id, exc
+            )
+            return False
+
+        # Обновляем job: новый provider_model + request_id, метка fallback в payload.
+        async with self._sessionmaker() as session:
+            async with session.begin():
+                repo = JobsRepository(session)
+                job = await repo.get_by_id_for_update(job_id)
+                if job is None:
+                    return False
+                payload = dict(job.input_payload or {})
+                payload["_music_fallback_used"] = True
+                payload["_music_fallback_prev_error"] = prev_error[:200]
+                job.input_payload = payload
+                job.provider_model = self.FALLBACK_MUSIC_MODEL
+                job.provider_request_id = submit.request_id
+                # current_stage остаётся music_generation
+        # Перезатираем stage event на running (был failed)
+        await self._record_stage(job_id, JobStage.music_generation, "running")
+        logger.info(
+            "music fallback: submitted stable-audio for job=%s rid=%s",
+            job_id,
+            submit.request_id,
+        )
+        return True
+
+    @staticmethod
+    def _fallback_prompt(payload: dict[str, Any]) -> str:
+        """Соберём короткий prompt для stable-audio (без reference URL)."""
+        eq = payload.get("equalizer") or {}
+        parts: list[str] = []
+        # genre/bpm если есть лог
+        if payload.get("lyrics_prompt"):
+            parts.append(f"theme: {payload['lyrics_prompt'][:60]}")
+        bpm = eq.get("tempo")
+        if bpm:
+            parts.append(f"{bpm} BPM")
+        if payload.get("production"):
+            parts.append(payload["production"])
+        if payload.get("pitch"):
+            parts.append(payload["pitch"])
+        return ", ".join(parts) or "instrumental music"
 
     # ------- internal helpers -------
 

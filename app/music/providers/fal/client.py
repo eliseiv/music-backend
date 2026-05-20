@@ -88,6 +88,26 @@ class FalAiProvider:
             idempotency_key=idempotency_key,
         )
 
+    async def submit_stable_audio(
+        self,
+        *,
+        prompt: str,
+        seconds_total: int,
+        webhook_url: str | None,
+        idempotency_key: str,
+    ) -> FalSubmitResult:
+        # stable-audio принимает 1..47 секунд, без reference_audio_url
+        payload: dict[str, Any] = {
+            "prompt": prompt,
+            "seconds_total": max(1, min(47, int(seconds_total))),
+        }
+        return await self._submit(
+            model="fal-ai/stable-audio",
+            payload=payload,
+            webhook_url=webhook_url,
+            idempotency_key=idempotency_key,
+        )
+
     async def submit_speech(
         self,
         *,
@@ -205,9 +225,13 @@ class FalAiProvider:
         result = data.get("result") or data.get("output") or {}
         if not isinstance(result, dict):
             result = {}
-        audio_url = result.get("audio_url") or result.get("audio", {}).get(
-            "url"
-        ) if isinstance(result.get("audio"), dict) else result.get("audio_url")
+        # Извлекаем audio_url из вариантов: result.audio_url / result.audio.url /
+        # result.audio_file.url (stable-audio)
+        audio_url = result.get("audio_url")
+        for k in ("audio", "audio_file"):
+            v = result.get(k)
+            if isinstance(v, dict) and not audio_url:
+                audio_url = v.get("url") or v.get("audio_url")
         duration_seconds = result.get("duration_seconds") or result.get(
             "duration"
         )
@@ -361,7 +385,9 @@ class FalAiProvider:
             audio_url = None
             duration = None
             stems = None
-            for key in ("audio", "audio_url", "output", "result"):
+            # Возможные форматы: audio.url / audio_file.url (stable-audio) /
+            # output.url / result.url / просто строка audio_url
+            for key in ("audio", "audio_file", "audio_url", "output", "result"):
                 v = result_data.get(key)
                 if isinstance(v, dict):
                     audio_url = audio_url or v.get("url") or v.get("audio_url")

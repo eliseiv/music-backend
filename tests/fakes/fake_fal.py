@@ -66,6 +66,15 @@ class FakeFal:
             )
         return self.refine_results.popleft()
 
+    async def submit_stable_audio(self, **kwargs) -> FalSubmitResult:
+        if not hasattr(self, "calls_stable"):
+            self.calls_stable = []
+        self.calls_stable.append(kwargs)
+        return FalSubmitResult(
+            request_id=f"fake-stable-{len(self.calls_stable)}",
+            status="queued",
+        )
+
     async def submit_speech(self, **kwargs) -> FalSubmitResult:
         self.calls_speech.append(kwargs)
         if not self.speech_results:

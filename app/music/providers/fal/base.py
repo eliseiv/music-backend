@@ -71,6 +71,21 @@ class FalProvider(Protocol):
         idempotency_key: str,
     ) -> FalSubmitResult: ...
 
+    async def submit_stable_audio(
+        self,
+        *,
+        prompt: str,
+        seconds_total: int,
+        webhook_url: str | None,
+        idempotency_key: str,
+    ) -> FalSubmitResult:
+        """Fallback music generator (fal-ai/stable-audio).
+
+        Используется когда minimax-music даёт PROVIDER_FAILED — у fal часто
+        отваливается их upstream к MiniMax.
+        """
+        ...
+
     async def submit_speech(
         self,
         *,

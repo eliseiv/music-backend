@@ -86,7 +86,7 @@ async def test_full_lifecycle_no_voice(
 
 
 @pytest.mark.asyncio
-async def test_failed_webhook_releases_tokens(
+async def test_failed_music_triggers_fallback_then_release(
     app_client,
     auth_headers,
     fake_fal,
@@ -94,6 +94,8 @@ async def test_failed_webhook_releases_tokens(
     seed_pricing,
     make_user_with_subscription,
 ):
+    """При fail от minimax-music Pipeline пробует stable-audio (fallback).
+    Если и fallback fail — job окончательно failed + токены возвращены."""
     await make_user_with_subscription("u-fail", tokens=5)
     payload = build_generate_payload(seed_beats)
     h = auth_headers("u-fail")
@@ -104,13 +106,34 @@ async def test_failed_webhook_releases_tokens(
     job_id = r.json()["jobId"]
     music_rid = f"fake-music-{len(fake_fal.calls_music)}"
 
-    # fal сообщает failed
+    # 1) fal сообщает failed от minimax-music → Pipeline.fail должен
+    # автоматически сабмитить stable-audio (fallback)
     resp = await fake_fal.emit_webhook(
         app_client,
         request_id=music_rid,
         status="failed",
         error="model exploded",
         event_id="evt-music-fail",
+    )
+    assert resp.status_code == 200
+
+    # Проверка: fallback вызван (был submit к stable-audio)
+    assert hasattr(fake_fal, "calls_stable") and len(fake_fal.calls_stable) == 1
+
+    # Job всё ещё processing (ждёт результат stable-audio)
+    job_status = await app_client.get(
+        f"/v1/tracks/jobs/{job_id}", headers=h
+    )
+    assert job_status.json()["status"] == "processing"
+
+    # 2) stable-audio тоже fail → теперь окончательный fail + release
+    stable_rid = f"fake-stable-{len(fake_fal.calls_stable)}"
+    resp = await fake_fal.emit_webhook(
+        app_client,
+        request_id=stable_rid,
+        status="failed",
+        error="stable-audio exploded too",
+        event_id="evt-stable-fail",
     )
     assert resp.status_code == 200
 

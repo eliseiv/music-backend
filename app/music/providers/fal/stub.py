@@ -61,6 +61,19 @@ class StubFalProvider:
             request_id=request_id, status="queued", raw={"stub": True}
         )
 
+    async def submit_stable_audio(
+        self,
+        *,
+        prompt: str,
+        seconds_total: int,
+        webhook_url: str | None,
+        idempotency_key: str,
+    ) -> FalSubmitResult:
+        request_id = f"stub-stableaudio-{uuid.uuid4().hex[:8]}"
+        return FalSubmitResult(
+            request_id=request_id, status="queued", raw={"stub": True, "model": "stable-audio"}
+        )
+
     async def submit_speech(
         self,
         *,
