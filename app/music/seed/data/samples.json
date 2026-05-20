@@ -12,52 +12,50 @@
   {
     "category": "harmonic_bass",
     "tags": [
-      "all_instruments",
-      "acoustic_guitars"
+      "all_instruments"
     ],
-    "title": "acoutic_d_rakepattern.wav",
+    "title": "DeepPluckClsnBassF0160bpm.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_2.mp3",
-    "duration_seconds": 5,
+    "duration_seconds": 2,
     "sort_order": 2
   },
   {
     "category": "harmonic_bass",
     "tags": [
-      "all_instruments",
-      "global_ensemble"
+      "all_instruments"
     ],
-    "title": "Future Garage (BASS)_04.wav",
+    "title": "Lo-fi Synth Bass - G.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_3.mp3",
-    "duration_seconds": 1,
+    "duration_seconds": 5,
     "sort_order": 3
   },
   {
     "category": "harmonic_bass",
     "tags": [
       "all_instruments",
-      "acoustic_instruments"
+      "acoustic_guitars"
     ],
-    "title": "piano F Minor chord.4th octave.wav",
+    "title": "acoutic_d_rakepattern.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_4.mp3",
-    "duration_seconds": 1,
+    "duration_seconds": 5,
     "sort_order": 4
   },
   {
     "category": "harmonic_bass",
     "tags": [
       "all_instruments",
-      "chill_keys"
+      "acoustic_guitars"
     ],
-    "title": "Piano Bell Sound (C3).wav",
+    "title": "Future Garage (BASS)_04.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_5.mp3",
-    "duration_seconds": 3,
+    "duration_seconds": 1,
     "sort_order": 5
   },
   {
     "category": "harmonic_bass",
     "tags": [
       "all_instruments",
-      "seventies_fusion"
+      "acoustic_guitars"
     ],
     "title": "Future Garage (BASS)_03.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_6.mp3",
@@ -68,7 +66,7 @@
     "category": "harmonic_bass",
     "tags": [
       "all_instruments",
-      "jazz_trio"
+      "global_ensemble"
     ],
     "title": "Future Garage (BASS)_02.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_7.mp3",
@@ -79,42 +77,42 @@
     "category": "harmonic_bass",
     "tags": [
       "all_instruments",
-      "rock_n_roll"
+      "global_ensemble"
     ],
-    "title": "Drum&Bass 09 Vol. 1.wav",
+    "title": "Future Garage (BASS)_01.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_8.mp3",
-    "duration_seconds": 6,
+    "duration_seconds": 1,
     "sort_order": 8
   },
   {
     "category": "harmonic_bass",
     "tags": [
       "all_instruments",
-      "soft_rock"
+      "global_ensemble"
     ],
-    "title": "Future Garage (BASS)_01.wav",
+    "title": "Bass Loop 82 BPM.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_9.mp3",
-    "duration_seconds": 1,
+    "duration_seconds": 6,
     "sort_order": 9
   },
   {
     "category": "harmonic_bass",
     "tags": [
       "all_instruments",
-      "classical_strings"
+      "acoustic_instruments"
     ],
-    "title": "FM Strings Ds3",
+    "title": "piano F Minor chord.4th octave.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_10.mp3",
-    "duration_seconds": 3,
+    "duration_seconds": 1,
     "sort_order": 10
   },
   {
     "category": "harmonic_bass",
     "tags": [
       "all_instruments",
-      "synth_haven"
+      "acoustic_instruments"
     ],
-    "title": "Rdmg 3.wav",
+    "title": "piano F Minor chord.3rd octave.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_11.mp3",
     "duration_seconds": 1,
     "sort_order": 11
@@ -123,12 +121,265 @@
     "category": "harmonic_bass",
     "tags": [
       "all_instruments",
+      "acoustic_instruments"
+    ],
+    "title": "piano F Major chord.4th octave.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_12.mp3",
+    "duration_seconds": 1,
+    "sort_order": 12
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "chill_keys"
+    ],
+    "title": "Piano Bell Sound (C3).wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_13.mp3",
+    "duration_seconds": 3,
+    "sort_order": 13
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "chill_keys"
+    ],
+    "title": "Packer Piano.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_14.mp3",
+    "duration_seconds": 1,
+    "sort_order": 14
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "chill_keys"
+    ],
+    "title": "SFX Piano + Rhodes Melody (3/4)",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_15.mp3",
+    "duration_seconds": 5,
+    "sort_order": 15
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "seventies_fusion"
+    ],
+    "title": "Sub Bass 6 - G.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_16.mp3",
+    "duration_seconds": 5,
+    "sort_order": 16
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "seventies_fusion"
+    ],
+    "title": "Sub Bass 10 - C#.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_17.mp3",
+    "duration_seconds": 4,
+    "sort_order": 17
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "seventies_fusion"
+    ],
+    "title": "Sub Bass 8 - D#.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_18.mp3",
+    "duration_seconds": 3,
+    "sort_order": 18
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "jazz_trio"
+    ],
+    "title": "Sub Bass 5 - D.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_19.mp3",
+    "duration_seconds": 4,
+    "sort_order": 19
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "jazz_trio"
+    ],
+    "title": "Sub Bass 4 - A.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_20.mp3",
+    "duration_seconds": 3,
+    "sort_order": 20
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "jazz_trio"
+    ],
+    "title": "Sub Bass 2 - D.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_21.mp3",
+    "duration_seconds": 6,
+    "sort_order": 21
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "rock_n_roll"
+    ],
+    "title": "Drum&Bass 10 Vol. 1.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_22.mp3",
+    "duration_seconds": 5,
+    "sort_order": 22
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "rock_n_roll"
+    ],
+    "title": "Drum&Bass 06 Vol. 1.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_23.mp3",
+    "duration_seconds": 7,
+    "sort_order": 23
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "rock_n_roll"
+    ],
+    "title": "Drum&Bass 07 Vol. 1.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_24.mp3",
+    "duration_seconds": 5,
+    "sort_order": 24
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "soft_rock"
+    ],
+    "title": "Sub Bass 1 - F.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_25.mp3",
+    "duration_seconds": 7,
+    "sort_order": 25
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "soft_rock"
+    ],
+    "title": "MonoBass001.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_26.mp3",
+    "duration_seconds": 1,
+    "sort_order": 26
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "soft_rock"
+    ],
+    "title": "MonoBass002.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_27.mp3",
+    "duration_seconds": 1,
+    "sort_order": 27
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "classical_strings"
+    ],
+    "title": "FM Strings Ds3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_28.mp3",
+    "duration_seconds": 3,
+    "sort_order": 28
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "classical_strings"
+    ],
+    "title": "FM Strings D6",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_29.mp3",
+    "duration_seconds": 3,
+    "sort_order": 29
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "classical_strings"
+    ],
+    "title": "FM Strings D4",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_30.mp3",
+    "duration_seconds": 3,
+    "sort_order": 30
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "synth_haven"
+    ],
+    "title": "Rdmg 3.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_31.mp3",
+    "duration_seconds": 1,
+    "sort_order": 31
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "synth_haven"
+    ],
+    "title": "growing.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_32.mp3",
+    "duration_seconds": 8,
+    "sort_order": 32
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "synth_haven"
+    ],
+    "title": "G-Strings_D#5.WAV",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_33.mp3",
+    "duration_seconds": 5,
+    "sort_order": 33
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
       "smooth_pop"
     ],
     "title": "Organiser_Punisher_Gsus4_FX1_120BPM.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_12.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_34.mp3",
     "duration_seconds": 6,
-    "sort_order": 12
+    "sort_order": 34
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "smooth_pop"
+    ],
+    "title": "layered bass 04.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_35.mp3",
+    "duration_seconds": 4,
+    "sort_order": 35
   },
   {
     "category": "harmonic_bass",
@@ -137,20 +388,31 @@
       "carolina_trap_set"
     ],
     "title": "GS_FREE1_140_SYNTH_05_D#.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_13.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_36.mp3",
     "duration_seconds": 6,
-    "sort_order": 13
+    "sort_order": 36
   },
   {
     "category": "harmonic_bass",
     "tags": [
       "all_instruments",
-      "brass_and_winds"
+      "carolina_trap_set"
     ],
-    "title": "Bass Loop 82 BPM.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_14.mp3",
-    "duration_seconds": 6,
-    "sort_order": 14
+    "title": "Insomniac Snyth Loop.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_37.mp3",
+    "duration_seconds": 9,
+    "sort_order": 37
+  },
+  {
+    "category": "harmonic_bass",
+    "tags": [
+      "all_instruments",
+      "carolina_trap_set"
+    ],
+    "title": "Insomniac Snyth Loop Rev.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_bass_38.mp3",
+    "duration_seconds": 9,
+    "sort_order": 38
   },
   {
     "category": "harmonic_lead",
@@ -165,21 +427,19 @@
   {
     "category": "harmonic_lead",
     "tags": [
-      "all_instruments",
-      "acoustic_guitars"
+      "all_instruments"
     ],
-    "title": "Microfreak lead 2",
+    "title": "Kygo Real Attack Lead 3 Nexus Pluck",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_2.mp3",
-    "duration_seconds": 8,
+    "duration_seconds": 1,
     "sort_order": 2
   },
   {
     "category": "harmonic_lead",
     "tags": [
-      "all_instruments",
-      "global_ensemble"
+      "all_instruments"
     ],
-    "title": "a c poppy tune fizzy lead 104bpm.wav",
+    "title": "Kygo Style Pluck 2.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_3.mp3",
     "duration_seconds": 4,
     "sort_order": 3
@@ -188,29 +448,29 @@
     "category": "harmonic_lead",
     "tags": [
       "all_instruments",
-      "acoustic_instruments"
+      "acoustic_guitars"
     ],
-    "title": "piano F Minor chord.3rd octave.wav",
+    "title": "Microfreak lead 2",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_4.mp3",
-    "duration_seconds": 1,
+    "duration_seconds": 8,
     "sort_order": 4
   },
   {
     "category": "harmonic_lead",
     "tags": [
       "all_instruments",
-      "chill_keys"
+      "acoustic_guitars"
     ],
-    "title": "Electric Piano Jazz Chords",
+    "title": "a c poppy tune fizzy lead 104bpm.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_5.mp3",
-    "duration_seconds": 8,
+    "duration_seconds": 4,
     "sort_order": 5
   },
   {
     "category": "harmonic_lead",
     "tags": [
       "all_instruments",
-      "seventies_fusion"
+      "acoustic_guitars"
     ],
     "title": "a c poppy tune fizzy lead 104bpm-01.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_6.mp3",
@@ -221,12 +481,166 @@
     "category": "harmonic_lead",
     "tags": [
       "all_instruments",
-      "jazz_trio"
+      "global_ensemble"
+    ],
+    "title": "Microfreak lead 1",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_7.mp3",
+    "duration_seconds": 8,
+    "sort_order": 7
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "global_ensemble"
+    ],
+    "title": "Bold_Lead_g4.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_8.mp3",
+    "duration_seconds": 4,
+    "sort_order": 8
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "global_ensemble"
     ],
     "title": "Bold_Lead_g2.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_7.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_9.mp3",
     "duration_seconds": 6,
-    "sort_order": 7
+    "sort_order": 9
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "acoustic_instruments"
+    ],
+    "title": "piano F Major chord.3rd octave.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_10.mp3",
+    "duration_seconds": 1,
+    "sort_order": 10
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "acoustic_instruments"
+    ],
+    "title": "Piano short sound",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_11.mp3",
+    "duration_seconds": 7,
+    "sort_order": 11
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "acoustic_instruments"
+    ],
+    "title": "SF_Piano Logo Aqua_B",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_12.mp3",
+    "duration_seconds": 9,
+    "sort_order": 12
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "chill_keys"
+    ],
+    "title": "Electric Piano Jazz Chords",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_13.mp3",
+    "duration_seconds": 8,
+    "sort_order": 13
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "chill_keys"
+    ],
+    "title": "Electric Piano Jazz Chords (Strummed)",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_14.mp3",
+    "duration_seconds": 8,
+    "sort_order": 14
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "chill_keys"
+    ],
+    "title": "C_S Rhodes Mark II G5.aif",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_15.mp3",
+    "duration_seconds": 7,
+    "sort_order": 15
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "seventies_fusion"
+    ],
+    "title": "Bold_Lead_f5.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_16.mp3",
+    "duration_seconds": 3,
+    "sort_order": 16
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "seventies_fusion"
+    ],
+    "title": "Bold_Lead_e4.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_17.mp3",
+    "duration_seconds": 5,
+    "sort_order": 17
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "seventies_fusion"
+    ],
+    "title": "Bold_Lead_e2.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_18.mp3",
+    "duration_seconds": 7,
+    "sort_order": 18
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "jazz_trio"
+    ],
+    "title": "Bold_Lead_d5.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_19.mp3",
+    "duration_seconds": 5,
+    "sort_order": 19
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "jazz_trio"
+    ],
+    "title": "Bold_Lead_d3.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_20.mp3",
+    "duration_seconds": 7,
+    "sort_order": 20
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "jazz_trio"
+    ],
+    "title": "Bold_Lead_c4.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_21.mp3",
+    "duration_seconds": 6,
+    "sort_order": 21
   },
   {
     "category": "harmonic_lead",
@@ -235,9 +649,31 @@
       "rock_n_roll"
     ],
     "title": "straight_rock56.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_8.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_22.mp3",
     "duration_seconds": 9,
-    "sort_order": 8
+    "sort_order": 22
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "rock_n_roll"
+    ],
+    "title": "75315_oymaldonado_bluesy_rock_guitar3_enveloped_reverbed.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_23.mp3",
+    "duration_seconds": 9,
+    "sort_order": 23
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "rock_n_roll"
+    ],
+    "title": "Verve Electric Guitar",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_24.mp3",
+    "duration_seconds": 5,
+    "sort_order": 24
   },
   {
     "category": "harmonic_lead",
@@ -245,10 +681,32 @@
       "all_instruments",
       "soft_rock"
     ],
-    "title": "Bold_Lead_f5.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_9.mp3",
-    "duration_seconds": 3,
-    "sort_order": 9
+    "title": "Bold_Lead_b4.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_25.mp3",
+    "duration_seconds": 6,
+    "sort_order": 25
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "soft_rock"
+    ],
+    "title": "Bold_Lead_b2.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_26.mp3",
+    "duration_seconds": 5,
+    "sort_order": 26
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "soft_rock"
+    ],
+    "title": "Bold_Lead_a5.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_27.mp3",
+    "duration_seconds": 4,
+    "sort_order": 27
   },
   {
     "category": "harmonic_lead",
@@ -256,10 +714,32 @@
       "all_instruments",
       "classical_strings"
     ],
-    "title": "FM Strings D6",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_10.mp3",
+    "title": "FM Strings D5",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_28.mp3",
     "duration_seconds": 3,
-    "sort_order": 10
+    "sort_order": 28
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "classical_strings"
+    ],
+    "title": "FM Strings D2",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_29.mp3",
+    "duration_seconds": 3,
+    "sort_order": 29
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "classical_strings"
+    ],
+    "title": "FM Strings D3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_30.mp3",
+    "duration_seconds": 3,
+    "sort_order": 30
   },
   {
     "category": "harmonic_lead",
@@ -267,21 +747,32 @@
       "all_instruments",
       "synth_haven"
     ],
-    "title": "growing.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_11.mp3",
-    "duration_seconds": 8,
-    "sort_order": 11
+    "title": "G-Strings_A4.WAV",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_31.mp3",
+    "duration_seconds": 5,
+    "sort_order": 31
   },
   {
     "category": "harmonic_lead",
     "tags": [
       "all_instruments",
-      "smooth_pop"
+      "synth_haven"
     ],
-    "title": "Bold_Lead_f3.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_12.mp3",
-    "duration_seconds": 7,
-    "sort_order": 12
+    "title": "G-Strings_F#5.WAV",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_32.mp3",
+    "duration_seconds": 5,
+    "sort_order": 32
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "synth_haven"
+    ],
+    "title": "G-Strings_F#4.WAV",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_33.mp3",
+    "duration_seconds": 5,
+    "sort_order": 33
   },
   {
     "category": "harmonic_lead",
@@ -289,21 +780,21 @@
       "all_instruments",
       "carolina_trap_set"
     ],
-    "title": "Insomniac Snyth Loop Rev.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_13.mp3",
-    "duration_seconds": 9,
-    "sort_order": 13
+    "title": "LCCPTL_140_Synth_Am_ThinPluck.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_34.mp3",
+    "duration_seconds": 6,
+    "sort_order": 34
   },
   {
     "category": "harmonic_lead",
     "tags": [
       "all_instruments",
-      "brass_and_winds"
+      "carolina_trap_set"
     ],
-    "title": "Bold_Lead_e4.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_14.mp3",
-    "duration_seconds": 5,
-    "sort_order": 14
+    "title": "TS_Synth_Plucks_147bpm_2.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_35.mp3",
+    "duration_seconds": 6,
+    "sort_order": 35
   },
   {
     "category": "harmonic_chord",
@@ -318,32 +809,30 @@
   {
     "category": "harmonic_chord",
     "tags": [
-      "all_instruments",
-      "acoustic_guitars"
+      "all_instruments"
     ],
-    "title": "acoustic guitar quick happy chord 2.wav",
+    "title": "Pluck-Bubule Pluck C Maj Chord",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_2.mp3",
-    "duration_seconds": 1,
+    "duration_seconds": 6,
     "sort_order": 2
   },
   {
     "category": "harmonic_chord",
     "tags": [
-      "all_instruments",
-      "global_ensemble"
+      "all_instruments"
     ],
-    "title": "acoustic guitar pretty chord.wav",
+    "title": "Pluck-Bubule Pluck B Maj Chord",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_3.mp3",
-    "duration_seconds": 2,
+    "duration_seconds": 6,
     "sort_order": 3
   },
   {
     "category": "harmonic_chord",
     "tags": [
       "all_instruments",
-      "acoustic_instruments"
+      "acoustic_guitars"
     ],
-    "title": "piano F Major chord.4th octave.wav",
+    "title": "acoustic guitar quick happy chord 2.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_4.mp3",
     "duration_seconds": 1,
     "sort_order": 4
@@ -352,18 +841,18 @@
     "category": "harmonic_chord",
     "tags": [
       "all_instruments",
-      "chill_keys"
+      "acoustic_guitars"
     ],
-    "title": "Electric Piano Jazz Chords (Strummed)",
+    "title": "acoustic guitar pretty chord.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_5.mp3",
-    "duration_seconds": 8,
+    "duration_seconds": 2,
     "sort_order": 5
   },
   {
     "category": "harmonic_chord",
     "tags": [
       "all_instruments",
-      "seventies_fusion"
+      "acoustic_guitars"
     ],
     "title": "acoustic guitar pretty chord 8.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_6.mp3",
@@ -374,7 +863,7 @@
     "category": "harmonic_chord",
     "tags": [
       "all_instruments",
-      "jazz_trio"
+      "global_ensemble"
     ],
     "title": "acoustic guitar pretty chord 7.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_7.mp3",
@@ -385,20 +874,20 @@
     "category": "harmonic_chord",
     "tags": [
       "all_instruments",
-      "rock_n_roll"
+      "global_ensemble"
     ],
-    "title": "Distortion Guitar Power Chord E.wav",
+    "title": "acoustic guitar pretty chord 6.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_8.mp3",
-    "duration_seconds": 4,
+    "duration_seconds": 2,
     "sort_order": 8
   },
   {
     "category": "harmonic_chord",
     "tags": [
       "all_instruments",
-      "soft_rock"
+      "global_ensemble"
     ],
-    "title": "acoustic guitar pretty chord 6.wav",
+    "title": "acoustic guitar pretty chord 5.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_9.mp3",
     "duration_seconds": 2,
     "sort_order": 9
@@ -407,12 +896,232 @@
     "category": "harmonic_chord",
     "tags": [
       "all_instruments",
+      "acoustic_instruments"
+    ],
+    "title": "SF_Logo Piano Drops_C",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_10.mp3",
+    "duration_seconds": 8,
+    "sort_order": 10
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "acoustic_instruments"
+    ],
+    "title": "SF_Piano Logo Aqua_Main",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_11.mp3",
+    "duration_seconds": 8,
+    "sort_order": 11
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "acoustic_instruments"
+    ],
+    "title": "SF_Piano Logo Aqua_C",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_12.mp3",
+    "duration_seconds": 7,
+    "sort_order": 12
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "chill_keys"
+    ],
+    "title": "mystic chord parallel motion 100bpm",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_13.mp3",
+    "duration_seconds": 4,
+    "sort_order": 13
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "chill_keys"
+    ],
+    "title": "mystic chord (C7#4) resolved (Bmin9)",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_14.mp3",
+    "duration_seconds": 5,
+    "sort_order": 14
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "chill_keys"
+    ],
+    "title": "D_ElecPiano_02",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_15.mp3",
+    "duration_seconds": 6,
+    "sort_order": 15
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "seventies_fusion"
+    ],
+    "title": "acoustic guitar pretty chord 4.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_16.mp3",
+    "duration_seconds": 2,
+    "sort_order": 16
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "seventies_fusion"
+    ],
+    "title": "acoustic guitar pretty chord 2.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_17.mp3",
+    "duration_seconds": 2,
+    "sort_order": 17
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "seventies_fusion"
+    ],
+    "title": "acoustic guitar pretty chord 1.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_18.mp3",
+    "duration_seconds": 4,
+    "sort_order": 18
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "jazz_trio"
+    ],
+    "title": "apprehensive chord 5",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_19.mp3",
+    "duration_seconds": 3,
+    "sort_order": 19
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "jazz_trio"
+    ],
+    "title": "apprehensive chord 4",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_20.mp3",
+    "duration_seconds": 2,
+    "sort_order": 20
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "jazz_trio"
+    ],
+    "title": "apprehensive chord 3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_21.mp3",
+    "duration_seconds": 2,
+    "sort_order": 21
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "rock_n_roll"
+    ],
+    "title": "Distortion Guitar Power Chord E.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_22.mp3",
+    "duration_seconds": 4,
+    "sort_order": 22
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "rock_n_roll"
+    ],
+    "title": "noisy electric guitar (single note).wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_23.mp3",
+    "duration_seconds": 8,
+    "sort_order": 23
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "rock_n_roll"
+    ],
+    "title": "Tone guitar",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_24.mp3",
+    "duration_seconds": 2,
+    "sort_order": 24
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "soft_rock"
+    ],
+    "title": "apprehensive chord 2",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_25.mp3",
+    "duration_seconds": 2,
+    "sort_order": 25
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "soft_rock"
+    ],
+    "title": "apprehensive chord 1",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_26.mp3",
+    "duration_seconds": 3,
+    "sort_order": 26
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "soft_rock"
+    ],
+    "title": "Ethereal Chord D#Maj.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_27.mp3",
+    "duration_seconds": 1,
+    "sort_order": 27
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
       "classical_strings"
     ],
-    "title": "FM Strings D7",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_10.mp3",
+    "title": "FM Strings Fs3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_28.mp3",
     "duration_seconds": 3,
-    "sort_order": 10
+    "sort_order": 28
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "classical_strings"
+    ],
+    "title": "FM Strings Fs4",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_29.mp3",
+    "duration_seconds": 3,
+    "sort_order": 29
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "classical_strings"
+    ],
+    "title": "FM Strings Gs2",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_30.mp3",
+    "duration_seconds": 3,
+    "sort_order": 30
   },
   {
     "category": "harmonic_chord",
@@ -420,43 +1129,32 @@
       "all_instruments",
       "synth_haven"
     ],
-    "title": "G-Strings_F#4.WAV",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_11.mp3",
+    "title": "G-Strings_F#3.WAV",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_31.mp3",
     "duration_seconds": 5,
-    "sort_order": 11
+    "sort_order": 31
   },
   {
     "category": "harmonic_chord",
     "tags": [
       "all_instruments",
-      "smooth_pop"
+      "synth_haven"
     ],
-    "title": "acoustic guitar pretty chord 5.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_12.mp3",
-    "duration_seconds": 2,
-    "sort_order": 12
+    "title": "G-Strings_F#2.WAV",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_32.mp3",
+    "duration_seconds": 5,
+    "sort_order": 32
   },
   {
     "category": "harmonic_chord",
     "tags": [
       "all_instruments",
-      "carolina_trap_set"
+      "synth_haven"
     ],
-    "title": "Insomniac Snyth Loop.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_13.mp3",
-    "duration_seconds": 9,
-    "sort_order": 13
-  },
-  {
-    "category": "harmonic_chord",
-    "tags": [
-      "all_instruments",
-      "brass_and_winds"
-    ],
-    "title": "acoustic guitar pretty chord 4.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_14.mp3",
-    "duration_seconds": 2,
-    "sort_order": 14
+    "title": "G-Strings_F#1.WAV",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_33.mp3",
+    "duration_seconds": 5,
+    "sort_order": 33
   },
   {
     "category": "drums_kick",
@@ -471,10 +1169,9 @@
   {
     "category": "drums_kick",
     "tags": [
-      "all_drums",
-      "acoustic"
+      "all_drums"
     ],
-    "title": "wicked acoustic kick.aif",
+    "title": "Sickly Kick Drum",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_2.mp3",
     "duration_seconds": 1,
     "sort_order": 2
@@ -482,10 +1179,9 @@
   {
     "category": "drums_kick",
     "tags": [
-      "all_drums",
-      "dusty"
+      "all_drums"
     ],
-    "title": "dusty drum",
+    "title": "Dance Kick Drum",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_3.mp3",
     "duration_seconds": 1,
     "sort_order": 3
@@ -494,9 +1190,9 @@
     "category": "drums_kick",
     "tags": [
       "all_drums",
-      "edm"
+      "acoustic"
     ],
-    "title": "Electronic Kick Drum #1",
+    "title": "Acoustic Drum Kick.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_4.mp3",
     "duration_seconds": 1,
     "sort_order": 4
@@ -505,9 +1201,9 @@
     "category": "drums_kick",
     "tags": [
       "all_drums",
-      "experimental"
+      "acoustic"
     ],
-    "title": "Techno Kick 2.wav",
+    "title": "Acoustic Synth Kick 2",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_5.mp3",
     "duration_seconds": 1,
     "sort_order": 5
@@ -516,9 +1212,9 @@
     "category": "drums_kick",
     "tags": [
       "all_drums",
-      "trap_808"
+      "acoustic"
     ],
-    "title": "KickAC.aif",
+    "title": "nice acoustic metal kick.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_6.mp3",
     "duration_seconds": 1,
     "sort_order": 6
@@ -527,12 +1223,166 @@
     "category": "drums_kick",
     "tags": [
       "all_drums",
+      "dusty"
+    ],
+    "title": "dusty drum",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_7.mp3",
+    "duration_seconds": 1,
+    "sort_order": 7
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "bd_detailed.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_8.mp3",
+    "duration_seconds": 1,
+    "sort_order": 8
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "bd_doitlive.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_9.mp3",
+    "duration_seconds": 1,
+    "sort_order": 9
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "EDM-KICK.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_10.mp3",
+    "duration_seconds": 1,
+    "sort_order": 10
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "[Kick] Standard Tech Kick",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_11.mp3",
+    "duration_seconds": 1,
+    "sort_order": 11
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "Electronic Kick Drum #1",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_12.mp3",
+    "duration_seconds": 1,
+    "sort_order": 12
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "Techno Kick 2.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_13.mp3",
+    "duration_seconds": 1,
+    "sort_order": 13
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "Techno Kick 3.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_14.mp3",
+    "duration_seconds": 1,
+    "sort_order": 14
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "Techno Kick.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_15.mp3",
+    "duration_seconds": 1,
+    "sort_order": 15
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "KickAC.aif",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_16.mp3",
+    "duration_seconds": 1,
+    "sort_order": 16
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "100 Monster 808 Sauce - Cosmic Blop Kick",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_17.mp3",
+    "duration_seconds": 2,
+    "sort_order": 17
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "100 Monster 808 Sauce - Radioactive Kick",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_18.mp3",
+    "duration_seconds": 2,
+    "sort_order": 18
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
       "vintage_electronic"
     ],
     "title": "Vintage Kick Dry and Reverb",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_7.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_19.mp3",
     "duration_seconds": 3,
-    "sort_order": 7
+    "sort_order": 19
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "Vintage Kick Dry",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_20.mp3",
+    "duration_seconds": 3,
+    "sort_order": 20
+  },
+  {
+    "category": "drums_kick",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "Vintage Kick Full FX",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_kick_21.mp3",
+    "duration_seconds": 3,
+    "sort_order": 21
   },
   {
     "category": "drums_snare",
@@ -547,10 +1397,9 @@
   {
     "category": "drums_snare",
     "tags": [
-      "all_drums",
-      "acoustic"
+      "all_drums"
     ],
-    "title": "snare1644.wav",
+    "title": "Unholy Snare Drum 2",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_2.mp3",
     "duration_seconds": 1,
     "sort_order": 2
@@ -558,10 +1407,9 @@
   {
     "category": "drums_snare",
     "tags": [
-      "all_drums",
-      "dusty"
+      "all_drums"
     ],
-    "title": "dustySnare.wav",
+    "title": "Unholy Snare Drum 1",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_3.mp3",
     "duration_seconds": 1,
     "sort_order": 3
@@ -570,9 +1418,9 @@
     "category": "drums_snare",
     "tags": [
       "all_drums",
-      "edm"
+      "acoustic"
     ],
-    "title": "Electronic Snare Drum #2",
+    "title": "snare1644.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_4.mp3",
     "duration_seconds": 1,
     "sort_order": 4
@@ -581,9 +1429,9 @@
     "category": "drums_snare",
     "tags": [
       "all_drums",
-      "experimental"
+      "acoustic"
     ],
-    "title": "weird_snare.wav",
+    "title": "acoustic snare.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_5.mp3",
     "duration_seconds": 1,
     "sort_order": 5
@@ -592,12 +1440,144 @@
     "category": "drums_snare",
     "tags": [
       "all_drums",
+      "acoustic"
+    ],
+    "title": "Acoustic Snare.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_6.mp3",
+    "duration_seconds": 4,
+    "sort_order": 6
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "dustySnare.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_7.mp3",
+    "duration_seconds": 1,
+    "sort_order": 7
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "Tampan stereo snare 2 short.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_8.mp3",
+    "duration_seconds": 1,
+    "sort_order": 8
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "Tampan stereo snare 2.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_9.mp3",
+    "duration_seconds": 1,
+    "sort_order": 9
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "Electronic Snare Drum #2",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_10.mp3",
+    "duration_seconds": 1,
+    "sort_order": 10
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "EDM_SNR_0009.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_11.mp3",
+    "duration_seconds": 1,
+    "sort_order": 11
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "EDM_SNR_0010.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_12.mp3",
+    "duration_seconds": 1,
+    "sort_order": 12
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "weird_snare.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_13.mp3",
+    "duration_seconds": 1,
+    "sort_order": 13
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "FlowerSnare 2.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_14.mp3",
+    "duration_seconds": 1,
+    "sort_order": 14
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "Snare_Modular",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_15.mp3",
+    "duration_seconds": 1,
+    "sort_order": 15
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
       "trap_808"
     ],
     "title": "snare trap.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_6.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_16.mp3",
     "duration_seconds": 2,
-    "sort_order": 6
+    "sort_order": 16
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "FD808A Snare.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_17.mp3",
+    "duration_seconds": 1,
+    "sort_order": 17
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "4808snare.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_18.mp3",
+    "duration_seconds": 3,
+    "sort_order": 18
   },
   {
     "category": "drums_snare",
@@ -606,9 +1586,31 @@
       "vintage_electronic"
     ],
     "title": "Vintage Snare Dry and Reverb",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_7.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_19.mp3",
     "duration_seconds": 2,
-    "sort_order": 7
+    "sort_order": 19
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "Vintage Snare Dry",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_20.mp3",
+    "duration_seconds": 2,
+    "sort_order": 20
+  },
+  {
+    "category": "drums_snare",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "Vintage Snare Full FX",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_snare_21.mp3",
+    "duration_seconds": 2,
+    "sort_order": 21
   },
   {
     "category": "drums_closed_hihat",
@@ -623,10 +1625,9 @@
   {
     "category": "drums_closed_hihat",
     "tags": [
-      "all_drums",
-      "acoustic"
+      "all_drums"
     ],
-    "title": "Hi Hat Closed.wav",
+    "title": "Hi-Hat Closed Hit 02",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_2.mp3",
     "duration_seconds": 1,
     "sort_order": 2
@@ -634,10 +1635,9 @@
   {
     "category": "drums_closed_hihat",
     "tags": [
-      "all_drums",
-      "dusty"
+      "all_drums"
     ],
-    "title": "Hi-Hat Closed Hit - Clean",
+    "title": "Hi-Hat Closed Hit 01",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_3.mp3",
     "duration_seconds": 1,
     "sort_order": 3
@@ -646,9 +1646,9 @@
     "category": "drums_closed_hihat",
     "tags": [
       "all_drums",
-      "edm"
+      "acoustic"
     ],
-    "title": "EDM_CHH_0001.wav",
+    "title": "Hi Hat Closed.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_4.mp3",
     "duration_seconds": 1,
     "sort_order": 4
@@ -657,9 +1657,9 @@
     "category": "drums_closed_hihat",
     "tags": [
       "all_drums",
-      "experimental"
+      "acoustic"
     ],
-    "title": "Mouth Hi-Hat with Zoom H4N",
+    "title": "AD Hat.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_5.mp3",
     "duration_seconds": 1,
     "sort_order": 5
@@ -668,9 +1668,9 @@
     "category": "drums_closed_hihat",
     "tags": [
       "all_drums",
-      "trap_808"
+      "acoustic"
     ],
-    "title": "hat_bodacious.wav",
+    "title": "Closed hi-hat sample",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_6.mp3",
     "duration_seconds": 1,
     "sort_order": 6
@@ -679,41 +1679,193 @@
     "category": "drums_closed_hihat",
     "tags": [
       "all_drums",
-      "vintage_electronic"
+      "dusty"
     ],
-    "title": "lo-fi hi hat.wav",
+    "title": "Hi-Hat Closing Hit",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_7.mp3",
     "duration_seconds": 1,
     "sort_order": 7
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "Hi-Hat Closed Hit - Clean",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_8.mp3",
+    "duration_seconds": 1,
+    "sort_order": 8
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "new 12 hat closed.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_9.mp3",
+    "duration_seconds": 1,
+    "sort_order": 9
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "EDM_CHH_0001.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_10.mp3",
+    "duration_seconds": 1,
+    "sort_order": 10
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "Alaska Hi-Hat",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_11.mp3",
+    "duration_seconds": 1,
+    "sort_order": 11
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "Synth Closed Hi-Hat v1.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_12.mp3",
+    "duration_seconds": 1,
+    "sort_order": 12
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "Mouth Hi-Hat with Zoom H4N",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_13.mp3",
+    "duration_seconds": 1,
+    "sort_order": 13
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "CloseHatAC.aif",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_14.mp3",
+    "duration_seconds": 1,
+    "sort_order": 14
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "rake - hi hat closed and open",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_15.mp3",
+    "duration_seconds": 3,
+    "sort_order": 15
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "hat_bodacious.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_16.mp3",
+    "duration_seconds": 1,
+    "sort_order": 16
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "hat_appetizer.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_17.mp3",
+    "duration_seconds": 1,
+    "sort_order": 17
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "hhclosed",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_18.mp3",
+    "duration_seconds": 3,
+    "sort_order": 18
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "lo-fi hi hat.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_19.mp3",
+    "duration_seconds": 1,
+    "sort_order": 19
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "Hi-Hat Hit ",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_20.mp3",
+    "duration_seconds": 1,
+    "sort_order": 20
+  },
+  {
+    "category": "drums_closed_hihat",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "Yamaha PSR-36 Closed Hi-Hat",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_closed_hihat_21.mp3",
+    "duration_seconds": 1,
+    "sort_order": 21
   },
   {
     "category": "drums_open_hihat",
     "tags": [
       "all_drums"
     ],
-    "title": "Hi-Hat Closing Hit",
+    "title": "HAT-2.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_1.mp3",
-    "duration_seconds": 1,
+    "duration_seconds": 3,
     "sort_order": 1
   },
   {
     "category": "drums_open_hihat",
     "tags": [
-      "all_drums",
-      "acoustic"
+      "all_drums"
     ],
-    "title": "Hi Hat Open.wav",
+    "title": "HAT-3.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_2.mp3",
-    "duration_seconds": 1,
+    "duration_seconds": 3,
     "sort_order": 2
   },
   {
     "category": "drums_open_hihat",
     "tags": [
-      "all_drums",
-      "dusty"
+      "all_drums"
     ],
-    "title": "rake - hi hat closed and open",
+    "title": "HAT-4.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_3.mp3",
     "duration_seconds": 3,
     "sort_order": 3
@@ -722,20 +1874,20 @@
     "category": "drums_open_hihat",
     "tags": [
       "all_drums",
-      "edm"
+      "acoustic"
     ],
-    "title": "DrumKHS-11.wav",
+    "title": "Hi Hat Open.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_4.mp3",
-    "duration_seconds": 2,
+    "duration_seconds": 1,
     "sort_order": 4
   },
   {
     "category": "drums_open_hihat",
     "tags": [
       "all_drums",
-      "experimental"
+      "acoustic"
     ],
-    "title": "hat open2.wav",
+    "title": "acoustic_open_hihat2.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_5.mp3",
     "duration_seconds": 1,
     "sort_order": 5
@@ -744,9 +1896,9 @@
     "category": "drums_open_hihat",
     "tags": [
       "all_drums",
-      "trap_808"
+      "acoustic"
     ],
-    "title": "hat_appetizer.wav",
+    "title": "acoustic_open_hihat1.wav",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_6.mp3",
     "duration_seconds": 1,
     "sort_order": 6
@@ -755,12 +1907,166 @@
     "category": "drums_open_hihat",
     "tags": [
       "all_drums",
+      "dusty"
+    ],
+    "title": "hat open3.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_7.mp3",
+    "duration_seconds": 1,
+    "sort_order": 7
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "hat open2.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_8.mp3",
+    "duration_seconds": 1,
+    "sort_order": 8
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "hat open short.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_9.mp3",
+    "duration_seconds": 1,
+    "sort_order": 9
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "DrumKHS-11.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_10.mp3",
+    "duration_seconds": 2,
+    "sort_order": 10
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "DrumKHS-08.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_11.mp3",
+    "duration_seconds": 2,
+    "sort_order": 11
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "EDM_CHH_0002.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_12.mp3",
+    "duration_seconds": 1,
+    "sort_order": 12
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "hat open1.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_13.mp3",
+    "duration_seconds": 1,
+    "sort_order": 13
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "hat cl hit4 half2.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_14.mp3",
+    "duration_seconds": 1,
+    "sort_order": 14
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "hat cl hit1.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_15.mp3",
+    "duration_seconds": 1,
+    "sort_order": 15
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "TR-808 - Hi Hat (open)",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_16.mp3",
+    "duration_seconds": 1,
+    "sort_order": 16
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "Loop for Dance",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_17.mp3",
+    "duration_seconds": 2,
+    "sort_order": 17
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "FD808A HiHat open.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_18.mp3",
+    "duration_seconds": 1,
+    "sort_order": 18
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
       "vintage_electronic"
     ],
     "title": "Acoustic Hi-Hat Open Vintage Hip Hop",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_7.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_19.mp3",
     "duration_seconds": 3,
-    "sort_order": 7
+    "sort_order": 19
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "Yamaha PSR-36 Open Hi-Hat",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_20.mp3",
+    "duration_seconds": 1,
+    "sort_order": 20
+  },
+  {
+    "category": "drums_open_hihat",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "MATTEL HHO3.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_open_hihat_21.mp3",
+    "duration_seconds": 1,
+    "sort_order": 21
   },
   {
     "category": "drums_auxiliary",
@@ -775,43 +2081,41 @@
   {
     "category": "drums_auxiliary",
     "tags": [
-      "all_drums",
-      "acoustic"
+      "all_drums"
     ],
-    "title": "56.flac",
+    "title": "Bass drum (bdrum_ppp_1.wav)",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_2.mp3",
-    "duration_seconds": 1,
+    "duration_seconds": 3,
     "sort_order": 2
   },
   {
     "category": "drums_auxiliary",
     "tags": [
-      "all_drums",
-      "dusty"
+      "all_drums"
     ],
-    "title": "dustySubKick.wav",
+    "title": "Bass drum (bdrum_pp_1.wav)",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_3.mp3",
-    "duration_seconds": 1,
+    "duration_seconds": 4,
     "sort_order": 3
   },
   {
     "category": "drums_auxiliary",
     "tags": [
       "all_drums",
-      "edm"
+      "acoustic"
     ],
-    "title": "FM Percussion Dance Beat.wav",
+    "title": "57.flac",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_4.mp3",
-    "duration_seconds": 3,
+    "duration_seconds": 1,
     "sort_order": 4
   },
   {
     "category": "drums_auxiliary",
     "tags": [
       "all_drums",
-      "experimental"
+      "acoustic"
     ],
-    "title": "Cellotape Percussion One Shot3",
+    "title": "58.flac",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_5.mp3",
     "duration_seconds": 1,
     "sort_order": 5
@@ -820,9 +2124,9 @@
     "category": "drums_auxiliary",
     "tags": [
       "all_drums",
-      "trap_808"
+      "acoustic"
     ],
-    "title": "TR-808 SFB _ MULTICLAP",
+    "title": "6.flac",
     "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_6.mp3",
     "duration_seconds": 1,
     "sort_order": 6
@@ -831,12 +2135,166 @@
     "category": "drums_auxiliary",
     "tags": [
       "all_drums",
+      "dusty"
+    ],
+    "title": "dustySubKick.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_7.mp3",
+    "duration_seconds": 1,
+    "sort_order": 7
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "drill fx percussion-125 by CVLTIV8R.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_8.mp3",
+    "duration_seconds": 1,
+    "sort_order": 8
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "dusty"
+    ],
+    "title": "drill fx percussion-124 by CVLTIV8R.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_9.mp3",
+    "duration_seconds": 1,
+    "sort_order": 9
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "FM Percussion Dance Beat.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_10.mp3",
+    "duration_seconds": 3,
+    "sort_order": 10
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "Percussive Slut.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_11.mp3",
+    "duration_seconds": 1,
+    "sort_order": 11
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "edm"
+    ],
+    "title": "Organic percussion loop 125",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_12.mp3",
+    "duration_seconds": 3,
+    "sort_order": 12
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "Cellotape Percussion One Shot3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_13.mp3",
+    "duration_seconds": 1,
+    "sort_order": 13
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "Cellotape Percussion One Shot25",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_14.mp3",
+    "duration_seconds": 1,
+    "sort_order": 14
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "experimental"
+    ],
+    "title": "Cellotape Percussion One Shot24",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_15.mp3",
+    "duration_seconds": 1,
+    "sort_order": 15
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "TR-808 SFB _ MULTICLAP",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_16.mp3",
+    "duration_seconds": 1,
+    "sort_order": 16
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "TR-808 SFB _ SmoothBD",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_17.mp3",
+    "duration_seconds": 1,
+    "sort_order": 17
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "trap_808"
+    ],
+    "title": "FD808A Marcaras.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_18.mp3",
+    "duration_seconds": 1,
+    "sort_order": 18
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
       "vintage_electronic"
     ],
     "title": "Vintage Custom 14 inch Hi Hat-026.wav",
-    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_7.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_19.mp3",
     "duration_seconds": 2,
-    "sort_order": 7
+    "sort_order": 19
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "Vintage Custom 14 inch Hi Hat-024.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_20.mp3",
+    "duration_seconds": 2,
+    "sort_order": 20
+  },
+  {
+    "category": "drums_auxiliary",
+    "tags": [
+      "all_drums",
+      "vintage_electronic"
+    ],
+    "title": "Vintage Custom 14 inch Hi Hat-023.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/drums_auxiliary_21.mp3",
+    "duration_seconds": 2,
+    "sort_order": 21
   },
   {
     "category": "mixing",
@@ -875,7 +2333,7 @@
     "tags": [],
     "title": "Vinyl Crackle",
     "audio_url": "https://appsprobek.shop/static/audio/samples/sound_effects_2.mp3",
-    "duration_seconds": 6,
+    "duration_seconds": 5,
     "sort_order": 2
   },
   {
