@@ -108,6 +108,22 @@ class FalAiProvider:
             idempotency_key=idempotency_key,
         )
 
+    async def submit_ace_step_vocal(
+        self,
+        *,
+        tags: str,
+        lyrics: str,
+        webhook_url: str | None,
+        idempotency_key: str,
+    ) -> FalSubmitResult:
+        payload: dict[str, Any] = {"tags": tags, "lyrics": lyrics}
+        return await self._submit(
+            model="fal-ai/ace-step",
+            payload=payload,
+            webhook_url=webhook_url,
+            idempotency_key=idempotency_key,
+        )
+
     async def generate_lyrics(
         self,
         *,

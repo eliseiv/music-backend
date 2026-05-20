@@ -97,6 +97,21 @@ class FalProvider(Protocol):
         """
         ...
 
+    async def submit_ace_step_vocal(
+        self,
+        *,
+        tags: str,
+        lyrics: str,
+        webhook_url: str | None,
+        idempotency_key: str,
+    ) -> FalSubmitResult:
+        """Vocal-fallback (fal-ai/ace-step) — генерирует песню со словами.
+
+        Используется когда minimax-music упал, а у нас есть lyrics
+        (stable-audio инструментален и слова теряет).
+        """
+        ...
+
     async def submit_speech(
         self,
         *,

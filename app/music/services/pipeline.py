@@ -157,6 +157,7 @@ class Pipeline:
             await self._finalize(job_id, runtime)
 
     FALLBACK_MUSIC_MODEL = "fal-ai/stable-audio"
+    FALLBACK_VOCAL_MODEL = "fal-ai/ace-step"
 
     async def fail(
         self,
@@ -205,7 +206,12 @@ class Pipeline:
     async def _try_music_fallback(
         self, job_id: UUID, prev_error: str
     ) -> bool:
-        """При сбое minimax-music — попробовать stable-audio (один раз)."""
+        """Smart fallback при сбое minimax-music:
+        - если есть lyrics → ace-step (vocal-model, поёт)
+        - иначе → stable-audio (instrumental)
+
+        Запускается один раз (флаг _music_fallback_used в payload).
+        """
         async with self._sessionmaker() as session:
             job = await session.get(Job, job_id)
             if job is None:
@@ -213,18 +219,60 @@ class Pipeline:
             payload = dict(job.input_payload or {})
             if payload.get("_music_fallback_used"):
                 return False
-            if job.provider_model == self.FALLBACK_MUSIC_MODEL:
-                # Уже сами на fallback модели — не зацикливаемся.
-                return False
+            if job.provider_model in (
+                self.FALLBACK_MUSIC_MODEL,
+                self.FALLBACK_VOCAL_MODEL,
+            ):
+                return False  # уже сами на fallback модели — не зацикливаемся
             session.expunge(job)
 
+        lyrics = payload.get("_generated_lyrics") or payload.get("lyrics_prompt")
+        if lyrics:
+            return await self._fallback_to_ace_step(
+                job_id, payload, lyrics, prev_error
+            )
+        return await self._fallback_to_stable_audio(
+            job_id, payload, prev_error
+        )
+
+    async def _fallback_to_ace_step(
+        self, job_id: UUID, payload: dict[str, Any], lyrics: str, prev_error: str
+    ) -> bool:
+        tags = self._ace_step_tags(payload)
+        logger.info(
+            "music fallback → ace-step (vocal): tags=%s lyrics_len=%d",
+            tags,
+            len(lyrics),
+        )
+        try:
+            submit = await self._fal.submit_ace_step_vocal(
+                tags=tags,
+                lyrics=lyrics,
+                webhook_url=self._webhook_url(),
+                idempotency_key=f"{job_id}:music-fb-vocal",
+            )
+        except (FalProviderError, FalTimeout) as exc:
+            logger.warning(
+                "ace-step submit failed for job=%s: %s — пробуем stable-audio",
+                job_id,
+                exc,
+            )
+            return await self._fallback_to_stable_audio(
+                job_id, payload, f"{prev_error} → ace-step also failed: {exc}"
+            )
+        await self._mark_fallback(
+            job_id, self.FALLBACK_VOCAL_MODEL, submit.request_id, prev_error
+        )
+        return True
+
+    async def _fallback_to_stable_audio(
+        self, job_id: UUID, payload: dict[str, Any], prev_error: str
+    ) -> bool:
         seconds = int(payload.get("desired_duration_seconds") or 30)
         seconds = max(10, min(47, seconds))  # stable-audio: 1..47
-        # prompt берём из payload — можно простой, beat reference не нужен.
         prompt = self._fallback_prompt(payload)
         logger.info(
-            "music fallback: prev=%s seconds=%s prompt=%.60s",
-            prev_error[:80],
+            "music fallback → stable-audio (instrumental): seconds=%s prompt=%.60s",
             seconds,
             prompt,
         )
@@ -237,32 +285,58 @@ class Pipeline:
             )
         except (FalProviderError, FalTimeout) as exc:
             logger.warning(
-                "music fallback submit failed for job=%s: %s", job_id, exc
+                "stable-audio submit failed for job=%s: %s", job_id, exc
             )
             return False
+        await self._mark_fallback(
+            job_id, self.FALLBACK_MUSIC_MODEL, submit.request_id, prev_error
+        )
+        return True
 
-        # Обновляем job: новый provider_model + request_id, метка fallback в payload.
+    async def _mark_fallback(
+        self,
+        job_id: UUID,
+        new_model: str,
+        new_request_id: str,
+        prev_error: str,
+    ) -> None:
         async with self._sessionmaker() as session:
             async with session.begin():
                 repo = JobsRepository(session)
                 job = await repo.get_by_id_for_update(job_id)
                 if job is None:
-                    return False
+                    return
                 payload = dict(job.input_payload or {})
                 payload["_music_fallback_used"] = True
+                payload["_music_fallback_model"] = new_model
                 payload["_music_fallback_prev_error"] = prev_error[:200]
                 job.input_payload = payload
-                job.provider_model = self.FALLBACK_MUSIC_MODEL
-                job.provider_request_id = submit.request_id
-                # current_stage остаётся music_generation
-        # Перезатираем stage event на running (был failed)
+                job.provider_model = new_model
+                job.provider_request_id = new_request_id
         await self._record_stage(job_id, JobStage.music_generation, "running")
         logger.info(
-            "music fallback: submitted stable-audio for job=%s rid=%s",
+            "music fallback: submitted %s for job=%s rid=%s",
+            new_model,
             job_id,
-            submit.request_id,
+            new_request_id,
         )
-        return True
+
+    @staticmethod
+    def _ace_step_tags(payload: dict[str, Any]) -> str:
+        """Соберём comma-separated style tags для ace-step из payload."""
+        parts: list[str] = []
+        # Можно протащить genre/sub-genre если бы был — но в payload их нет напрямую.
+        # Берём production/pitch как хинт стиля.
+        if payload.get("production"):
+            parts.append(payload["production"])
+        if payload.get("pitch"):
+            parts.append(payload["pitch"])
+        eq = payload.get("equalizer") or {}
+        if eq.get("tempo"):
+            parts.append(f"{eq['tempo']} bpm")
+        # Универсальный хинт чтобы был вокал
+        parts.append("vocal")
+        return ", ".join(parts)
 
     @staticmethod
     def _fallback_prompt(payload: dict[str, Any]) -> str:

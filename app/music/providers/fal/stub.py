@@ -79,6 +79,16 @@ class StubFalProvider:
     ) -> str:
         return f"Stub lyrics for theme: {prompt[:40]}\nLine two\nLine three\nLine four"
 
+    async def submit_ace_step_vocal(
+        self, *, tags: str, lyrics: str, webhook_url: str | None,
+        idempotency_key: str,
+    ) -> FalSubmitResult:
+        request_id = f"stub-acestep-{uuid.uuid4().hex[:8]}"
+        return FalSubmitResult(
+            request_id=request_id, status="queued",
+            raw={"stub": True, "model": "ace-step"},
+        )
+
     async def submit_speech(
         self,
         *,

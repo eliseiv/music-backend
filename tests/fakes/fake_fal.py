@@ -82,6 +82,15 @@ class FakeFal:
         prompt = kwargs.get("prompt", "")
         return f"Fake lyrics about {prompt[:30]}\nLine 2\nLine 3"
 
+    async def submit_ace_step_vocal(self, **kwargs) -> FalSubmitResult:
+        if not hasattr(self, "calls_acestep"):
+            self.calls_acestep = []
+        self.calls_acestep.append(kwargs)
+        return FalSubmitResult(
+            request_id=f"fake-acestep-{len(self.calls_acestep)}",
+            status="queued",
+        )
+
     async def submit_speech(self, **kwargs) -> FalSubmitResult:
         self.calls_speech.append(kwargs)
         if not self.speech_results:

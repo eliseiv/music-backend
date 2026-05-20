@@ -30,5 +30,13 @@
     "rounding_mode": "ceil",
     "precharge_default_units": null,
     "active_from": "2026-01-01T00:00:00Z"
+  },
+  {
+    "provider_model": "fal-ai/ace-step",
+    "billing_mode": "per_track",
+    "token_rate": "1",
+    "rounding_mode": "ceil",
+    "precharge_default_units": null,
+    "active_from": "2026-01-01T00:00:00Z"
   }
 ]
