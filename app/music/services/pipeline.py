@@ -55,15 +55,55 @@ class Pipeline:
         # 1. prepare_prompt (inline)
         await self._record_stage(job_id, JobStage.prepare_prompt, "succeeded")
 
-        # 2. lyrics (inline, если есть lyrics_prompt)
-        if (job.input_payload or {}).get("lyrics_prompt"):
-            await self._record_stage(job_id, JobStage.lyrics, "succeeded")
-        else:
-            await self._record_stage(job_id, JobStage.lyrics, "skipped")
+        # 2. lyrics — LLM-генерация текста из lyrics_prompt (если есть)
+        generated_lyrics = await self._maybe_generate_lyrics(job, job_id)
 
         # 3. music_generation (async fal)
-        await self._submit_music_generation(job, beat)
+        await self._submit_music_generation(job, beat, lyrics=generated_lyrics)
         return JobStage.music_generation
+
+    async def _maybe_generate_lyrics(
+        self, job: Job, job_id: UUID
+    ) -> str | None:
+        """Если в payload есть lyrics_prompt — вызвать LLM. При ошибке
+        логируем и продолжаем без lyrics (опциональная стадия)."""
+        payload = job.input_payload or {}
+        theme = payload.get("lyrics_prompt")
+        if not theme:
+            await self._record_stage(job_id, JobStage.lyrics, "skipped")
+            return None
+        await self._record_stage(job_id, JobStage.lyrics, "running")
+        language = (payload.get("language") or "en")
+        try:
+            lyrics = await self._fal.generate_lyrics(
+                prompt=theme, language=language
+            )
+        except (FalProviderError, FalTimeout) as exc:
+            logger.warning(
+                "lyrics generation failed for job=%s: %s — продолжаем без lyrics",
+                job_id,
+                exc,
+            )
+            await self._record_stage(
+                job_id, JobStage.lyrics, "failed", error=str(exc)
+            )
+            return None
+        if not lyrics or len(lyrics) < 3:
+            await self._record_stage(
+                job_id, JobStage.lyrics, "skipped", error="empty LLM output"
+            )
+            return None
+        # Сохраним в payload для аудита
+        async with self._sessionmaker() as session:
+            async with session.begin():
+                repo = JobsRepository(session)
+                j = await repo.get_by_id_for_update(job_id)
+                if j is not None:
+                    p = dict(j.input_payload or {})
+                    p["_generated_lyrics"] = lyrics
+                    j.input_payload = p
+        await self._record_stage(job_id, JobStage.lyrics, "succeeded")
+        return lyrics
 
     # ------- webhook handler -------
 
@@ -292,7 +332,9 @@ class Pipeline:
                 job.input_payload = payload
                 await session.flush()
 
-    async def _submit_music_generation(self, job: Job, beat: Beat | None) -> None:
+    async def _submit_music_generation(
+        self, job: Job, beat: Beat | None, *, lyrics: str | None = None
+    ) -> None:
         await self._record_stage(job.id, JobStage.music_generation, "running")
         prompt = _compose_prompt(job.input_payload, beat)
         webhook_url = self._webhook_url()
@@ -302,13 +344,17 @@ class Pipeline:
             (job.input_payload or {}).get("voice_url")
             or (beat.audio_url if beat is not None else None)
         )
+        # lyrics — это уже сгенерированный LLM текст (из стадии lyrics).
+        # Если LLM пропустили — берём lyrics_prompt как есть (backward-compat,
+        # пользователь мог прислать готовый текст).
+        final_lyrics = lyrics or (job.input_payload or {}).get("lyrics_prompt")
         try:
             submit = await self._fal.submit_music_generation(
                 prompt=prompt,
                 duration_seconds=(job.input_payload or {}).get(
                     "desired_duration_seconds"
                 ),
-                lyrics=(job.input_payload or {}).get("lyrics_prompt"),
+                lyrics=final_lyrics,
                 reference_audio_url=reference_audio_url,
                 webhook_url=webhook_url,
                 idempotency_key=f"{job.id}:music",

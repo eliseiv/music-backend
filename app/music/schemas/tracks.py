@@ -107,7 +107,18 @@ class GenerateTrackRequest(CamelModel):
     beat_id: UUID
     instruments: _Instruments
     equalizer: _Equalizer
-    lyrics_prompt: str | None = Field(default=None, max_length=2000)
+    lyrics_prompt: str | None = Field(
+        default=None,
+        max_length=2000,
+        description=(
+            "Тема/промт для генерации текста песни. Бэкенд автоматически "
+            "вызовет LLM (fal-ai/any-llm с claude-3.5-haiku), сгенерирует "
+            "стихи на языке `language` и передаст готовый текст в music-"
+            "модель. Если хотите прислать **готовый текст** — он тоже "
+            "сработает, но LLM прогонит его повторно для нормализации."
+        ),
+        examples=["sunset beach with sweet memories", "грустная песня про осень"],
+    )
     voice_url: str | None = Field(default=None, max_length=2048)
     production: str | None = None
     pitch: str | None = None

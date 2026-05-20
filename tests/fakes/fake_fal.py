@@ -75,6 +75,13 @@ class FakeFal:
             status="queued",
         )
 
+    async def generate_lyrics(self, **kwargs) -> str:
+        if not hasattr(self, "calls_lyrics"):
+            self.calls_lyrics = []
+        self.calls_lyrics.append(kwargs)
+        prompt = kwargs.get("prompt", "")
+        return f"Fake lyrics about {prompt[:30]}\nLine 2\nLine 3"
+
     async def submit_speech(self, **kwargs) -> FalSubmitResult:
         self.calls_speech.append(kwargs)
         if not self.speech_results:

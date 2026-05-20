@@ -86,6 +86,17 @@ class FalProvider(Protocol):
         """
         ...
 
+    async def generate_lyrics(
+        self,
+        *,
+        prompt: str,
+        language: str = "en",
+    ) -> str:
+        """Превращает пользовательский тема-промт в готовый текст песни через
+        LLM (fal-ai/any-llm). Возвращает чистый текст без preamble/markdown.
+        """
+        ...
+
     async def submit_speech(
         self,
         *,

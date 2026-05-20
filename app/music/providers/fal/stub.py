@@ -74,6 +74,11 @@ class StubFalProvider:
             request_id=request_id, status="queued", raw={"stub": True, "model": "stable-audio"}
         )
 
+    async def generate_lyrics(
+        self, *, prompt: str, language: str = "en", llm_model: str = "x"
+    ) -> str:
+        return f"Stub lyrics for theme: {prompt[:40]}\nLine two\nLine three\nLine four"
+
     async def submit_speech(
         self,
         *,

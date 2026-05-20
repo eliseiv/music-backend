@@ -108,6 +108,68 @@ class FalAiProvider:
             idempotency_key=idempotency_key,
         )
 
+    async def generate_lyrics(
+        self,
+        *,
+        prompt: str,
+        language: str = "en",
+        llm_model: str = "anthropic/claude-3-5-haiku",
+    ) -> str:
+        """Sync-вызов fal-ai/any-llm для генерации текста песни."""
+        lang_name = {"en": "English", "ru": "Russian", "es": "Spanish",
+                     "fr": "French", "de": "German", "pt": "Portuguese"}.get(
+            language.lower()[:2], "English"
+        )
+        system = (
+            f"You are a songwriter. Generate song lyrics in {lang_name} based on "
+            f"the user's theme. Output ONLY the lyrics text — no preamble, no "
+            f"commentary, no markdown, no quotes, no titles. Keep it to 4-12 "
+            f"short lines suitable for a brief song. Each line on its own row."
+        )
+        full_prompt = f"{system}\n\nTheme: {prompt}\n\nLyrics:"
+
+        url = f"https://fal.run/fal-ai/any-llm"
+        body = {"model": llm_model, "prompt": full_prompt}
+        token = provider_var.set(self.PROVIDER_NAME)
+        try:
+            try:
+                resp = await self._client.post(url, json=body, timeout=60.0)
+            except httpx.TimeoutException as exc:
+                raise FalTimeout() from exc
+            except httpx.HTTPError as exc:
+                raise FalProviderError(
+                    f"fal LLM call failed: {exc.__class__.__name__}: {exc}"
+                ) from exc
+            if resp.status_code >= 400:
+                raise FalProviderError(
+                    f"fal LLM returned {resp.status_code}: {resp.text[:200]}"
+                )
+            data = resp.json()
+            output = str(data.get("output") or "").strip()
+            # Уберём типичный preamble "Here are the lyrics:\n\n" если LLM не послушал
+            for marker in (
+                "Lyrics:\n",
+                "lyrics:\n",
+                "Here are",
+                "Here is",
+                "Here's",
+                "Sure,",
+                "Sure!",
+            ):
+                if marker in output[:80]:
+                    # Берём только то что после первой пустой строки
+                    parts = output.split("\n\n", 1)
+                    if len(parts) == 2:
+                        output = parts[1].strip()
+                    break
+            # Убираем markdown ** _ ` если есть
+            output = output.replace("**", "").replace("__", "").replace("`", "")
+            # Триммируем кавычки на концах
+            output = output.strip("\"'  \n")
+            return output
+        finally:
+            provider_var.reset(token)
+
     async def submit_speech(
         self,
         *,
