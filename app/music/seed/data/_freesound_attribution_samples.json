@@ -1734,5 +1734,29 @@
     "freesound_id": 241146,
     "author": "Speedenza",
     "license": "https://creativecommons.org/licenses/by-nc/4.0/"
+  },
+  {
+    "category": "harmonic_chord",
+    "tag": "carolina_trap_set",
+    "file": "harmonic_chord_34.mp3",
+    "freesound_id": 554689,
+    "author": "truscience",
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "category": "harmonic_lead",
+    "tag": "smooth_pop",
+    "file": "harmonic_lead_36.mp3",
+    "freesound_id": 248135,
+    "author": "levelclearer",
+    "license": "https://creativecommons.org/licenses/by-nc/4.0/"
+  },
+  {
+    "category": "harmonic_chord",
+    "tag": "smooth_pop",
+    "file": "harmonic_chord_35.mp3",
+    "freesound_id": 690185,
+    "author": "bender25",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/"
   }
 ]

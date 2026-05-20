@@ -2343,5 +2343,38 @@
     "audio_url": "https://appsprobek.shop/static/audio/samples/sound_effects_3.mp3",
     "duration_seconds": 2,
     "sort_order": 3
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "carolina_trap_set"
+    ],
+    "title": "TS-CHORD STAB358d (2)_2.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_34.mp3",
+    "duration_seconds": 1,
+    "sort_order": 34
+  },
+  {
+    "category": "harmonic_lead",
+    "tags": [
+      "all_instruments",
+      "smooth_pop"
+    ],
+    "title": "landing4.wav",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_lead_36.mp3",
+    "duration_seconds": 7,
+    "sort_order": 36
+  },
+  {
+    "category": "harmonic_chord",
+    "tags": [
+      "all_instruments",
+      "smooth_pop"
+    ],
+    "title": "acoustic_guitar_chords_CGAmEm.mp3",
+    "audio_url": "https://appsprobek.shop/static/audio/samples/harmonic_chord_35.mp3",
+    "duration_seconds": 9,
+    "sort_order": 35
   }
 ]
