@@ -6,6 +6,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.api.errors import WebhookPayloadInvalid
 from app.api.v1.music._common import MUSIC_ERROR_RESPONSES
 from app.config import Settings
 from app.deps import (
@@ -166,7 +167,20 @@ async def adapty_webhook(
     # Явный test-event {"event_type":"test"}.
     if _is_test_payload(raw):
         return {"status": "test_ping"}
-    event = adapty_parser.parse_event(raw)
+    try:
+        event = adapty_parser.parse_event(raw)
+    except WebhookPayloadInvalid as exc:
+        # Adapty при сохранении интеграции шлёт валидационный запрос с
+        # тестовым/нестандартным телом. Авторизация уже прошла (иначе был бы
+        # 401), поэтому возвращаем 2XX чтобы Adapty принял endpoint, а тело
+        # логируем для разбора. Реальные события имеют корректный формат и
+        # обработаются ниже.
+        logger.warning(
+            "Adapty webhook: unparseable payload (returning 200) details=%s body=%.500s",
+            exc.details,
+            raw.decode("utf-8", errors="replace"),
+        )
+        return {"status": "ignored"}
     outcome = await service.apply(event)
     return {"status": outcome}
 
@@ -224,6 +238,16 @@ async def rf_webhook(
     )
     if _is_test_payload(raw):
         return {"status": "test_ping"}
-    event = rf_parser.parse_event(raw)
+    try:
+        event = rf_parser.parse_event(raw)
+    except WebhookPayloadInvalid as exc:
+        # Валидационный/тестовый запрос с нестандартным телом (подпись уже
+        # проверена). Возвращаем 2XX, тело логируем для разбора.
+        logger.warning(
+            "RuStore webhook: unparseable payload (returning 200) details=%s body=%.500s",
+            exc.details,
+            raw.decode("utf-8", errors="replace"),
+        )
+        return {"status": "ignored"}
     outcome = await service.apply(event)
     return {"status": outcome}

@@ -216,6 +216,33 @@ async def test_adapty_invalid_auth_returns_401(app_client):
     assert r.json()["error"]["code"] == "WEBHOOK_SIGNATURE_INVALID"
 
 
+@pytest.mark.asyncio
+async def test_adapty_validation_request_returns_2xx(app_client):
+    """Adapty при сохранении интеграции шлёт валидационный запрос с
+    нестандартным телом. Авторизация валидна → должны вернуть 2XX (не 400),
+    иначе Adapty отвергнет endpoint."""
+    # Неизвестный event_type — parse_event бросил бы WebhookPayloadInvalid
+    raw = json.dumps({"event_type": "some_adapty_validation_probe"}).encode()
+    r = await app_client.post(
+        "/v1/webhooks/billing/adapty",
+        content=raw,
+        headers=_adapty_headers(),
+    )
+    assert r.status_code == 200, r.json()
+    assert r.json()["status"] in ("ignored", "test_ping")
+
+
+@pytest.mark.asyncio
+async def test_adapty_empty_body_is_test_ping(app_client):
+    r = await app_client.post(
+        "/v1/webhooks/billing/adapty",
+        content=b"",
+        headers=_adapty_headers(),
+    )
+    assert r.status_code == 200
+    assert r.json()["status"] == "test_ping"
+
+
 # --- RuStore ---
 
 
