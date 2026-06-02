@@ -17,6 +17,25 @@ docker compose up -d
 
 `acme/acme.json` создаётся автоматически и хранит сертификаты — **не удалять**.
 
+### Совместимость Docker Engine 25+ ↔ Traefik
+
+Новые Docker Engine (25+/29) поднимают минимальную версию API, а Traefik
+шлёт устаревший initial-ping `1.24` → ошибка `client version 1.24 is too
+old`. Чтобы docker-провайдер Traefik работал, разрешаем daemon принимать
+старый ping (клиент затем сам договаривается до актуальной версии):
+
+```bash
+mkdir -p /etc/systemd/system/docker.service.d
+cat > /etc/systemd/system/docker.service.d/api-compat.conf <<'EOF'
+[Service]
+Environment="DOCKER_MIN_API_VERSION=1.24"
+EOF
+systemctl daemon-reload && systemctl restart docker
+```
+
+Делается **один раз на сервере** (не в compose). Проверка:
+`docker version --format '{{.Server.MinAPIVersion}}'` → `1.24`.
+
 ## Как подключить новый сервис
 
 Любой сервис (Docker, FastAPI/uvicorn на каком-то порту) добавляет себя в

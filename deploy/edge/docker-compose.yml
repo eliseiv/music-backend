@@ -12,6 +12,10 @@ services:
   traefik:
     image: traefik:v3.3
     restart: unless-stopped
+    environment:
+      # Иначе docker-provider шлёт устаревшую API-версию 1.24 и падает
+      # ("client version too old"). Фиксируем совместимую с Docker 25+.
+      - DOCKER_API_VERSION=1.44
     command:
       # --- провайдер: docker, маршруты только у явно помеченных контейнеров ---
       - --providers.docker=true
