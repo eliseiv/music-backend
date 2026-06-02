@@ -37,39 +37,37 @@ services:
       timeout: 5s
       retries: 5
 
+  # nginx здесь — ВНУТРЕННИЙ: раздаёт /static/ (mp3 битов/сэмплов) и проксирует
+  # на api. TLS и публичные порты 80/443 держит общий Traefik (см. deploy/edge).
+  # Поэтому никаких ports: и SSL — только HTTP на :80 внутри сети web.
   nginx:
     image: nginx:1.27-alpine
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./certbot/conf:/etc/letsencrypt:ro
-      - ./certbot/www:/var/www/certbot:ro
       # Локальные аудио-файлы (beats + samples), раздаются через /static/
       - ./static:/var/www/static:ro
     depends_on:
       - api
+    networks:
+      - web
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.music.rule=Host(`appsprobek.shop`) || Host(`www.appsprobek.shop`)"
+      - "traefik.http.routers.music.entrypoints=websecure"
+      - "traefik.http.services.music.loadbalancer.server.port=80"
     healthcheck:
-      test: ["CMD", "nginx", "-t"]
+      test: ["CMD", "wget", "-qO-", "http://localhost/healthz"]
       interval: 30s
       timeout: 5s
       retries: 3
-    # каждые 6 часов перезагружаем конфиг, чтобы подхватить обновлённые сертификаты
-    command: >
-      /bin/sh -c "while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g 'daemon off;'"
 
-  certbot:
-    image: certbot/certbot:latest
-    restart: unless-stopped
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    # каждые 12 часов проверяем сертификаты на обновление
-    entrypoint: >
-      /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet --keep-until-expiring; sleep 12h & wait $${!}; done"
+networks:
+  web:
+    external: true
+  default:
 
 volumes:
   pgdata:

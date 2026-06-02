@@ -30,6 +30,12 @@ if [ ! -f "./$COMPOSE_FILE" ]; then
     exit 1
 fi
 
+# Общая сеть с Traefik (deploy/edge). Создаём, если ещё нет.
+if ! docker network inspect web >/dev/null 2>&1; then
+    echo "[deploy] Создаю docker-сеть 'web' (общая с Traefik)"
+    docker network create web
+fi
+
 echo "[deploy] Building api image (this can take 1-3 min)"
 dc build api
 
@@ -62,11 +68,7 @@ else
     dc up -d nginx
 fi
 
-# Certbot — поднимаем, если ещё не запущен
-if ! dc ps certbot --status running -q | grep -q .; then
-    echo "[deploy] certbot не запущен — поднимаем"
-    dc up -d certbot
-fi
+# TLS и сертификаты держит общий Traefik (deploy/edge) — certbot здесь не нужен.
 
 echo "[deploy] Pruning old images (старше 72h)"
 docker image prune -af --filter "until=72h" || true

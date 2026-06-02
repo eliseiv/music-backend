@@ -1,0 +1,54 @@
+# Общий edge reverse-proxy (Traefik) для всех сервисов на сервере.
+# Живёт отдельно от любого конкретного сервиса в /opt/edge.
+#
+# Один раз на сервере:
+#   docker network create web
+#   cd /opt/edge && docker compose up -d
+#
+# Каждый сервис подключается к внешней сети `web` и объявляет маршрут
+# через docker-labels (см. /opt/edge/README.md). Traefik сам обнаруживает
+# контейнеры, роутит по доменам и выпускает/продлевает SSL (Let's Encrypt).
+services:
+  traefik:
+    image: traefik:v3.3
+    restart: unless-stopped
+    command:
+      # --- провайдер: docker, маршруты только у явно помеченных контейнеров ---
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=web
+      # --- entrypoints ---
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # HTTP → HTTPS редирект глобально
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      # TLS + авто-сертификат для всех HTTPS-роутеров по умолчанию
+      # (сервисам не нужно дублировать certresolver в labels)
+      - --entrypoints.websecure.http.tls=true
+      - --entrypoints.websecure.http.tls.certresolver=le
+      # --- ACME (Let's Encrypt) через HTTP-01 challenge ---
+      - --certificatesresolvers.le.acme.email=grey_eminence@gipsy.mba
+      - --certificatesresolvers.le.acme.storage=/acme/acme.json
+      - --certificatesresolvers.le.acme.httpchallenge=true
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+      # --- логи ---
+      - --log.level=INFO
+      - --accesslog=true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./acme:/acme
+    networks:
+      - web
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  web:
+    external: true
