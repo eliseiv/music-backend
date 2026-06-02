@@ -36,6 +36,8 @@ services:
       - --certificatesresolvers.le.acme.storage=/acme/acme.json
       - --certificatesresolvers.le.acme.httpchallenge=true
       - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+      # --- ping endpoint (для docker healthcheck) ---
+      - --ping=true
       # --- логи ---
       - --log.level=INFO
       - --accesslog=true
