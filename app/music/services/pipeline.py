@@ -476,7 +476,10 @@ class Pipeline:
             await self._submit_vocal_tts(job)
             return
         await self._record_stage(job.id, JobStage.vocal_tts, "skipped")
-        runtime = (job.input_payload or {}).get("_runtime") or {}
+        # Свежий payload: объект job устарел, _runtime уже в БД (см. _submit_vocal_tts).
+        async with self._sessionmaker() as session:
+            fresh = await session.get(Job, job.id)
+            runtime = (fresh.input_payload or {}).get("_runtime") or {} if fresh else {}
         await self._finalize(job.id, runtime)
 
     async def _submit_vocal_tts(self, job: Job) -> None:
@@ -487,7 +490,13 @@ class Pipeline:
         2. submit_speech(text=_generated_lyrics, voice_id=custom_voice_id)
         3. webhook принесёт vocal track → пойдёт в mix_master (вместе с music)
         """
-        payload = job.input_payload or {}
+        # Перечитываем свежий payload из БД: advance() уже сохранил _runtime с
+        # music_generation через _persist_runtime, но объект job в памяти устарел.
+        # Без этого при voice_clone/speech fail _finalize получит runtime без
+        # music и упадёт "no audio_url", потеряв уже готовую музыку.
+        async with self._sessionmaker() as session:
+            fresh = await session.get(Job, job.id)
+            payload = dict(fresh.input_payload or {}) if fresh else dict(job.input_payload or {})
         voice_url = payload.get("voice_url")
         # ВАЖНО: берём _generated_lyrics (вывод LLM-стадии), не lyrics_prompt.
         # lyrics_prompt — это ТЕМА от пользователя, не текст для озвучки.

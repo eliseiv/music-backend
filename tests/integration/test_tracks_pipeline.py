@@ -224,6 +224,55 @@ async def test_full_lifecycle_with_voice_clone(
 
 
 @pytest.mark.asyncio
+async def test_voice_clone_failure_falls_back_to_music_only(
+    app_client,
+    auth_headers,
+    fake_fal,
+    seed_beats,
+    seed_pricing,
+    make_user_with_subscription,
+):
+    """Регрессия: если voice_clone падает (fal 422 'No valid audio clips'),
+    трек НЕ должен фейлиться — финализируем music-only (музыка уже готова).
+    Раньше _submit_vocal_tts брал устаревший runtime из объекта job и
+    _finalize падал 'no audio_url after pipeline', теряя готовую музыку."""
+    await make_user_with_subscription("u-vc-fail", tokens=10)
+    payload = build_generate_payload(seed_beats)
+    payload["voiceUrl"] = "https://cdn.test/bad-voice.wav"
+    payload["lyricsPrompt"] = "rainy day"
+    h = auth_headers("u-vc-fail")
+
+    # voice_clone должен упасть
+    fake_fal.voice_clone_should_fail = True
+
+    r = await app_client.post("/v1/tracks/generate", headers=h, json=payload)
+    assert r.status_code == 200, r.json()
+    job_id = r.json()["jobId"]
+
+    # music webhook → дальше vocal_tts попробует voice_clone и упадёт
+    await fake_fal.emit_webhook(
+        app_client, request_id="fake-music-1", status="completed",
+        audio_url="https://cdn.test/music.mp3", duration_seconds=30.0,
+        event_id="evt-vcf-music",
+    )
+
+    job_status = await app_client.get(f"/v1/tracks/jobs/{job_id}", headers=h)
+    body = job_status.json()
+    # ГЛАВНОЕ: job succeeded (music-only), не failed
+    assert body["status"] == "succeeded", body
+    assert body["trackId"] is not None
+    stages = {e["stage"]: e["status"] for e in body["pipeline"]}
+    assert stages["music_generation"] == "succeeded"
+    assert stages["vocal_tts"] == "failed"       # voice_clone упал
+    assert stages["finalize"] == "succeeded"     # но финал прошёл с музыкой
+
+    # Трек содержит music audio_url
+    track_id = body["trackId"]
+    tr = await app_client.get(f"/v1/tracks/{track_id}", headers=h)
+    assert tr.json()["audioUrl"] == "https://cdn.test/music.mp3"
+
+
+@pytest.mark.asyncio
 async def test_stems_only_when_store_stems_true(
     app_client,
     auth_headers,

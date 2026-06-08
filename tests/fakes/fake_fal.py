@@ -104,6 +104,12 @@ class FakeFal:
         if not hasattr(self, "calls_voice_clone"):
             self.calls_voice_clone = []
         self.calls_voice_clone.append({"audio_url": audio_url})
+        if getattr(self, "voice_clone_should_fail", False):
+            from app.api.errors import FalProviderError
+
+            raise FalProviderError(
+                'voice_clone returned 422: {"detail":[{"msg":"No valid audio clips found"}]}'
+            )
         return f"fake-cloned-voice-{len(self.calls_voice_clone)}"
 
     async def upload_to_storage(
