@@ -176,7 +176,7 @@ async def adapty_webhook(
         # логируем для разбора. Реальные события имеют корректный формат и
         # обработаются ниже.
         logger.warning(
-            "Adapty webhook: unparseable payload (returning 200) details=%s body=%.500s",
+            "Adapty webhook: unparseable payload (returning 200) details=%s body=%.6000s",
             exc.details,
             raw.decode("utf-8", errors="replace"),
         )
