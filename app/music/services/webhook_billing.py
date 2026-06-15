@@ -103,14 +103,37 @@ class BillingWebhookService:
             await WalletService.set_frozen_in_session(
                 session, user_id=user_id, frozen=False
             )
+            # Сколько токенов начислить за подписку:
+            #  - если событие явно несёт token_amount (старый формат / ручная
+            #    активация) → используем его, идемпотентность по event_id;
+            #  - иначе автоначисление по vendor_product_id через token_products,
+            #    идемпотентность ПО ПЕРИОДУ подписки (product:expires_at), т.к.
+            #    Adapty за один период шлёт несколько событий (access_level_updated,
+            #    trial_started, trial_renewal_cancelled) с разными event_id —
+            #    начислить надо один раз на период, а при renewal (новый
+            #    expires_at) — снова.
             if event.token_amount and event.token_amount > 0:
+                grant = event.token_amount
+                ref_type, ref_id = "subscription_event", event.event_id
+            else:
+                grant = await self._resolve_tokens_for_product(
+                    session=session, event=event
+                )
+                period = (
+                    event.expires_at.isoformat()
+                    if event.expires_at is not None
+                    else event.event_id
+                )
+                ref_type = "subscription_period"
+                ref_id = f"{event.product_external_id}:{period}"
+            if grant and grant > 0:
                 await WalletService.credit_in_session(
                     session,
                     user_id=user_id,
-                    amount=event.token_amount,
+                    amount=grant,
                     kind=TokenLedgerKind.credit_subscription_grant,
-                    ref_type="subscription_event",
-                    ref_id=event.event_id,
+                    ref_type=ref_type,
+                    ref_id=ref_id,
                     meta={"product": event.product_external_id},
                 )
         elif event.kind == BillingEventKind.subscription_expired:

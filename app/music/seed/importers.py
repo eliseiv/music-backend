@@ -80,6 +80,7 @@ class TokenProductSeed:
     price_minor: int | None
     currency: str | None
     active: bool
+    is_subscription: bool = False
 
     def to_row(self) -> dict[str, Any]:
         return asdict(self)
@@ -186,6 +187,7 @@ def parse_token_products(path: Path) -> list[TokenProductSeed]:
                 price_minor=row.get("price_minor"),
                 currency=row.get("currency"),
                 active=bool(row.get("active", True)),
+                is_subscription=bool(row.get("is_subscription", False)),
             )
         except (KeyError, ValueError) as exc:
             raise ValueError(f"{path}[{i}]: {exc}") from exc

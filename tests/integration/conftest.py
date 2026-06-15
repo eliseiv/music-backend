@@ -128,15 +128,19 @@ async def seed_token_products(engine):
                 """
                 INSERT INTO token_products (
                     code, platform, external_product_id, token_amount,
-                    price_minor, currency, active
-                ) VALUES (
+                    price_minor, currency, active, is_subscription
+                ) VALUES
+                (
                     'tokens_10',
                     CAST('adapty' AS billing_platform),
                     'com.test.tokens_10',
-                    10,
-                    99,
-                    'USD',
-                    true
+                    10, 99, 'USD', true, false
+                ),
+                (
+                    'sub_week',
+                    CAST('adapty' AS billing_platform),
+                    'week_6.99_nottrial',
+                    30, 699, 'USD', true, true
                 )
                 """
             )

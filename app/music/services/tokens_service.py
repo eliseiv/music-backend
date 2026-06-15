@@ -33,6 +33,7 @@ class TokensService:
         )
 
     async def list_active_products(self) -> list[TokenProduct]:
+        # Каталог токен-паков — подписки исключены (см. list_purchasable).
         async with self._sessionmaker() as session:
             repo = TokenProductsRepository(session)
-            return await repo.list_active()
+            return await repo.list_purchasable()

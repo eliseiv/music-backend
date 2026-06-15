@@ -255,6 +255,49 @@ async def test_adapty_real_access_level_updated_activates(app_client, auth_heade
 
 
 @pytest.mark.asyncio
+async def test_adapty_subscription_auto_grants_tokens_once_per_period(
+    app_client, auth_headers, seed_token_products
+):
+    """Автоначисление токенов по подписке: vendor_product_id → token_products.
+    За один период Adapty шлёт несколько событий (access_level_updated,
+    trial_started, trial_renewal_cancelled) с разными event_id — токены
+    должны начислиться ОДИН раз (идемпотентность по периоду product:expires_at)."""
+    profile = "auto-grant-1"
+    expires = "2026-06-22T10:56:31.000000+0000"
+
+    def evt(event_type, profile_event_id):
+        return {
+            "profile_id": profile,
+            "event_type": event_type,
+            "event_datetime": "2026-06-15T10:56:45+0000",
+            "event_properties": {
+                "profile_event_id": profile_event_id,
+                "vendor_product_id": "week_6.99_nottrial",
+                "expires_at": expires,
+                "is_active": True,
+                "profile_has_access_level": True,
+            },
+        }
+
+    # три события одного периода (как реально шлёт Adapty)
+    for et, peid in [
+        ("access_level_updated", "ag-1"),
+        ("trial_started", "ag-2"),
+        ("trial_renewal_cancelled", "ag-3"),
+    ]:
+        r = await app_client.post(
+            "/v1/webhooks/billing/adapty",
+            content=json.dumps(evt(et, peid)).encode(),
+            headers=_adapty_headers(),
+        )
+        assert r.status_code == 200, r.json()
+
+    # начислено РОВНО 30 (один раз за период), а не 90
+    bal = await app_client.get("/v1/tokens/balance", headers=auth_headers(profile))
+    assert bal.json() == {"available": 30, "reserved": 0, "frozen": False}
+
+
+@pytest.mark.asyncio
 async def test_adapty_access_level_inactive_expires(app_client, auth_headers):
     """access_level_updated с is_active=false → подписка истекает (frozen)."""
     profile = "exp-fmt-1"

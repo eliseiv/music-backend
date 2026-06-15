@@ -48,3 +48,9 @@ class TokenProduct(Base, TimestampMixin):
     active: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=True, server_default=text("true")
     )
+    # true → продукт-подписка (даёт токены за период). НЕ показывается в
+    # каталоге токен-паков /v1/tokens/products, но участвует в резолве
+    # подписка→токены при webhook'е подписки.
+    is_subscription: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default=text("false")
+    )
