@@ -25,5 +25,15 @@
     "price_minor": 1299,
     "currency": "USD",
     "active": true
+  },
+  {
+    "code": "sub_week",
+    "platform": "adapty",
+    "external_product_id": "week_6.99_nottrial",
+    "token_amount": 100,
+    "price_minor": 699,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": true
   }
 ]
