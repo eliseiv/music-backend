@@ -28,14 +28,58 @@ from app.music.providers.fal.signature import body_digest
 AUTH_HEADER = "Authorization"
 
 
+# Прямой маппинг имён событий (для старого формата / ручных активаций / тестов).
+# Реальные события Adapty определяются в первую очередь по признаку доступа
+# (is_active / profile_has_access_level) — см. _resolve_kind.
 _EVENT_MAP: dict[str, BillingEventKind] = {
     "subscription_started": BillingEventKind.subscription_purchased,
+    "subscription_initial_purchase": BillingEventKind.subscription_purchased,
     "subscription_renewed": BillingEventKind.subscription_renewed,
+    "trial_started": BillingEventKind.subscription_purchased,
+    "trial_converted": BillingEventKind.subscription_renewed,
     "subscription_cancelled": BillingEventKind.subscription_canceled,
+    "subscription_renewal_cancelled": BillingEventKind.subscription_canceled,
+    "trial_renewal_cancelled": BillingEventKind.subscription_canceled,
     "subscription_expired": BillingEventKind.subscription_expired,
+    "trial_expired": BillingEventKind.subscription_expired,
     "non_subscription_purchase": BillingEventKind.one_time_purchase,
     "refund": BillingEventKind.refund,
+    "subscription_refunded": BillingEventKind.refund,
 }
+
+
+def _resolve_kind(
+    event_type: str, props: dict, top: dict
+) -> BillingEventKind | None:
+    """Определяет тип события. Приоритет — признак доступа из Adapty
+    (is_active / profile_has_access_level): он отражает АКТУАЛЬНОЕ состояние
+    подписки и устойчив к порядку/семантике событий (trial_renewal_cancelled
+    с сохранённым доступом не должен «отключать» подписку). Фолбэк — маппинг
+    по имени события (старый формат без event_properties).
+    """
+    # Рефанд — всегда рефанд, независимо от доступа.
+    if event_type in ("refund", "subscription_refunded"):
+        return BillingEventKind.refund
+    if props.get("is_refund") is True or top.get("is_refund") is True:
+        return BillingEventKind.refund
+    if event_type == "non_subscription_purchase":
+        return BillingEventKind.one_time_purchase
+
+    # Признак доступа из Adapty — источник истины.
+    access = props.get("is_active")
+    if access is None:
+        access = props.get("profile_has_access_level")
+    if access is None:
+        access = top.get("is_active")
+    if access is None:
+        access = top.get("profile_has_access_level")
+    if access is True:
+        return BillingEventKind.subscription_purchased
+    if access is False:
+        return BillingEventKind.subscription_expired
+
+    # Фолбэк: маппинг по имени (старый формат / тесты без props).
+    return _EVENT_MAP.get(event_type)
 
 
 def verify_authorization(
@@ -63,34 +107,56 @@ def parse_event(raw_body: bytes) -> NormalizedBillingEvent:
     if not isinstance(data, dict):
         raise WebhookPayloadInvalid(details={"reason": "not_object"})
 
+    # Реальные события Adapty кладут все поля подписки во вложенный
+    # event_properties. Старый формат / ручные активации / тесты — на верхнем
+    # уровне. Ищем сначала в props, затем в data (top-level).
+    props = data.get("event_properties") or {}
+    if not isinstance(props, dict):
+        props = {}
+
+    def field(*keys):
+        for k in keys:
+            if props.get(k) is not None:
+                return props[k]
+            if data.get(k) is not None:
+                return data[k]
+        return None
+
     event_type = (data.get("event_type") or "").lower()
-    if event_type not in _EVENT_MAP:
+
+    kind = _resolve_kind(event_type, props, data)
+    if kind is None:
         raise WebhookPayloadInvalid(
             details={"reason": "unknown_event_type", "event_type": event_type}
         )
-    kind = _EVENT_MAP[event_type]
 
-    event_id = (
-        data.get("event_id")
-        or data.get("idempotency_key")
-        or data.get("id")
-    )
+    # event_id: profile_event_id (реальный Adapty) → event_id/id (старый формат)
+    # → transaction_id+тип как последний фолбэк.
+    event_id = field("profile_event_id", "event_id", "idempotency_key", "id")
+    if not event_id:
+        txid = field("transaction_id", "original_transaction_id")
+        if txid:
+            event_id = f"{txid}:{event_type}"
     if not event_id:
         raise WebhookPayloadInvalid(details={"reason": "no_event_id"})
 
+    # profile_id — на верхнем уровне у Adapty (= external user id / X-User-Id).
     profile_id = (
         data.get("profile_id")
-        or data.get("user_id")
         or data.get("customer_user_id")
+        or data.get("user_id")
+        or props.get("profile_id")
     )
     if not profile_id:
         raise WebhookPayloadInvalid(details={"reason": "no_profile_id"})
 
-    product_id = data.get("vendor_product_id") or data.get("product_id")
-    token_amount = data.get("token_amount")
-    occurred_at = _parse_dt(data.get("event_datetime") or data.get("occurred_at"))
+    product_id = field("vendor_product_id", "product_id")
+    token_amount = field("token_amount")
+    occurred_at = _parse_dt(
+        data.get("event_datetime") or field("event_datetime", "occurred_at")
+    )
     expires_at = _parse_dt_optional(
-        data.get("expires_at") or data.get("subscription_expires_at")
+        field("expires_at", "subscription_expires_at")
     )
 
     return NormalizedBillingEvent(

@@ -217,6 +217,74 @@ async def test_adapty_invalid_auth_returns_401(app_client):
 
 
 @pytest.mark.asyncio
+async def test_adapty_real_access_level_updated_activates(app_client, auth_headers):
+    """Реальный формат Adapty: поля во вложенном event_properties,
+    event_id = profile_event_id, активность по is_active. Это то, что Adapty
+    реально шлёт при покупке/промокоде/trial (раньше дропалось как
+    unknown_event_type → 'Active subscription required')."""
+    profile = "5340429e-real-fmt"
+    body = {
+        "profile_id": profile,
+        "customer_user_id": None,
+        "event_type": "access_level_updated",
+        "event_datetime": "2026-06-15T10:56:45.630622+0000",
+        "event_properties": {
+            "profile_event_id": "evt-real-1",
+            "profile_id": profile,
+            "vendor_product_id": "week_6.99_nottrial",
+            "transaction_id": "230003474116029",
+            "subscription_expires_at": "2026-06-22T10:56:31.000000+0000",
+            "access_level_id": "premium",
+            "is_active": True,
+            "expires_at": "2026-06-22T10:56:31.000000+0000",
+            "profile_has_access_level": True,
+        },
+        "event_api_version": 1,
+    }
+    r = await app_client.post(
+        "/v1/webhooks/billing/adapty",
+        content=json.dumps(body).encode(),
+        headers=_adapty_headers(),
+    )
+    assert r.status_code == 200, r.json()
+    assert r.json()["status"] == "applied"
+
+    # Подписка активна → кошелёк не frozen (генерация не блокируется gate'ом)
+    bal = await app_client.get("/v1/tokens/balance", headers=auth_headers(profile))
+    assert bal.json()["frozen"] is False
+
+
+@pytest.mark.asyncio
+async def test_adapty_access_level_inactive_expires(app_client, auth_headers):
+    """access_level_updated с is_active=false → подписка истекает (frozen)."""
+    profile = "exp-fmt-1"
+    # сначала активируем
+    active = {
+        "profile_id": profile, "event_type": "access_level_updated",
+        "event_datetime": "2026-06-15T10:00:00+0000",
+        "event_properties": {
+            "profile_event_id": "exp-evt-active", "is_active": True,
+            "expires_at": "2026-07-15T10:00:00+0000",
+        },
+    }
+    await app_client.post("/v1/webhooks/billing/adapty",
+        content=json.dumps(active).encode(), headers=_adapty_headers())
+    # затем истечение
+    expired = {
+        "profile_id": profile, "event_type": "access_level_updated",
+        "event_datetime": "2026-07-15T10:00:01+0000",
+        "event_properties": {
+            "profile_event_id": "exp-evt-inactive", "is_active": False,
+        },
+    }
+    r = await app_client.post("/v1/webhooks/billing/adapty",
+        content=json.dumps(expired).encode(), headers=_adapty_headers())
+    assert r.status_code == 200
+    bal = await app_client.get("/v1/tokens/balance", headers=auth_headers(profile))
+    assert bal.json()["frozen"] is True
+
+
+@pytest.mark.asyncio
 async def test_adapty_validation_request_returns_2xx(app_client):
     """Adapty при сохранении интеграции шлёт валидационный запрос с
     нестандартным телом. Авторизация валидна → должны вернуть 2XX (не 400),
