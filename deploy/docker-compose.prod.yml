@@ -31,6 +31,14 @@ services:
         condition: service_healthy
     expose:
       - "8000"
+    # Уникальный сетевой alias: nginx проксирует на http://music_api:8000.
+    # Нельзя использовать обычное имя `api` — в общей сети web десятки чужих
+    # сервисов тоже зовутся `api`, и docker DNS делает round-robin между ними,
+    # из-за чего наш nginx проксировал на чужие бэкенды (чужой Swagger, 404).
+    networks:
+      default:
+        aliases:
+          - music_api
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
       interval: 10s
