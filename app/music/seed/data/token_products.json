@@ -1,30 +1,53 @@
 [
   {
-    "code": "tokens_10",
+    "code": "tokens_100",
     "platform": "adapty",
-    "external_product_id": "com.appstorepro.tokens_10",
-    "token_amount": 10,
-    "price_minor": 99,
+    "external_product_id": "100_Tokens_9.99",
+    "token_amount": 100,
+    "price_minor": 999,
     "currency": "USD",
-    "active": true
+    "active": true,
+    "is_subscription": false
   },
   {
-    "code": "tokens_50",
+    "code": "tokens_250",
     "platform": "adapty",
-    "external_product_id": "com.appstorepro.tokens_50",
-    "token_amount": 50,
-    "price_minor": 399,
+    "external_product_id": "250_Tokens_19.99",
+    "token_amount": 250,
+    "price_minor": 1999,
     "currency": "USD",
-    "active": true
+    "active": true,
+    "is_subscription": false
   },
   {
-    "code": "tokens_200",
+    "code": "tokens_500",
     "platform": "adapty",
-    "external_product_id": "com.appstorepro.tokens_200",
-    "token_amount": 200,
-    "price_minor": 1299,
+    "external_product_id": "500_Tokens_34.99",
+    "token_amount": 500,
+    "price_minor": 3499,
     "currency": "USD",
-    "active": true
+    "active": true,
+    "is_subscription": false
+  },
+  {
+    "code": "tokens_1000",
+    "platform": "adapty",
+    "external_product_id": "1000_Tokens_59.99",
+    "token_amount": 1000,
+    "price_minor": 5999,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": false
+  },
+  {
+    "code": "tokens_2000",
+    "platform": "adapty",
+    "external_product_id": "2000_Tokens_99.99",
+    "token_amount": 2000,
+    "price_minor": 9999,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": false
   },
   {
     "code": "sub_week",
@@ -32,6 +55,16 @@
     "external_product_id": "week_6.99_nottrial",
     "token_amount": 100,
     "price_minor": 699,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": true
+  },
+  {
+    "code": "sub_yearly",
+    "platform": "adapty",
+    "external_product_id": "yearly_49.99_nottrial",
+    "token_amount": 500,
+    "price_minor": 4999,
     "currency": "USD",
     "active": true,
     "is_subscription": true
