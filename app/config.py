@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     FAL_MUSIC_MODEL: str = "fal-ai/minimax-music"
     FAL_REFINE_MODEL: str = "fal-ai/ace-step/audio-to-audio"
     FAL_SPEECH_MODEL: str = "fal-ai/minimax/speech-02-turbo"
+    # lyrics via fal-ai/any-llm; claude-3-5-haiku currently 404 on fal
+    FAL_LLM_MODEL: str = "google/gemini-2.5-flash-lite"
 
     ADAPTY_WEBHOOK_SECRET: SecretStr = SecretStr("")
     RF_BILLING_WEBHOOK_SECRET: SecretStr = SecretStr("")

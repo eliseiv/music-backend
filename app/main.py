@@ -45,6 +45,7 @@ def _default_fal_factory(settings: Settings):
         music_model=settings.FAL_MUSIC_MODEL,
         refine_model=settings.FAL_REFINE_MODEL,
         speech_model=settings.FAL_SPEECH_MODEL,
+        llm_model=settings.FAL_LLM_MODEL,
         webhook_secret=settings.FAL_WEBHOOK_SECRET.get_secret_value(),
         timeout_seconds=settings.FAL_HTTP_TIMEOUT_SECONDS,
     )

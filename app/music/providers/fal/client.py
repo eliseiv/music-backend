@@ -29,6 +29,7 @@ class FalAiProvider:
         speech_model: str,
         webhook_secret: str,
         timeout_seconds: float = 30.0,
+        llm_model: str = "google/gemini-2.5-flash-lite",
     ) -> None:
         if not api_key:
             raise RuntimeError("FAL_API_KEY is required")
@@ -37,6 +38,7 @@ class FalAiProvider:
         self._music_model = music_model
         self._refine_model = refine_model
         self._speech_model = speech_model
+        self._llm_model = llm_model
         self._webhook_secret = webhook_secret
         self._timeout = timeout_seconds
         self._client = httpx.AsyncClient(
@@ -129,9 +131,10 @@ class FalAiProvider:
         *,
         prompt: str,
         language: str = "en",
-        llm_model: str = "anthropic/claude-3-5-haiku",
+        llm_model: str | None = None,
     ) -> str:
         """Sync-вызов fal-ai/any-llm для генерации текста песни."""
+        model = llm_model or self._llm_model
         lang_name = {"en": "English", "ru": "Russian", "es": "Spanish",
                      "fr": "French", "de": "German", "pt": "Portuguese"}.get(
             language.lower()[:2], "English"
@@ -145,7 +148,7 @@ class FalAiProvider:
         full_prompt = f"{system}\n\nTheme: {prompt}\n\nLyrics:"
 
         url = f"https://fal.run/fal-ai/any-llm"
-        body = {"model": llm_model, "prompt": full_prompt}
+        body = {"model": model, "prompt": full_prompt}
         token = provider_var.set(self.PROVIDER_NAME)
         try:
             try:
