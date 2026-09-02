@@ -124,7 +124,10 @@ clone_repo() {
         return
     fi
     log "Клонирую $REPO_URL в $DEPLOY_DIR/repo"
-    sudo -u "$DEPLOY_USER" git clone "$REPO_URL" "$DEPLOY_DIR/repo"
+    # protocol.version=1 — см. комментарий в .github/workflows/deploy.yml:
+    # git 2.34 + protocol v2 = 401 на анонимный клон публичного репо.
+    sudo -u "$DEPLOY_USER" git -c protocol.version=1 clone "$REPO_URL" "$DEPLOY_DIR/repo"
+    sudo -u "$DEPLOY_USER" git -C "$DEPLOY_DIR/repo" config --local protocol.version 1
 }
 
 setup_disk_cleanup_cron() {

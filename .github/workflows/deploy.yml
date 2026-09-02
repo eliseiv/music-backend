@@ -36,7 +36,10 @@ jobs:
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" bash -s <<EOF
             set -euo pipefail
             cd "$DEPLOY_DIR/repo"
-            git fetch origin "$BRANCH"
+            # protocol.version=1: git 2.34 (Ubuntu 22.04) c protocol v2 получает
+            # от GitHub 401 на анонимный POST git-upload-pack даже для публичного
+            # репо. На v1 анонимный fetch работает.
+            git -c protocol.version=1 fetch origin "$BRANCH"
             git reset --hard "origin/$BRANCH"
             # Если в репо обновился deploy/ — синхронизируем (сохраняя certbot/,
             # .env, static/ — пользовательский контент и репо).
