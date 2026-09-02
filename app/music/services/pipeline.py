@@ -15,6 +15,7 @@ from app.music.repositories.jobs import JobsRepository
 from app.music.repositories.tracks import TracksRepository
 from app.music.services.pricing_service import PricingService
 from app.music.services.wallet_service import WalletService
+from app.music.tags import pitch_semitones, pitch_vocal_hint
 
 logger = logging.getLogger(__name__)
 
@@ -329,13 +330,17 @@ class Pipeline:
         # Берём production/pitch как хинт стиля.
         if payload.get("production"):
             parts.append(payload["production"])
-        if payload.get("pitch"):
-            parts.append(payload["pitch"])
+        # ace-step реально отрабатывает вокальные теги — кладём развёрнутый
+        # хинт ("deep bass male vocals"), а не сырой тег ("bass").
+        vocal_hint = pitch_vocal_hint(payload.get("pitch"))
+        if vocal_hint:
+            parts.append(vocal_hint)
         eq = payload.get("equalizer") or {}
         if eq.get("tempo"):
             parts.append(f"{eq['tempo']} bpm")
-        # Универсальный хинт чтобы был вокал
-        parts.append("vocal")
+        # Универсальный хинт чтобы был вокал — не дублируем, если уже есть свой
+        if not vocal_hint:
+            parts.append("vocal")
         return ", ".join(parts)
 
     @staticmethod
@@ -351,8 +356,9 @@ class Pipeline:
             parts.append(f"{bpm} BPM")
         if payload.get("production"):
             parts.append(payload["production"])
-        if payload.get("pitch"):
-            parts.append(payload["pitch"])
+        vocal_hint = pitch_vocal_hint(payload.get("pitch"))
+        if vocal_hint:
+            parts.append(vocal_hint)
         return ", ".join(parts) or "instrumental music"
 
     # ------- internal helpers -------
@@ -533,13 +539,18 @@ class Pipeline:
                         p = dict(j.input_payload or {})
                         p["_cloned_voice_id"] = cloned_voice_id
                         j.input_payload = p
-        # Step 2: TTS speech с клонированным голосом (через queue + webhook)
+        # Step 2: TTS speech с клонированным голосом (через queue + webhook).
+        # pitch сдвигает высоту клона в полутонах: bass опускает, soprano
+        # поднимает. Для «манерных» тегов (whisper) сдвига нет — их несёт
+        # вокальный хинт в промпте music-стадии.
+        pitch_shift = pitch_semitones(payload.get("pitch"))
         try:
             submit = await self._fal.submit_speech(
                 text=lyrics,
                 voice_id=cloned_voice_id,
                 webhook_url=self._webhook_url(),
                 idempotency_key=f"{job.id}:tts",
+                pitch=pitch_shift,
             )
         except (FalProviderError, FalTimeout) as exc:
             await self._record_stage(
@@ -781,8 +792,11 @@ def _compose_prompt(payload: dict[str, Any] | None, beat: Beat | None) -> str:
         parts.append(f"reference_beat={beat.audio_url}")
     if payload.get("production"):
         parts.append(f"Production: {payload['production']}")
-    if payload.get("pitch"):
-        parts.append(f"Pitch: {payload['pitch']}")
+    # Вокал описываем прозой, а не `Pitch: bass` — key/value модель читает как
+    # мусор и тембр игнорирует (см. app.music.tags.PITCH_VOCAL_HINT).
+    vocal_hint = pitch_vocal_hint(payload.get("pitch"))
+    if vocal_hint:
+        parts.append(f"Vocals: {vocal_hint}, sung in that register throughout")
     if payload.get("lyrics_prompt"):
         parts.append(f"Lyrics theme: {payload['lyrics_prompt']}")
     parts.append(

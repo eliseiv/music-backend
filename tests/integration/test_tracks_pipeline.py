@@ -317,3 +317,68 @@ async def test_stems_only_when_store_stems_true(
     track_id = job_status.json()["trackId"]
     tr = await app_client.get(f"/v1/tracks/{track_id}", headers=h)
     assert tr.json()["stems"] is not None
+
+
+@pytest.mark.asyncio
+async def test_pitch_shifts_cloned_voice_and_reaches_music_prompt(
+    app_client,
+    auth_headers,
+    fake_fal,
+    seed_beats,
+    seed_pricing,
+    make_user_with_subscription,
+):
+    """pitch=bass: сдвиг −6 полутонов в TTS + вокальный хинт в music-промпте."""
+    await make_user_with_subscription("u-pitch-1", tokens=10)
+    payload = build_generate_payload(seed_beats)
+    payload["voiceUrl"] = "https://cdn.test/user-voice.wav"
+    payload["lyricsPrompt"] = "midnight city"
+    payload["pitch"] = "bass"
+    h = auth_headers("u-pitch-1")
+
+    r = await app_client.post("/v1/tracks/generate", headers=h, json=payload)
+    assert r.status_code == 200, r.json()
+
+    # music-стадия получает вокал прозой, а не `Pitch: bass`
+    music_prompt = fake_fal.calls_music[0]["prompt"]
+    assert "deep bass male vocals" in music_prompt
+    assert "Pitch: bass" not in music_prompt
+
+    await fake_fal.emit_webhook(
+        app_client, request_id="fake-music-1", status="completed",
+        audio_url="https://cdn.test/music.mp3", duration_seconds=30.0,
+        event_id="evt-pitch-music-1",
+    )
+
+    assert len(fake_fal.calls_speech) == 1
+    assert fake_fal.calls_speech[0]["pitch"] == -6
+
+
+@pytest.mark.asyncio
+async def test_whisper_pitch_does_not_shift_voice(
+    app_client,
+    auth_headers,
+    fake_fal,
+    seed_beats,
+    seed_pricing,
+    make_user_with_subscription,
+):
+    """whisper — манера подачи: высоту не двигаем, но хинт в промпт кладём."""
+    await make_user_with_subscription("u-pitch-2", tokens=10)
+    payload = build_generate_payload(seed_beats)
+    payload["voiceUrl"] = "https://cdn.test/user-voice.wav"
+    payload["lyricsPrompt"] = "quiet room"
+    payload["pitch"] = "whisper"
+    h = auth_headers("u-pitch-2")
+
+    r = await app_client.post("/v1/tracks/generate", headers=h, json=payload)
+    assert r.status_code == 200, r.json()
+    assert "whispered breathy intimate vocals" in fake_fal.calls_music[0]["prompt"]
+
+    await fake_fal.emit_webhook(
+        app_client, request_id="fake-music-1", status="completed",
+        audio_url="https://cdn.test/music.mp3", duration_seconds=30.0,
+        event_id="evt-pitch-music-2",
+    )
+
+    assert fake_fal.calls_speech[0]["pitch"] is None

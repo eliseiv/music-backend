@@ -96,6 +96,7 @@ class StubFalProvider:
         voice_id: str | None,
         webhook_url: str | None,
         idempotency_key: str,
+        pitch: int | None = None,
     ) -> FalSubmitResult:
         request_id = f"stub-speech-{uuid.uuid4().hex[:8]}"
         return FalSubmitResult(

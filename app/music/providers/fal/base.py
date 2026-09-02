@@ -119,6 +119,7 @@ class FalProvider(Protocol):
         voice_id: str | None,
         webhook_url: str | None,
         idempotency_key: str,
+        pitch: int | None = None,
     ) -> FalSubmitResult: ...
 
     async def voice_clone(self, *, audio_url: str) -> str:

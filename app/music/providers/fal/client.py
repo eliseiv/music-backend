@@ -196,16 +196,24 @@ class FalAiProvider:
         voice_id: str | None,
         webhook_url: str | None,
         idempotency_key: str,
+        pitch: int | None = None,
     ) -> FalSubmitResult:
         """TTS озвучка через minimax/speech-02-turbo.
 
         voice_id может быть либо preset из каталога minimax
         (например 'English_Trustworth_Man'), либо custom voice ID полученный
         из /minimax/voice-clone.
+
+        pitch — сдвиг высоты голоса в полутонах, minimax принимает -12..12
+        (см. app.music.tags.pitch_semitones). Уходит внутрь voice_setting,
+        поэтому без voice_id не отправляется.
         """
         payload: dict[str, Any] = {"text": text}
         if voice_id:
-            payload["voice_setting"] = {"voice_id": voice_id}
+            voice_setting: dict[str, Any] = {"voice_id": voice_id}
+            if pitch:
+                voice_setting["pitch"] = max(-12, min(12, int(pitch)))
+            payload["voice_setting"] = voice_setting
         return await self._submit(
             model=self._speech_model,
             payload=payload,
