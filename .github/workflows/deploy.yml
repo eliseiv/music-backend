@@ -36,10 +36,10 @@ jobs:
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" bash -s <<EOF
             set -euo pipefail
             cd "$DEPLOY_DIR/repo"
-            # protocol.version=1: git 2.34 (Ubuntu 22.04) c protocol v2 получает
-            # от GitHub 401 на анонимный POST git-upload-pack даже для публичного
-            # репо. На v1 анонимный fetch работает.
-            git -c protocol.version=1 fetch origin "$BRANCH"
+            # http.version=HTTP/1.1: git 2.34 (Ubuntu 22.04) по HTTP/2 получает
+            # от GitHub 401 на POST git-upload-pack даже для публичного репо
+            # (GET info/refs при этом отдаёт 200). По HTTP/1.1 fetch проходит.
+            git -c http.version=HTTP/1.1 fetch origin "$BRANCH"
             git reset --hard "origin/$BRANCH"
             # Если в репо обновился deploy/ — синхронизируем (сохраняя certbot/,
             # .env, static/ — пользовательский контент и репо).
