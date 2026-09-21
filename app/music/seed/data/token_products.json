@@ -68,5 +68,95 @@
     "currency": "USD",
     "active": true,
     "is_subscription": true
+  },
+  {
+    "code": "tokens_100_v2",
+    "platform": "adapty",
+    "external_product_id": "100_tokens_9.99",
+    "token_amount": 100,
+    "price_minor": 999,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": false
+  },
+  {
+    "code": "tokens_250_v2",
+    "platform": "adapty",
+    "external_product_id": "250_tokens_19.99",
+    "token_amount": 250,
+    "price_minor": 1999,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": false
+  },
+  {
+    "code": "tokens_500_v2",
+    "platform": "adapty",
+    "external_product_id": "500_tokens_34.99",
+    "token_amount": 500,
+    "price_minor": 3499,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": false
+  },
+  {
+    "code": "tokens_1000_v2",
+    "platform": "adapty",
+    "external_product_id": "1000_tokens_59.99",
+    "token_amount": 1000,
+    "price_minor": 5999,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": false
+  },
+  {
+    "code": "tokens_2000_v2",
+    "platform": "adapty",
+    "external_product_id": "2000_tokens_99.99",
+    "token_amount": 2000,
+    "price_minor": 9999,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": false
+  },
+  {
+    "code": "sub_weekly_999",
+    "platform": "adapty",
+    "external_product_id": "weekly_9.99_nottrial",
+    "token_amount": 100,
+    "price_minor": 999,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": true
+  },
+  {
+    "code": "sub_offer_week_499",
+    "platform": "adapty",
+    "external_product_id": "offer_week_4.99_nottrial",
+    "token_amount": 100,
+    "price_minor": 499,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": true
+  },
+  {
+    "code": "sub_monthly_1999",
+    "platform": "adapty",
+    "external_product_id": "monthly_19.99_nottrial",
+    "token_amount": 200,
+    "price_minor": 1999,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": true
+  },
+  {
+    "code": "sub_yearly_5999",
+    "platform": "adapty",
+    "external_product_id": "yearly_59.99_nottrial",
+    "token_amount": 1000,
+    "price_minor": 5999,
+    "currency": "USD",
+    "active": true,
+    "is_subscription": true
   }
 ]
