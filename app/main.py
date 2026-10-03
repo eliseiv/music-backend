@@ -249,6 +249,16 @@ def create_app(
             "Используется в docker-compose healthcheck и в smoke-тестах CI."
         ),
     )
+    @app.get(
+        "/health",
+        tags=["Система"],
+        summary="Healthcheck (алиас)",
+        description=(
+            "Алиас `/healthz` для внешних мониторингов, которые опрашивают "
+            "фиксированный путь `/health` (например реестр бэков в broad-crm). "
+            "Отвечает 200 без авторизации и без редиректов."
+        ),
+    )
     async def healthz() -> dict[str, str]:
         return {"status": "ok"}
 

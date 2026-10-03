@@ -10,6 +10,19 @@ async def test_healthz_public(app_client):
     assert r.json() == {"status": "ok"}
 
 
+async def test_health_alias_public(app_client):
+    """Алиас /health — его опрашивает реестр бэков в broad-crm.
+
+    Требования монитора: строго 2xx без авторизации и без редиректа
+    (follow_redirects=False, поэтому 307 на /healthz не подошёл бы).
+    """
+    r = await app_client.get(
+        "/health", headers={"Authorization": ""}, follow_redirects=False
+    )
+    assert r.status_code == 200
+    assert r.json() == {"status": "ok"}
+
+
 async def test_missing_bearer_returns_unauthorized(app_client):
     r = await app_client.get(
         "/v1/beats",

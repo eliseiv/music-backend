@@ -39,6 +39,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     SKIP_PATHS = frozenset(
         {
             "/healthz",
+            "/health",
             "/docs",
             "/redoc",
             "/openapi.json",
